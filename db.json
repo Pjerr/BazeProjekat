@@ -1,0 +1,34 @@
+{
+  "product-categories": [
+    {
+      "id": 1,
+      "categoryName": "computers",
+      "subcategories": ["Laptops", "PCs", "Accessories"]
+    },
+    {
+      "id": 2,
+      "categoryName": "washing machines",
+      "subcategories": ["LG", "Samsung", "Bosch"]
+    },
+    {
+      "id": 3,
+      "categoryName": "consoles",
+      "subcategories": ["Playstation", "Xbox", "Atari"]
+    },
+    {
+      "id": 4,
+      "categoryName": "gaming chairs",
+      "subcategories": ["Razer", "Bloody", "Scorpion"]
+    },
+    {
+      "id": 5,
+      "categoryName": "hairdryers",
+      "subcategories": ["LG", "Samsung", "Bosch"]
+    },    
+    {
+      "id": 6,
+      "categoryName": "cameras",
+      "subcategories": ["Digital", "Analog"]
+    }
+  ]
+}

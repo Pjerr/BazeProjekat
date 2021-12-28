@@ -1,0 +1,16 @@
+.nav-item{
+    cursor: pointer;
+}
+
+.fa-shopping-cart{
+    color: white;
+
+    &:hover{
+       color: lightgray; 
+    }
+}
+
+ul{
+    display: flex;
+    align-items: center;
+}

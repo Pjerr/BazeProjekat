@@ -1,0 +1,11 @@
+CREATE (n:Radnik {username: 'todor.kalezic', password: 'todor.kalezic', ime: 'Todor', prezime: 'Kalezic'});
+
+CREATE (n:Radnik {username: 'petra.milisavljevic', password: 'petra.milisavljevic', ime: 'Petra', prezime: 'Milisavljevic'});
+
+CREATE (n:Radnik {username: 'luna.mladenovic', password: 'luna.mladenovic', ime: 'Luna', prezime: 'Mladenovic'});
+
+
+
+
+MATCH (n:Radnik) 
+RETURN n.username;

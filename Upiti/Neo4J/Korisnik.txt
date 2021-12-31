@@ -1,0 +1,18 @@
+CREATE (n:Korisnik {email: 'marko.njusic@yahoo.com', username: 'marko.njusic', password: 'marko.njusic', telefon: '060-000-000', ime: 'Marko', prezime: 'Njusic'});
+
+CREATE (n:Korisnik {email: 'darko.janjic@yahoo.com', username: 'darko.janjic', password: 'darko.janjic', telefon: '060-000-001', ime: 'Darko', prezime: 'Janjic'});
+
+CREATE (n:Korisnik {email: 'jelisaveta.djordjevic@yahoo.com', username: 'jelisaveta.djordjevic', password: 'jelisaveta.djordjevic', telefon: '060-000-002', ime: 'Jelisaveta', prezime: 'Djordjevic'});
+
+CREATE (n:Korisnik {email: 'darja.adamovic@yahoo.com', username: 'darja.adamovic', password: 'darja.adamovic', telefon: '060-000-003', ime: 'Darja', prezime: 'Adamovic'});
+
+CREATE (n:Korisnik {email: 'dragoslav.jeftic@yahoo.com', username: 'dragoslav.jeftic', password: 'dragoslav.jeftic', telefon: '060-000-004', ime: 'Dragoslav', prezime: 'Jeftic'});
+
+CREATE (n:Korisnik {email: 'jelena.bogdanovic@yahoo.com', username: 'jelena.bogdanovic', password: 'jelena.bogdanovic', telefon: '060-000-005', ime: 'Jelena', prezime: 'Bogdanovic'});
+
+CREATE (n:Korisnik {email: 'djordje.dobrosavljevic@yahoo.com', username: 'djordje.dobrosavljevic', password: 'djordje.dobrosavljevic', telefon: '060-000-006', ime: 'Djordje', prezime: 'Dobrosavljevic'});
+
+CREATE (n:Korisnik {email: 'sasa.novkovic@yahoo.com', username: 'sasa.novkovic', password: 'sasa.novkovic', telefon: '060-000-007', ime: 'Sasa', prezime: 'Novkovic'});
+
+CREATE (n:Korisnik {email: 'bogdan.petrov@yahoo.com', username: 'bogdan.petrov', password: 'bogdan.petrov', telefon: '060-000-008', ime: 'Bogdan', prezime: 'Petrov'});
+

@@ -1,0 +1,114 @@
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Graficke kartice', naziv: 'AMD RADEON RX580 XFX', cena: 50000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Graficke kartice', naziv: 'PALIT nVidia GeForce RTX 3080 Ti GameRock', cena: 1000000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Procesori', naziv: 'AMD Ryzen 5 1600 AF', cena: 20000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Procesori', naziv: 'Intel Core i7 12700K', cena: 70000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Procesori', naziv: 'AMD Ryzen 9 5900X', cena: 80000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Procesori', naziv: 'Intel Core i7 11700K', cena: 55000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Maticne ploce', naziv: 'MSI MPG B550 GAMING PLUS', cena: 16000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Maticne ploce', naziv: 'GIGABYTE Z690 UD', cena: 30000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Maticne ploce', naziv: 'MSI B450 TOMAHAWK MAX II', cena: 13000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'SSD', naziv: 'SAMSUNG SSD 970 EVO PLUS 500GB', cena: 12500, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'SSD', naziv: 'KINGSTON KC600 1024GB', cena: 19000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Smart', naziv: 'SAMSUNG GALAXY S21 PLUS', cena: 130000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Smart', naziv: 'XIAOMI MI 8', cena: 40000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Smart', naziv: 'APPLE iPhone 13 Pro Max', cena: 174600, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Obicni', naziv: 'ALCATEL 1066D', cena: 2500, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Obicni', naziv: 'NOKIA 3310', cena: 2500, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Mobilni telefoni', tip: 'Obicni', naziv: 'NOKIA 5310', cena: 2500, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Ves masine', naziv: 'MIELE WWD120 WCS', cena: 99000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Ves masine', naziv: 'BOSCH WAX32M40BY', cena: 107000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Ves masine', naziv: 'GORENJE WNEI 74 BS', cena: 39000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Ves masine', naziv: 'MIELE WCA030WCS D LW', cena: 85000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Masine za pranje i susenje', naziv: 'MIELE WTF 115 WCS', cena: 195000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Masine za pranje i susenje', naziv: 'MIELE WTZH730 WPM', cena: 310000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Masine za pranje i susenje', naziv: 'MIDEA MFK80 DU1401B', cena: 70000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Elektricni sporeti', naziv: 'TESLA CV6400SX', cena: 42000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Elektricni sporeti', naziv: 'VOX CHT5000W', cena: 30000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Elektricni sporeti', naziv: 'GORENJE E5121WH', cena: 24000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Mikrotalasne', naziv: 'BOSCH FEL023MS2', cena: 21000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Mikrotalasne', naziv: 'GORENJE MO4250CLI', cena: 19000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Mikrotalasne', naziv: 'PANASONIC NN GD36HMSUG', cena: 25000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Bela tehnika', tip: 'Mikrotalasne', naziv: 'CANDY CMG 2071 M', cena: 11500, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Televizori', tip: 'Smart', naziv: 'GRUNDIG 65GDU7500B SMART', cena: 84000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Televizori', tip: 'Smart', naziv: 'PHILIPS 70PUS7505 SMART', cena: 110000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Televizori', tip: 'Smart', naziv: 'PANASONIC TX-49HX940E SMART', cena: 92000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Televizori', tip: 'Obicni', naziv: 'TESLA 32T312BH', cena: 19000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Televizori', tip: 'Obicni', naziv: 'VOX 32DSQGB', cena: 16000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Prenosni racunari', tip: 'Lap top racunari', naziv: 'ACER Aspire 3 A315-23', cena: 66000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Prenosni racunari', tip: 'Lap top racunari', naziv: 'LENOVO IdeaPad 3 14ADA05', cena: 66000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Prenosni racunari', tip: 'Lap top racunari', naziv: 'HP 250 G7-1F3J0EA', cena: 66000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+CREATE (n:Proizvod {kategorija: 'Prenosni racunari', tip: 'Tableti', naziv: 'ALCATEL 1T', cena: 12000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+CREATE (n:Proizvod {kategorija: 'Prenosni racunari', tip: 'Tableti', naziv: 'XIAOMI Pad 5', cena: 40000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

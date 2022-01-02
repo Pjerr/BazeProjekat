@@ -29,6 +29,11 @@
       "id": 6,
       "categoryName": "cameras",
       "subcategories": ["Digital", "Analog"]
+    },
+    {
+      "id": 7,
+      "categoryName": "guitars",
+      "subcategories": ["Fender", "Gibson"]
     }
   ]
 }

@@ -1,10 +1,10 @@
-<div class="product-categories">
-    <div class="category" *ngFor="let category of productCategories | async;  let i = index" (mouseenter)="toggleSubcategories(i)" (mouseleave)="hideSubcategories(i)">
-        <h4>{{i}}. {{category.categoryName}}</h4>
-        <div class="subcategories" *ngIf="isSubcategoryShown[i]">
-            <p (click)="moveToProductList(category.categoryName, subcategory)" *ngFor="let subcategory of category.subcategories">
+<ul class="sidebar__product-categories">
+    <li class="sidebar__category" *ngFor="let category of productCategories | async;  let i = index" (mouseenter)="toggleSubcategories(i)" (mouseleave)="hideSubcategories(i)">
+        <h4 class="sidebar__category-name">{{category.categoryName}}</h4>
+        <ul class="sidebar__subcategories" *ngIf="isSubcategoryShown[i]">
+            <li (click)="moveToProductList(category.categoryName, subcategory)" *ngFor="let subcategory of category.subcategories" class="sidebar__subcategory">
                 {{subcategory}}
-            </p>
-        </div>
-    </div>
-</div>
+            </li>
+        </ul>
+    </li>
+</ul>

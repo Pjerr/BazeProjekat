@@ -9,7 +9,7 @@ CREATE TABLE proizvod_naziv
     proizvodjac text,                                      
     opis text,                                                
     slika text,
-    popust int, //u procentima (?)
+    popust int, //u procentima
 
     PRIMARY KEY ((kategorija, tip), naziv)
 )                                                 
@@ -30,9 +30,9 @@ CREATE TABLE proizvod_cenanaziv
     proizvodjac text,                                      
     opis text,                                                
     slika text,
-    popust int, //u procentima (?)
+    popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), cena, naziv)
+    PRIMARY KEY ((kategorija, tip), cena, proizvodjac)		//NE naziv, nego proizvodjac
 )                                                 
 WITH
   bloom_filter_fp_chance=0.01
@@ -51,9 +51,9 @@ CREATE TABLE proizvod_ocenanaziv
     proizvodjac text,                                      
     opis text,                                                
     slika text,
-    popust int, //u procentima (?)
+    popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), ocena, naziv)
+    PRIMARY KEY ((kategorija, tip), ocena, proizvodjac)	//NE naziv, nego proizvodjac
 )                                                 
 WITH                          
   bloom_filter_fp_chance=0.01                                     
@@ -72,9 +72,9 @@ CREATE TABLE proizvod_proizvodjac
     proizvodjac text,                                      
     opis text,                                                
     slika text,
-    popust int, //u procentima (?)
+    popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), proizvodjac, naziv)
+    PRIMARY KEY ((kategorija, tip), proizvodjac, naziv)	//Ovde moze da ostane naziv samo da bi sortiralo leksikografski
 )                                                 
 WITH                          
   bloom_filter_fp_chance=0.01                                     
@@ -93,9 +93,9 @@ CREATE TABLE proizvod_popust
     proizvodjac text,                                      
     opis text,                                                
     slika text,
-    popust int, //u procentima (?)
+    popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), popust, naziv)
+    PRIMARY KEY ((kategorija, tip), popust)	//ne (popust, naziv). Samo popust
 )                                                 
 WITH                          
   bloom_filter_fp_chance=0.01                                     
@@ -114,7 +114,7 @@ CREATE TABLE transakcija
     "kupljeniProizvodi" text,    //svi proizvodi koji su kupljeni
     "usernameKorisnika" text,
     "ukupnaCena" float,
-    "vremeKupovine" timestamp,     //? ili mozda samo string, jednostavnije je
+    "vremeKupovine" text,     //text umesto timestamp
                          
     PRIMARY KEY ((godina, kvartal, mesec), online, "imeProdavnice")
 )

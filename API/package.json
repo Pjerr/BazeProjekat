@@ -1,0 +1,23 @@
+{
+  "name": "API",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app",
+    "dev": "nodemon app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cassandra-client": "^0.15.2",
+    "express": "^4.17.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "cassandra-driver": "*",
+    "neo4j-driver": "*"
+  }
+}

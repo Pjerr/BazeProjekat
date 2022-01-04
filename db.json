@@ -3,7 +3,7 @@
     {
       "id": 1,
       "categoryName": "computers",
-      "subcategories": ["Laptops", "PCs", "Accessories"]
+      "subcategories": ["Laptops", "PCs", "Accessories", "processors"]
     },
     {
       "id": 2,
@@ -34,6 +34,85 @@
       "id": 7,
       "categoryName": "guitars",
       "subcategories": ["Fender", "Gibson"]
+    },
+    {
+      "id": 8,
+      "categoryName": "mobile",
+      "subcategories": ["regular", "smart"]
+    }
+  ],
+  "product-list-1":[
+    {
+      "id": 0,
+      "category": "computers",
+      "subcategory": "processors",
+      "name": "Ryzen 5",
+      "price": 300,
+      "rating": 3.9,
+      "pictureURL": "../../../assets/slike/RACUNARSKE_KOMPONENTE/PROCESORI/AMD_Ryzen_5_1600_AF.jpg",
+      "description": "This is a great processor",
+      "manufacturer": "AMD",
+      "discount": 0
+    },
+    {
+      "id": 1,
+      "category": "mobile",
+      "subcategory": "smart",
+      "name": "Xaomi Mi 8",
+      "price": 200,
+      "rating": 3.4,
+      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/XIAOMI_MI_8.jpg",
+      "description": "This is a good phone",
+      "manufacturer": "Xiaomi",
+      "discount": 0
+    },
+    {
+      "id": 2,
+      "category": "mobile",
+      "subcategory": "smart",
+      "name": "Iphone 13",
+      "price": 900,
+      "rating": 4.9,
+      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/APPLE_iPhone_13_Pro_Max.jpg",
+      "description": "This is a great phone",
+      "manufacturer": "Apple",
+      "discount": 0
+    },
+    {
+      "id": 3,
+      "category": "mobile",
+      "subcategory": "smart",
+      "name": "Samsung Galaxy S21",
+      "price": 600,
+      "rating": 5.0,
+      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/SAMSUNG_GALAXY_S21_PLUS.jpg",
+      "description": "Great!",
+      "manufacturer": "Samsung",
+      "discount": 0
+    },
+    {
+      "id": 4,
+      "category": "mobile",
+      "subcategory": "regular",
+      "name": "Nokia 3310",
+      "price": 50,
+      "rating": 2.9,
+      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_3310.jpg",
+      "description": "The old reliable",
+      "manufacturer": "Nokia",
+      "discount": 0
+    },
+    {
+      "id": 5,
+      "category": "mobile",
+      "subcategory": "regular",
+      "name": "Nokia 5310",
+      "price": 60,
+      "rating": 3.0,
+      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_5310.jpg",
+      "description": "The old but gold",
+      "manufacturer": "Nokia",
+      "discount": 0
     }
   ]
 }

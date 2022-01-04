@@ -1,0 +1,33 @@
+@import "../../../assets/colors.scss";
+
+.product-detail__wrapper{
+    margin: 40px 0px 20px 0px;
+    display: flex;
+}
+.product_detail__product-card{
+    padding: 20px;
+}
+
+.product-detail__rating_and_price{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.product-detail__image{
+    width: 400px;
+    height: 500px;
+}
+
+.product-detail__comments{
+    margin-left: 20px;
+}
+
+.product-detail__fa-star{
+    color: $mustard;
+    cursor: pointer;
+    
+    &:hover{
+        color: #947506;
+    }
+}

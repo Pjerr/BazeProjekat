@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
-
+import { Store } from '@ngrx/store';
+import { Observable, of } from 'rxjs';
+import { AppState } from './store/app.state';
+import * as CommonSelectors from './store/common/common.selectors';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -8,11 +11,15 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'BazeProjekat';
 
-  constructor() {}
+  constructor(private store: Store<AppState>) {}
 
-  isSidebarShown: boolean = false;
+  ngOnInit(): void {
+    this.loadSidebarStatus();
+  }
 
-  toggleSidebar(sidebarState: boolean) : void{
-    this.isSidebarShown = sidebarState;
+  isSidebarShown: Observable<boolean> = of();
+
+  loadSidebarStatus() : void{
+    this.isSidebarShown = this.store.select(CommonSelectors.selectSidebarStatus);
   }
 }

@@ -1,0 +1,31 @@
+<div class="product-detail__wrapper" *ngIf="product">
+    <div class="product_detail__product-card card">
+        <div class="product-detail__general">
+            <img [src]="product.pictureURL" alt="picture" class="img img-fluid rounded mx-auto d-block product-detail__image">
+            <div class="product-detail__rating_and_price">
+                <h3>Score: {{product.rating}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="rateProduct()"></i></h3>
+                <h3>Price: {{product.price}}$</h3>
+                <button class="btn btn-success">Add to cart</button>
+            </div>
+        </div>
+        <hr>
+        <div class="product-detail__description">
+            <h4>Description:</h4>
+            <p>{{product.description}}</p>
+            <h4>Manufacturer:</h4>
+            <p>{{product.manufacturer}}</p>
+        </div>
+    </div>
+    <div class="product-detail__comments">
+        <h5>Comment section</h5>
+        <form>
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Leave a comment</mat-label>
+                <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
+            </mat-form-field>
+        </form>
+        <div class="product-detail__other-comments">
+            This is where other comments would show!
+        </div>
+    </div>
+</div>

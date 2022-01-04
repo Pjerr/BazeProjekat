@@ -1,1 +1,36 @@
-<p>product-list works!</p>
+<div class="product-list__wrapper">
+  <div class="product-list__manufacturers">
+    <p class="product-list__manufacturers-title">Manufacturers</p>
+    <mat-checkbox *ngFor="let product of products | async" (change)="filterByManufacturers($event.checked ,product.manufacturer)">{{product.manufacturer}}</mat-checkbox>
+  </div>
+  <div class="product-list__container">
+    <div class="product-list__search-filters container">
+      <div class="row">
+        <div class="col">
+          <mat-form-field appearance="fill">
+            <mat-label>Filter by: </mat-label>
+            <mat-select [(ngModel)]="selectedFilterOption" (ngModelChange)="filterBySelectedOption()">
+              <mat-option *ngFor="let filter of filters" [value]="filter">
+                {{filter}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="product-list__product-wrapper">
+      <div *ngFor="let product of products | async">
+        <app-product-thumb
+          [product]="product"
+          class="product-list__product"
+        ></app-product-thumb>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 <div class="body">
-<app-header (toggleSidebar)="toggleSidebar($event)" class="header"></app-header>
+<app-header class="header"></app-header>
 <div class="container-fluid">
-<app-sidebar *ngIf="isSidebarShown"></app-sidebar>
+<app-sidebar *ngIf="isSidebarShown | async"></app-sidebar>
 <router-outlet></router-outlet>
 </div>
 <app-footer class="footer"></app-footer>

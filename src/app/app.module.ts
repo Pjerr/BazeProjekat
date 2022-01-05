@@ -29,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { cartReducer } from './store/cart/cart.reducer';
 @NgModule({
   declarations: [
     AppComponent,
@@ -57,6 +58,7 @@ import { MatInputModule } from '@angular/material/input';
         common: commonReducer,
         products: productsReducer,
         productCategories: productsCategoriesReducer,
+        cart: cartReducer
       },
       {
         metaReducers: !environment.production ? [] : [],

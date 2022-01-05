@@ -5,7 +5,8 @@
             <div class="product-detail__rating_and_price">
                 <h3>Score: {{product.rating}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="rateProduct()"></i></h3>
                 <h3>Price: {{product.price}}$</h3>
-                <button class="btn btn-success">Add to cart</button>
+                <button class="btn btn-success" (click)="addToCart()">Add to cart</button>
+                <button class="btn btn-danger" (click)="removeFromCart()">Remove from cart</button>
             </div>
         </div>
         <hr>

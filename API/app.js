@@ -1,11 +1,13 @@
 const express = require('express');
 const proizvodNazivRouter = require('./routes/proizvod_naziv');
 const ProizvodNeo4jRouter = require('./routes/neo4jProizvod');
+const popularniProizvodiRouter = require('./routes/popularniProizvodiCassandra');
 
 const app = express();
 const rootRouter = express.Router();
-rootRouter.use('/proizvod_naziv', proizvodNazivRouter);
+rootRouter.use('/proizvod_cassandra_tabele', proizvodNazivRouter);
 rootRouter.use('/neo4jProizvod', ProizvodNeo4jRouter);
+rootRouter.use('/popularniProizvodi', popularniProizvodiRouter);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use('/', rootRouter);

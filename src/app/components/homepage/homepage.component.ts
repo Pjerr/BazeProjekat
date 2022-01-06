@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalService } from '../_modal';
 
 @Component({
   selector: 'app-homepage',
@@ -7,9 +8,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomepageComponent implements OnInit {
 
-  constructor() { }
+  constructor(private modalService: ModalService) { }
 
   ngOnInit(): void {
+  }
+
+  openModalForLogin(){
+    this.modalService.open("login");
+  }
+
+  closeModalForLogin(){
+    this.modalService.close("login");
+  }
+
+  openModalForRegister(){
+    this.modalService.open("register");
+  }
+
+  closeModalForRegister(){
+    this.modalService.close("register");
+  }
+
+  login(){
+    console.log("should login!");
+  }
+
+  register(){
+    console.log("should register!");
   }
 
 }

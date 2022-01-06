@@ -22,6 +22,6 @@ export const cartReducer = createReducer(
     return adapter.addOne(product, state);
   }),
   on(CartActions.removeFromCart, (state, { product }) => {
-    return adapter.removeOne(product.id.toString(), state);
+    return adapter.removeOne(product.naziv.toString(), state);
   })
 );

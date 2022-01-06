@@ -16,8 +16,8 @@ export const rateProductSuccess = createAction(
 export const loadProducts = createAction(
   '[Product] Load Products',
   props<{
-    category: string;
-    subcategory: string;
+    kategorija: string;
+    tip: string;
   }>()
 );
 
@@ -31,6 +31,8 @@ export const loadProductsSuccess = createAction(
 export const selectProduct = createAction(
   '[Product] Select Product',
   props<{
-    productID: number;
+    kategorija: string;
+    tip: string;
+    naziv: string
   }>()
 );

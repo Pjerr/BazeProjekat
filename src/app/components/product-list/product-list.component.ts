@@ -15,35 +15,35 @@ export class ProductListComponent implements OnInit {
   constructor(private route: ActivatedRoute, private store: Store<AppState>) {}
 
   products: Observable<ProductDto[]> = of([]);
-  manufacturersToFilterBy: string[] = [];
+  proizvodjaciToFilterBy: string[] = [];
   selectedFilterOption: string = "None";
   filters: string[] = ["None" ,"Popularity", "Price des", "Price asc", "Rating"]
 
   ngOnInit(): void {
-    const category = this.route.snapshot.queryParamMap.get('category');
-    const subcategory = this.route.snapshot.queryParamMap.get('subcategory');
-    if (category != null && subcategory != null) {
-      this.loadProducts(category, subcategory);
+    const kategorija = this.route.snapshot.queryParamMap.get('kategorija');
+    const tip = this.route.snapshot.queryParamMap.get('tip');
+    if (kategorija != null && tip != null) {
+      this.loadProducts(kategorija, tip);
     }
   }
 
-  loadProducts(category: string, subcategory: string): void {
-    this.store.dispatch(ProductActions.loadProducts({ category, subcategory }));
+  loadProducts(kategorija: string, tip: string): void {
+    this.store.dispatch(ProductActions.loadProducts({ kategorija, tip }));
     this.products = this.store.select(ProductSelectors.selectAllProducts);
   }
 
-  filterByManufacturers(checked: boolean, manufacturer: string) {
+  filterByProizvodjaci(checked: boolean, manufacturer: string) {
     if (checked) {
-      this.manufacturersToFilterBy.push(manufacturer);
+      this.proizvodjaciToFilterBy.push(manufacturer);
       console.log('Checked!');
-      console.log(this.manufacturersToFilterBy);
+      console.log(this.proizvodjaciToFilterBy);
     } else {
-      this.manufacturersToFilterBy.splice(
-        this.manufacturersToFilterBy.indexOf(manufacturer),
+      this.proizvodjaciToFilterBy.splice(
+        this.proizvodjaciToFilterBy.indexOf(manufacturer),
         1
       );
       console.log('Unchecked!');
-      console.log(this.manufacturersToFilterBy);
+      console.log(this.proizvodjaciToFilterBy);
     }
   }
   filterBySelectedOption(){

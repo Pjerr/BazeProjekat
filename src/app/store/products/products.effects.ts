@@ -16,9 +16,9 @@ export class ProductsEffects {
       ofType(ProductActions.loadProducts),
       mergeMap((action) =>
         this.productsService
-          .getProductsByCategoryAndSubcategory(
-            action.category,
-            action.subcategory
+          .getProductsByKategorijaTip(
+            action.kategorija,
+            action.tip
           )
           .pipe(
             map((products) => ProductActions.loadProductsSuccess({ products })),

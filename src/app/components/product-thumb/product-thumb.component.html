@@ -1,7 +1,7 @@
 <div class="product-thumb__wrapper card" *ngIf="product" (click)="showProductDetail()">
-    <img [src]="product.pictureURL" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
-    <h4>{{product.name}}</h4>
-    <h5>{{product.price}}$</h5>
-    <h5>{{product.rating}}<i class="fas fa-star product-thumb__fa-star"></i></h5>
+    <img [src]="product.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
+    <h4>{{product.naziv}}</h4>
+    <h5>{{product.cena}}$</h5>
+    <h5>{{product.ocena}}<i class="fas fa-star product-thumb__fa-star"></i></h5>
 </div>
 

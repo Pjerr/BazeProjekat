@@ -20,14 +20,3 @@ export const selectAllProductsAsDict = createSelector(
   selectProducsFeature,
   (state: ProductsState) => state.entities
 );
-
-export const selectOneProductID = createSelector(
-  selectProducsFeature,
-  (state: ProductsState) => state.selectedProductID
-);
-
-export const selectOneProduct = createSelector(
-  selectAllProducts,
-  selectOneProductID,
-  (allProducts, productID) => allProducts[productID] ?? null
-);

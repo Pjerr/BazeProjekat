@@ -15,7 +15,7 @@ export const loadCategoriesAndSubcategoriesSuccess = createAction(
 export const selectCategoryAndSubcategory = createAction(
   '[Product] Select Category and Subcategory',
   props<{
-    category: string,
-    subcategory: string
+    kategorija: string,
+    tip: string
   }>()
 )

@@ -22,8 +22,8 @@ export class ProductThumbComponent implements OnInit {
 
   showProductDetail(){
     if(this.product){
-      this.store.dispatch(ProductActions.selectProduct({productID: this.product.id}));
-      this.router.navigate(["product-detail"], {queryParams: {"id":this.product.id}});
+      this.store.dispatch(ProductActions.selectProduct({kategorija: this.product.kategorija, tip: this.product.tip, naziv: this.product.naziv}));
+      this.router.navigate(["product-detail"], {queryParams: {"kategorija":this.product.kategorija, "tip": this.product.tip, "naziv": this.product.naziv}});
     }
   }
 }

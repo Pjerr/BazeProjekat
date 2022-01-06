@@ -1,118 +1,104 @@
 {
   "product-categories": [
     {
-      "id": 1,
-      "categoryName": "computers",
-      "subcategories": ["Laptops", "PCs", "Accessories", "processors"]
+      "kategorija": "computers",
+      "tipovi": ["Laptops", "PCs", "Accessories", "processors"]
     },
     {
-      "id": 2,
-      "categoryName": "washing machines",
-      "subcategories": ["LG", "Samsung", "Bosch"]
+      "kategorija": "washing machines",
+      "tipovi": ["LG", "Samsung", "Bosch"]
     },
     {
-      "id": 3,
-      "categoryName": "consoles",
-      "subcategories": ["Playstation", "Xbox", "Atari"]
+      "kategorija": "consoles",
+      "tipovi": ["Playstation", "Xbox", "Atari"]
     },
     {
-      "id": 4,
-      "categoryName": "gaming chairs",
-      "subcategories": ["Razer", "Bloody", "Scorpion"]
+      "kategorija": "gaming chairs",
+      "tipovi": ["Razer", "Bloody", "Scorpion"]
     },
     {
-      "id": 5,
-      "categoryName": "hairdryers",
-      "subcategories": ["LG", "Samsung", "Bosch"]
+      "kategorija": "hairdryers",
+      "tipovi": ["LG", "Samsung", "Bosch"]
     },    
     {
-      "id": 6,
-      "categoryName": "cameras",
-      "subcategories": ["Digital", "Analog"]
+      "kategorija": "cameras",
+      "tipovi": ["Digital", "Analog"]
     },
     {
-      "id": 7,
-      "categoryName": "guitars",
-      "subcategories": ["Fender", "Gibson"]
+      "kategorija": "guitars",
+      "tipovi": ["Fender", "Gibson"]
     },
     {
-      "id": 8,
-      "categoryName": "mobile",
-      "subcategories": ["regular", "smart"]
+      "kategorija": "mobile",
+      "tipovi": ["regular", "smart"]
     }
   ],
-  "product-list-1":[
+  "product-list":[
     {
-      "id": 0,
-      "category": "computers",
-      "subcategory": "processors",
-      "name": "Ryzen 5",
-      "price": 300,
-      "rating": 3.9,
-      "pictureURL": "../../../assets/slike/RACUNARSKE_KOMPONENTE/PROCESORI/AMD_Ryzen_5_1600_AF.jpg",
-      "description": "This is a great processor",
-      "manufacturer": "AMD",
-      "discount": 0
+      "kategorija": "computers",
+      "tip": "processors",
+      "naziv": "Ryzen 5",
+      "cena": 300,
+      "ocena": 3.9,
+      "slika": "../../../assets/slike/RACUNARSKE_KOMPONENTE/PROCESORI/AMD_Ryzen_5_1600_AF.jpg",
+      "opis": "This is a great processor",
+      "proizvodjac": "AMD",
+      "popust": 0
     },
     {
-      "id": 1,
-      "category": "mobile",
-      "subcategory": "smart",
-      "name": "Xaomi Mi 8",
-      "price": 200,
-      "rating": 3.4,
-      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/XIAOMI_MI_8.jpg",
-      "description": "This is a good phone",
-      "manufacturer": "Xiaomi",
-      "discount": 0
+      "kategorija": "mobile",
+      "tip": "smart",
+      "naziv": "Xaomi Mi 8",
+      "cena": 200,
+      "ocena": 3.4,
+      "slika": "../../../assets/slike/MOBILNI_TELEFONI/SMART/XIAOMI_MI_8.jpg",
+      "opis": "This is a good phone",
+      "proizvodjac": "Xiaomi",
+      "popust": 0
     },
     {
-      "id": 2,
-      "category": "mobile",
-      "subcategory": "smart",
-      "name": "Iphone 13",
-      "price": 900,
-      "rating": 4.9,
-      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/APPLE_iPhone_13_Pro_Max.jpg",
-      "description": "This is a great phone",
-      "manufacturer": "Apple",
-      "discount": 0
+      "kategorija": "mobile",
+      "tip": "smart",
+      "naziv": "Iphone 13",
+      "cena": 900,
+      "ocena": 4.9,
+      "slika": "../../../assets/slike/MOBILNI_TELEFONI/SMART/APPLE_iPhone_13_Pro_Max.jpg",
+      "opis": "This is a great phone",
+      "proizvodjac": "Apple",
+      "popust": 0
     },
     {
-      "id": 3,
-      "category": "mobile",
-      "subcategory": "smart",
-      "name": "Samsung Galaxy S21",
-      "price": 600,
-      "rating": 5.0,
-      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/SMART/SAMSUNG_GALAXY_S21_PLUS.jpg",
-      "description": "Great!",
-      "manufacturer": "Samsung",
-      "discount": 0
+      "kategorija": "mobile",
+      "tip": "smart",
+      "naziv": "Samsung Galaxy S21",
+      "cena": 600,
+      "ocena": 5.0,
+      "slika": "../../../assets/slike/MOBILNI_TELEFONI/SMART/SAMSUNG_GALAXY_S21_PLUS.jpg",
+      "opis": "Great!",
+      "proizvodjac": "Samsung",
+      "popust": 0
     },
     {
-      "id": 4,
-      "category": "mobile",
-      "subcategory": "regular",
-      "name": "Nokia 3310",
-      "price": 50,
-      "rating": 2.9,
-      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_3310.jpg",
-      "description": "The old reliable",
-      "manufacturer": "Nokia",
-      "discount": 0
+      "kategorija": "mobile",
+      "tip": "regular",
+      "naziv": "Nokia 3310",
+      "cena": 50,
+      "ocena": 2.9,
+      "slika": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_3310.jpg",
+      "opis": "The old reliable",
+      "proizvodjac": "Nokia",
+      "popust": 0
     },
     {
-      "id": 5,
-      "category": "mobile",
-      "subcategory": "regular",
-      "name": "Nokia 5310",
-      "price": 60,
-      "rating": 3.0,
-      "pictureURL": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_5310.jpg",
-      "description": "The old but gold",
-      "manufacturer": "Nokia",
-      "discount": 0
+      "kategorija": "mobile",
+      "tip": "regular",
+      "naziv": "Nokia 5310",
+      "cena": 60,
+      "ocena": 3.0,
+      "slika": "../../../assets/slike/MOBILNI_TELEFONI/OBICNI/NOKIA_5310.jpg",
+      "opis": "The old but gold",
+      "proizvodjac": "Nokia",
+      "popust": 0
     }
   ]
 }

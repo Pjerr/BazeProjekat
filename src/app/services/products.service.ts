@@ -17,24 +17,27 @@ export class ProductsService {
     );
   }
 
-  getProductsByCategoryAndSubcategory(
-    category: string,
-    subcategory: string
+  getProductsByKategorijaTip(
+    kategorija: string,
+    tip: string
   ): Observable<ProductDto[]> {
     let params = new HttpParams();
-    params = params.append('category', category);
-    params = params.append('subcategory', subcategory);
+    params = params.append('kategorija', kategorija);
+    params = params.append('tip', tip);
     return this.httpClient.get<ProductDto[]>(
-      `${environment.apiURL}product-list-1`,
+      `${environment.apiURL}product-list`,
       { params: params }
     );
   }
 
-  getProductByID(productID: number): Observable<ProductDto[]> {
+  getProductByKategorijaTipNaziv(kategorija: string, tip: string, naziv: string): Observable<ProductDto[]> {
     let params = new HttpParams();
-    params = params.append('id', productID);
+    params = params.append('kategorija', kategorija);
+    params = params.append('tip', tip);
+    params = params.append('naziv', naziv);
+    
     return this.httpClient.get<ProductDto[]>(
-      `${environment.apiURL}product-list-1`,
+      `${environment.apiURL}product-list`,
       { params: params }
     );
   }

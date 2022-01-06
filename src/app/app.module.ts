@@ -30,6 +30,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { cartReducer } from './store/cart/cart.reducer';
+import { ModalModule } from './components/_modal';
 @NgModule({
   declarations: [
     AppComponent,
@@ -53,6 +54,7 @@ import { cartReducer } from './store/cart/cart.reducer';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
+    ModalModule,
     StoreModule.forRoot(
       {
         common: commonReducer,

@@ -24,13 +24,16 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   //FIXME: get product through store and not productService
   productSub: Subscription | undefined = undefined;
   product: ProductDto | undefined = undefined;
+  rated: boolean = false; //moramo da preuzmemo nekako od korisnika + da ogranicimo da mogu da ratuju samo oni koji su logovani
+  clickedOnRate: boolean = false;
 
   ngOnInit(): void {
-    let pomString = this.route.snapshot.queryParamMap.get('id');
-    if (pomString != null) {
-      const productID: number = +pomString;
+    const kategorija = this.route.snapshot.queryParamMap.get("kategorija");
+    const tip = this.route.snapshot.queryParamMap.get("tip");
+    const naziv = this.route.snapshot.queryParamMap.get("naziv");
+    if (kategorija != null && tip != null && naziv != null) {
       this.productSub = this.productsService
-        .getProductByID(productID)
+        .getProductByKategorijaTipNaziv(kategorija, tip, naziv)
         .pipe(take(1))
         .subscribe((product) => (this.product = product[0]));
     }
@@ -50,9 +53,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     return 'Is good';
   }
 
+  //TODO: SHOW ALL FIVE STARS
+  openRating(): void{
+    if(!this.rated){
+      this.clickedOnRate = true;
+    }
+  }
   //TODO: probably on click show all five stars, user clickes on number of stars he wants to give
-  rateProduct(): void {
-    console.log('should rate this product!');
+  rateProduct(rating: number): void {
+    console.log(`should rate this product with ${rating}`);
+    this.rated = true
+    this.clickedOnRate = false;
   }
 
   //TODO: implement cart, make an api call every time someone adds or removes something from cart?

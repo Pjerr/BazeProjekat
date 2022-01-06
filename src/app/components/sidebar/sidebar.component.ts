@@ -8,13 +8,14 @@ import * as ProductCategoryActions from '../../store/productCategories/productCa
 import * as ProductCategorySelectors from '../../store/productCategories/productCategories.selectors';
 import * as CommonActions from '../../store/common/common.actions';
 import * as ProductActions from '../../store/products/product.actions';
+import { ProductsService } from 'src/app/services/products.service';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent implements OnInit {
-  constructor(private store: Store<AppState>, private router: Router) {}
+  constructor(private store: Store<AppState>, private router: Router, private productsService: ProductsService) {}
 
   ngOnInit(): void {
     this.getAllCategories();
@@ -26,6 +27,7 @@ export class SidebarComponent implements OnInit {
   getAllCategories(): void {
     this.store.dispatch(ProductCategoryActions.loadCategoriesAndSubcategories());
     this.productCategories = this.store.select(ProductCategorySelectors.selectAllCategories);
+    //this.productCategories = this.productsService.getAllCategories();
   }
 
   initSubcategoryShown(): void{
@@ -42,10 +44,10 @@ export class SidebarComponent implements OnInit {
     this.isSubcategoryShown[index] = false;
   }
 
-  moveToProductList(category:string, subcategory: string){
-    this.store.dispatch(ProductCategoryActions.selectCategoryAndSubcategory({category, subcategory}));
+  moveToProductList(kategorija:string, tip: string){
+    this.store.dispatch(ProductCategoryActions.selectCategoryAndSubcategory({kategorija, tip}));
     this.store.dispatch(CommonActions.toggleSidebar({sidebarStatus: false}));
-    this.store.dispatch(ProductActions.loadProducts({ category, subcategory }));
-    this.router.navigate(["products"], {queryParams: {category, subcategory}})
+    this.store.dispatch(ProductActions.loadProducts({ kategorija, tip }));
+    this.router.navigate(["products"], {queryParams: {kategorija, tip}})
   }
 }

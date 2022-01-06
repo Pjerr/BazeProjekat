@@ -4,13 +4,19 @@ import { ProductDto } from 'src/app/models/product/productDto';
 import * as ProductActions from './product.actions';
 
 export interface ProductsState extends EntityState<ProductDto> {
-  selectedProductID: number;
+  selectedKategorija: string,
+  selectedTip: string,
+  selectedNaziv: string
 }
 
-const adapter = createEntityAdapter<ProductDto>();
+const adapter = createEntityAdapter<ProductDto>({
+  selectId: (product: ProductDto) => product.naziv,
+});
 
 const initialState: ProductsState = adapter.getInitialState({
-  selectedProductID: -1,
+  selectedKategorija: "",
+  selectedTip: "",
+  selectedNaziv: ""
 });
 
 export const productsReducer = createReducer(
@@ -18,8 +24,10 @@ export const productsReducer = createReducer(
   on(ProductActions.loadProductsSuccess, (state, { products }) => {
     return adapter.setAll(products, state);
   }),
-  on(ProductActions.selectProduct, (state, { productID }) => ({
+  on(ProductActions.selectProduct, (state, { kategorija, tip, naziv }) => ({
     ...state,
-    selectedProductID: productID,
+    selectedKategorija: kategorija,
+    selectedTip: tip,
+    selectedNaziv: naziv
   }))
 );

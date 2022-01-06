@@ -1,10 +1,20 @@
 <div class="product-detail__wrapper" *ngIf="product">
     <div class="product_detail__product-card card">
         <div class="product-detail__general">
-            <img [src]="product.pictureURL" alt="picture" class="img img-fluid rounded mx-auto d-block product-detail__image">
+            <img [src]="product.slika" alt="picture" class="img img-fluid rounded mx-auto d-block product-detail__image">
             <div class="product-detail__rating_and_price">
-                <h3>Score: {{product.rating}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="rateProduct()"></i></h3>
-                <h3>Price: {{product.price}}$</h3>
+                <div class="product-detail__rating-box">
+                    <h3 *ngIf="!clickedOnRate">Score: {{product.ocena}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="openRating()"></i></h3>
+                    <div class="rating" *ngIf="clickedOnRate">
+                        <p>Pick an acording number of stars</p>
+                        <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(5)"></i>
+                        <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(4)"></i>
+                        <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(3)"></i>
+                        <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(2)"></i>
+                        <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(1)"></i>
+                    </div>
+                </div>
+                <h3>Price: {{product.cena}}$</h3>
                 <button class="btn btn-success" (click)="addToCart()">Add to cart</button>
                 <button class="btn btn-danger" (click)="removeFromCart()">Remove from cart</button>
             </div>
@@ -12,9 +22,9 @@
         <hr>
         <div class="product-detail__description">
             <h4>Description:</h4>
-            <p>{{product.description}}</p>
+            <p>{{product.opis}}</p>
             <h4>Manufacturer:</h4>
-            <p>{{product.manufacturer}}</p>
+            <p>{{product.proizvodjac}}</p>
         </div>
     </div>
     <div class="product-detail__comments">

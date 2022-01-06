@@ -1,12 +1,11 @@
 export interface ProductDto{
-    id: number,
-    category: string,
-    subcategory: string,
-    name: string,
-    price: number,
-    rating: number,
-    pictureURL: string,
-    description: string,
-    manufacturer: string,
-    discount: number //u % popust
+    kategorija: string,
+    tip: string,
+    naziv: string,
+    cena: number,
+    ocena: number,
+    slika: string,
+    opis: string,
+    proizvodjac: string,
+    popust: number //u % popust
 }

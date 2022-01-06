@@ -4,15 +4,17 @@ import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import * as ProductCategoryActions from './productCategories.actions';
 
 export interface ProductCategoryState extends EntityState<ProductCatergory> {
-  selectedCategory: string;
-  selectedSubcategory: string;
+  selectedKategorija: string;
+  selectedTip: string;
 }
 
-const adapter = createEntityAdapter<ProductCatergory>();
+const adapter = createEntityAdapter<ProductCatergory>({
+  selectId: (kategorija: ProductCatergory) => kategorija.kategorija,
+});
 
 const initialState: ProductCategoryState = adapter.getInitialState({
-  selectedCategory: '',
-  selectedSubcategory: '',
+  selectedKategorija: '',
+  selectedTip: '',
 });
 
 export const productsCategoriesReducer = createReducer(
@@ -25,10 +27,10 @@ export const productsCategoriesReducer = createReducer(
   ),
   on(
     ProductCategoryActions.selectCategoryAndSubcategory,
-    (state, { category, subcategory }) => ({
+    (state, { kategorija, tip }) => ({
       ...state,
-      selectedCategory: category,
-      selectedSubcategory: subcategory,
+      selectedKategorija: kategorija,
+      selectedTip: tip,
     })
   )
 );

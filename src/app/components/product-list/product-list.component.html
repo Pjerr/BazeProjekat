@@ -1,7 +1,7 @@
 <div class="product-list__wrapper">
   <div class="product-list__manufacturers">
-    <p class="product-list__manufacturers-title">Manufacturers</p>
-    <mat-checkbox *ngFor="let product of products | async" (change)="filterByManufacturers($event.checked ,product.manufacturer)">{{product.manufacturer}}</mat-checkbox>
+    <p class="product-list__manufacturers-title">Prodizvodjaci</p>
+    <mat-checkbox *ngFor="let product of products | async" (change)="filterByProizvodjaci($event.checked ,product.proizvodjac)">{{product.proizvodjac}}</mat-checkbox>
   </div>
   <div class="product-list__container">
     <div class="product-list__search-filters container">

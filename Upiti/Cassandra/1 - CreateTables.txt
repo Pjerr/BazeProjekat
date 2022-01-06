@@ -32,7 +32,7 @@ CREATE TABLE proizvod_cenanaziv
     slika text,
     popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), cena, proizvodjac)		//NE naziv, nego proizvodjac
+    PRIMARY KEY ((kategorija, tip), cena, proizvodjac, naziv)		//Ipak dodat i naziv
 )                                                 
 WITH
   bloom_filter_fp_chance=0.01
@@ -53,7 +53,7 @@ CREATE TABLE proizvod_ocenanaziv
     slika text,
     popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), ocena, proizvodjac)	//NE naziv, nego proizvodjac
+    PRIMARY KEY ((kategorija, tip), ocena, proizvodjac, naziv)		//Ipak dodat i naziv
 )                                                 
 WITH                          
   bloom_filter_fp_chance=0.01                                     
@@ -95,7 +95,7 @@ CREATE TABLE proizvod_popust
     slika text,
     popust int, //u procentima
 
-    PRIMARY KEY ((kategorija, tip), popust)	//ne (popust, naziv). Samo popust
+    PRIMARY KEY ((kategorija, tip), popust, naziv)		//Ipak dodat i naziv
 )                                                 
 WITH                          
   bloom_filter_fp_chance=0.01                                     
@@ -132,9 +132,10 @@ CREATE TABLE popularno
     tip text,
     naziv text,
     ocena float,                        
-    cena float,                            
+    cena float,   
+    slika text,	//dodata slika                         
 
-    PRIMARY KEY (popularno, ocena)
+    PRIMARY KEY (popularno, naziv, ocena)	//Ipak "naziv, ocena" kao clustering key, a ne samo ocena
 )
 WITH
   bloom_filter_fp_chance=0.01
@@ -156,9 +157,3 @@ WITH
   AND compaction={ 'class' : 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy' }
   AND compression={ 'sstable_compression' : 'org.apache.cassandra.io.compress.LZ4Compressor' }
   AND caching={'keys':'ALL', 'rows_per_partition':'NONE'};     
-
-
-
-
-
-

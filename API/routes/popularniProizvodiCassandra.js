@@ -19,54 +19,25 @@ router.get('/',(req,res)=>{
     })
 })
 
-router.post('/dodajNovePopularne', (req,res)=>{
 
-    neo4jSession.readTransaction((tx)=>{
-        tx
-        .run('MATCH (p:Proizvod) \
-             WHERE p.brojKupovina = 0 \
-             and p.brojOcena = 0 \
-             and p.zbirOcena / (p.brojOcena+1) = 0\
-              RETURN p LIMIT 5')
-        .then((result)=>{
-            var argsArray = [];
-                result.records.forEach(element => {
-                   
-                    argsArray.push(element._fields[0].properties);
-                    console.log(proizvod);
-                });
-                argsArray.unshift("POPULARNO");
-                var addQuery = 'BEGIN BATCH\
-                 INSERT INTO buyhub.popularno (popularno, ocena, naziv, cena) VALUES (?,?,?,?); \
-                 INSERT INTO buyhub.popularno (popularno, ocena, naziv, cena) VALUES (?,?,?,?);\
-                 INSERT INTO buyhub.popularno (popularno, ocena, naziv, cena) VALUES (?,?,?,?);\
-                 INSERT INTO buyhub.popularno (popularno, ocena, naziv, cena) VALUES (?,?,?,?);\
-                 INSERT INTO buyhub.popularno (popularno, ocena, naziv, cena) VALUES (?,?,?,?);\
-                 APPLY BATCH';
-                cassandraClient.execute(addQuery,
-                        ["POPULARNO",proizvod.zbirOcena/(proizvod.brojOcena + 1), proizvod.naziv,proizvod.cena],
-                        {prepare : true}, (err,result)=>{
-                            if(err){
-                                console.log(proizvod);
-                                console.log('Unable to put data' + err);
-                            }
-                            else 
-                            {
-                                //console.log(proizvod);
-                                //res.status(200).send(result);
-                            }
-                        })
+router.post('/dodajNovePopularne', getPopularneProizvodeNeo, (req,res)=>{
+     
+    var addQuery = 'BEGIN BATCH' +
+                ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+               ' APPLY BATCH';
+     //var addQuery = "INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);";
+     cassandraClient.execute(addQuery, req.body.argsArray,
+                    {prepare : true}, (err,result)=>{
+                        if(err){
+                            console.log('Unable to put data' + err);
+                        }
+                    })          
 
-                
-                //res.send(nizProizvoda);
-
-            })
-        .catch((err)=>{
-                res.status(500).send('Neo4j not working' + err);
-            });  
-            
-         res.status(200).send();   
-    })
+    res.status(200).send(req.body.argsArray);                    
     
 })
 
@@ -89,5 +60,33 @@ router.delete('/obrisiOceneIPopularno', (req,res)=>{
         }
     })
 })
+
+
+async function getPopularneProizvodeNeo(req,res,next){
+    neo4jSession.readTransaction((tx)=>{
+        tx
+        .run('MATCH (p:Proizvod) \
+        WHERE p.brojKupovina = 0 \
+        and p.brojOcena = 0 \
+        and p.zbirOcena / (p.brojOcena+1) = 0\
+         RETURN p LIMIT 5')
+         .then((result)=>{
+            var argsArray = [];
+            var i = 0;
+            result.records.forEach(element=>{
+                
+                var elemUnpacked = element._fields[0].properties;
+                argsArray.push('POPULARNO', elemUnpacked.zbirOcena/(elemUnpacked.brojOcena+1),
+                elemUnpacked.cena,elemUnpacked.kategorija,elemUnpacked.naziv,
+                elemUnpacked.tip);
+            });
+            req.body.argsArray = argsArray;
+            next();
+         })
+         .catch((err)=>{
+            res.status(500).send('Neo4j not working' + err);
+         });
+    })
+}
 
 module.exports = router;

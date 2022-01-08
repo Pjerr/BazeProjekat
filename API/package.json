@@ -16,8 +16,11 @@
     "express": "^4.17.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15",
+    "bcryptjs": "^2.4.3",
     "cassandra-driver": "*",
-    "neo4j-driver": "*"
+    "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "neo4j-driver": "*",
+    "nodemon": "^2.0.15"
   }
 }

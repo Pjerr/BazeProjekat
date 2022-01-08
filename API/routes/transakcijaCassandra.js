@@ -50,14 +50,14 @@ router.post('/dodajTransakciju', (req,res) =>
         var datum = new Intl.DateTimeFormat(["rs-RS"], options).format;
         console.log(datum().toString().split(' ')[0].toUpperCase());
         
-        //var meseci = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
+        var meseci = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
 
         var today = new Date();
         var godina = today.getFullYear();
-        //var mesec = meseci[today.getMonth()];
-        var mesec = datum().toString().split(' ')[0].toUpperCase();
+        var mesec = meseci[today.getMonth()];
+        //var mesec = datum().toString().split(' ')[0].toUpperCase();
         var kvartal = ~~((mesec + 1) / 4) + 1;
-
+        var minutes = today.getMinutes();
         var vreme = today.getDate() + " - " + today.getHours() + ":" + today.getMinutes();
         
         //console.log(mesec)

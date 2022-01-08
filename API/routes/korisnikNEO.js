@@ -166,5 +166,25 @@ router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
     })
 })
 
+router.get('/pogledajSvojeTransakcije',(req,res)=>{
+
+    var username = req.body.username;
+
+    neo4jSession.readTransaction((tx)=>{
+        tx
+          .run('MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) RETURN p',{username})
+          .then((result)=>{
+              var output = [];
+              result.records.forEach(element => {
+                  output.push(element._fields[0].properties);
+              });
+              res.status(200).send(output);
+          })
+          .catch((err)=>{
+              res.status(500).send('ERR TRANSAKCIJA' + err);
+          });
+    })
+})
+
 module.exports = router;
 

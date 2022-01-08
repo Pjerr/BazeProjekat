@@ -122,4 +122,135 @@ router.delete('/obrisiProdavnicu', (req, res) =>
     }
 )
 
+//Veza sa proizvodom - PRIVREMENO OVDE. TREBA DA BUDE KOD PROIZVODA:
+router.get('/vratiStanjeMagacina', (req, res) => 
+    {
+        var kategorija = req.body.kategorija;
+        var tip = req.body.tip;
+        var naziv = req.body.naziv;
+
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                    RETURN rel`, {kategorija, tip, naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            var info = [];
+
+                            result.records.forEach(element => {
+                                info.push(element._fields[0].properties);
+                            });
+
+                            res.send(info);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+router.post('/dodajUProdavnicu', (req, res) => 
+    {
+        var kategorija = req.body.kategorija;
+        var tip = req.body.tip;
+        var naziv = req.body.naziv;
+
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+        
+        var brojProizvoda = req.body.brojProizvoda;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})
+                        MATCH (m: Prodavnica {grad: $grad, adresa: $adresa})
+                        CREATE (n)-[rel:U_MAGACINU { brojProizvoda: ${brojProizvoda}}]->(m)`, {kategorija, tip, naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno dodat proizvod u magacin!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+//NE MENJA BROJ PROIZVODA ZADATIM BROJEM, NEGO DODAJE TOLIKO NA TRENUTNO STANJE
+//NOTE: ovo se koristi i za dekrementiranje prilikom offline kupovine! Samo se salje -1 kao brojProizvoda
+router.put('/dodajProizvodeUMagacin', (req, res) => 
+    {
+        var kategorija = req.body.kategorija;
+        var tip = req.body.tip;
+        var naziv = req.body.naziv;
+
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+        
+        var brojProizvoda = req.body.brojProizvoda;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        SET rel.brojProizvoda = rel.brojProizvoda + ${brojProizvoda}
+                        RETURN rel`, {kategorija, tip, naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno dodato jos proizvoda u magacin!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+router.delete('/obrisiMagacin', (req, res) => 
+    {
+        var kategorija = req.body.kategorija;
+        var tip = req.body.tip;
+        var naziv = req.body.naziv;
+
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        DELETE rel`, {kategorija, tip, naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno obrisan proizvod/magacin!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 module.exports = router;

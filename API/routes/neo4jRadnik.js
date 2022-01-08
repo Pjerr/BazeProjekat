@@ -77,7 +77,7 @@ router.post('/dodajRadnika', (req, res) =>
 
 router.delete('/obrisiRadnika', (req, res) =>
     {
-        var username = req.body.Username;
+        var username = req.body.username;
         
         var deleteQuery = 'MATCH (r:Radnik {username: $username} ) DELETE r';
         
@@ -93,5 +93,125 @@ router.delete('/obrisiRadnika', (req, res) =>
                     });
     }
 )
+
+//Veza sa prodavnicom:
+router.get('/preuzmiZaposlenje', (req, res) => 
+    {
+        var username = req.body.username;
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        RETURN rel`, {username, grad, adresa})
+                    .then((result) => 
+                        {
+                            var info = [];
+
+                            result.records.forEach(element => {
+                                info.push(element._fields[0].properties);
+                            });
+
+                            res.send(info);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+router.post('/zaposliRadnika', (req, res) => 
+    {
+        var username = req.body.username;
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+        var pozicija = req.body.pozicija;
+        var datum = req.body.datum;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (r: Radnik {username: $username})
+                        MATCH (p: Prodavnica {grad: $grad, adresa: $adresa})
+                        CREATE (r)-[rel:RADI_U { pozicija: '${pozicija}', datumZaposlenja: '${datum}'}]->(p)`, {username, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno zaposljen radnik!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+router.put('/izmeniPoziciju', (req, res) => 
+    {
+        var username = req.body.username;
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+        var pozicija = req.body.pozicija;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        SET rel.pozicija = '${pozicija}'
+                        RETURN rel`, {username, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesna promocija/demotion radnika!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+router.delete('/otpustiRadnika', (req, res) => 
+    {
+        var username = req.body.username;
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        DELETE rel`, {username, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno otpusten radnik!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+//Primer upita za proveru:
+//    MATCH (r: Radnik {username: 'todor.kalezic'})
+//    MATCH (p: Prodavnica {grad: 'Nis'}) RETURN r, p
 
 module.exports = router;

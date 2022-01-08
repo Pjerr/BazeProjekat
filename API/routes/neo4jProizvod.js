@@ -27,7 +27,7 @@ router.post('/dodajProizvod', (req,res)=>{
     if(!naziv || popust < 0 || cena < 0 || brojKupovina < 0)
         res.status(400).send('Bad request params');
     
-    const addQuery = 'CREATE (p:Proizvod{brojKupovina : $brojKupovina,brojOcena : $brojOcena,cena : $cena,kategorija:$kategorija,naziv:$naziv,popust:$popust,tip:$tip,zbirOcena:$zbirOcena}) RETURN p';
+    const addQuery = 'MERGE (p:Proizvod{brojKupovina : $brojKupovina,brojOcena : $brojOcena,cena : $cena,kategorija:$kategorija,naziv:$naziv,popust:$popust,tip:$tip,zbirOcena:$zbirOcena}) RETURN p';
     neo4jSession
                 .run(addQuery,{brojKupovina,brojOcena,cena,kategorija,naziv,popust,tip,zbirOcena})
                 .then((result)=>{

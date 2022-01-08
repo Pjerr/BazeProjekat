@@ -5,6 +5,7 @@ const popularniProizvodiRouter = require('./routes/popularniProizvodiCassandra')
 const proizvodjacRouter = require('./routes/proizvodjac');
 const RadnikNeo4jRouter = require('./routes/neo4jRadnik');
 const ProdavnicaNeo4jRouter = require('./routes/neo4jProdavnica');
+const transakcijaCassandraRouter = require('./routes/transakcijaCassandra')
 
 const app = express();
 const rootRouter = express.Router();
@@ -14,6 +15,7 @@ rootRouter.use('/popularniProizvodi', popularniProizvodiRouter);
 rootRouter.use('/proizvodjac', proizvodjacRouter);
 rootRouter.use('/neo4jRadnik', RadnikNeo4jRouter);
 rootRouter.use('/neo4jProdavnica', ProdavnicaNeo4jRouter);
+rootRouter.use('/transakcijaCassandra', transakcijaCassandraRouter);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());

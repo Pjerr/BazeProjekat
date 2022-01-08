@@ -44,7 +44,50 @@ router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
 
 router.post('/dodajTransakciju', (req,res) => 
     {
+        var options = {year: "numeric", month: "short", day: "numeric", 
+                        hour: "2-digit", minute: "2-digit", hour12: false,
+                        timeZoneName: "short", timeZone: "CET"};
+        var datum = new Intl.DateTimeFormat(["rs-RS"], options).format;
+        console.log(datum().toString().split(' ')[0].toUpperCase());
         
+        //var meseci = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
+
+        var today = new Date();
+        var godina = today.getFullYear();
+        //var mesec = meseci[today.getMonth()];
+        var mesec = datum().toString().split(' ')[0].toUpperCase();
+        var kvartal = ~~((mesec + 1) / 4) + 1;
+
+        var vreme = today.getDate() + " - " + today.getHours() + ":" + today.getMinutes();
+        
+        //console.log(mesec)
+        //console.log(godina);
+        //console.log(mesec);
+        //console.log(kvartal);
+
+        //Online je boolean:
+        var online = req.body.online;
+        var imeProdavnice = req.body.imeProdavnice;
+        
+        if(online == true)
+            imeProdavnice = "ONLINE";
+
+        var allArgs = [godina, kvartal, mesec, online, imeProdavnice, req.body.kupljeniProizvodi, req.body.ukupnaCena, req.body.usernameKorisnika, vreme];
+        var query = 'INSERT INTO buyhub.transakcija (godina, kvartal, mesec, online, "imeProdavnice", "kupljeniProizvodi", "ukupnaCena", "usernameKorisnika", "vremeKupovine") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+
+        cassandraClient.execute(query, allArgs, {prepare: true}, (err, result) => 
+        {
+            if(err)
+            {
+                console.log(req.body);
+                console.log('Unable to put data' + err);
+            }
+            else 
+            {
+                console.log(req.body);
+                res.status(200).send(result);
+            }
+        });
     }
 )
 
@@ -58,7 +101,7 @@ router.delete('/obrisiTransakciju', (req,res) =>
         //online bi trebalo da bude = 0. Mozda da se hardkodira u upitu?
         var query = 'DELETE FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = ? and "imeProdavnice" = ?;';
        
-        cassandraClient.execute(query, allArgs, (err,result) =>
+        cassandraClient.execute(query, allArgs, {prepare: true}, (err,result) =>
         {
             if(err)
             {

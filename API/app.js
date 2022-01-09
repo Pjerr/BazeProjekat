@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const cas_proizvod_Router = require('./routes/cas_proizvod');
 const cas_proizvodjac_Router = require('./routes/cas_proizvodjac');
@@ -10,11 +11,16 @@ const neo_prodavnica_Router = require('./routes/neo_prodavnica');
 const neo_korisnik_Router = require('./routes/neo_korisnik');
 const neo_radnik_Router = require('./routes/neo_radnik');
 
+const corsOptions = {
+    origin:'http://localhost:4200'
+}
 
 
 const app = express();
 const APIRouter = express.Router();
 const rootRouter = express.Router();
+
+app.use(cors(corsOptions));
 
 rootRouter.use('/proizvod_cassandra_tabele', cas_proizvod_Router);
 rootRouter.use('/proizvodjac', cas_proizvodjac_Router);

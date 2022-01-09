@@ -2,6 +2,8 @@ const express = require('express');
 const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
+//Ovo je npr korisno da se izlista adminu da bi zaposlio nekog radnika 
+//u konkretnu prodavnicu
 router.get('/preuzmiProdavnice', (req, res) =>
     {
         neo4jSession
@@ -24,6 +26,7 @@ router.get('/preuzmiProdavnice', (req, res) =>
     }
 )
 
+//Moze da se koristi takodje za admina kada hoce da zaposli radnika
 router.get('/preuzmiProdavniceUGradu', (req, res) =>
     {
         var grad = req.body.grad;
@@ -78,7 +81,7 @@ router.post('/dodajProdavnicu', (req, res) =>
     }
 )
 
-//Moze sve da se menja osim grada i adrese
+//Moze sve da se menja osim grada i adrese. Nema poente da se grad/adresa menjaju
 router.put('/izmeniProdavnicu', (req, res) =>
     {
         var grad = req.body.grad;
@@ -123,6 +126,8 @@ router.delete('/obrisiProdavnicu', (req, res) =>
 )
 
 //Veza sa proizvodom - PRIVREMENO OVDE. TREBA DA BUDE KOD PROIZVODA:
+
+//Vraca trenutni broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
 router.get('/vratiStanjeMagacina', (req, res) => 
     {
         var kategorija = req.body.kategorija;
@@ -158,6 +163,8 @@ router.get('/vratiStanjeMagacina', (req, res) =>
     }
 )
 
+//KREIRA vezu izmedju proizvoda i prodavnice ALI se postavlja i inicijalni
+//broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
 router.post('/dodajUProdavnicu', (req, res) => 
     {
         var kategorija = req.body.kategorija;
@@ -192,6 +199,11 @@ router.post('/dodajUProdavnicu', (req, res) =>
 
 //NE MENJA BROJ PROIZVODA ZADATIM BROJEM, NEGO DODAJE TOLIKO NA TRENUTNO STANJE
 //NOTE: ovo se koristi i za dekrementiranje prilikom offline kupovine! Samo se salje -1 kao brojProizvoda
+
+//Primer:
+//Ako je trenutan broj proizvoda 100, a preko ove funkcije se prosledi 50,
+//rezultat ce biti 150
+//=> Ovo se koristi za narucivanje jos proizvoda (potrebno za OFFLINE kupovinu, ovo radi RADNIK)
 router.put('/izmeniBrojProizvodaMagacina', (req, res) => 
     {
         var kategorija = req.body.kategorija;
@@ -224,6 +236,7 @@ router.put('/izmeniBrojProizvodaMagacina', (req, res) =>
     }
 )
 
+//RASKIDANJE VEZE IZMEDJU PROIZVODA I PRODAVNICE
 router.delete('/obrisiMagacin', (req, res) => 
     {
         var kategorija = req.body.kategorija;

@@ -110,13 +110,15 @@ CREATE TABLE transakcija
     kvartal int,
     mesec text,    //ili mozda int
     online Boolean,
-    "imeProdavnice" text,
+    //"imeProdavnice" text,
+    grad text,
+    adresa text,
     "kupljeniProizvodi" text,    //svi proizvodi koji su kupljeni
     "usernameKorisnika" text,
     "ukupnaCena" float,
     "vremeKupovine" text,     //text umesto timestamp
                          
-    PRIMARY KEY ((godina, kvartal, mesec), online, "imeProdavnice")
+    PRIMARY KEY ((godina, kvartal, mesec), online, grad, adresa, "vremeKupovine", "usernameKorisnika")   //"imeProdavnice")
 )
 WITH
   bloom_filter_fp_chance=0.01

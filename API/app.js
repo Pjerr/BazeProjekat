@@ -22,15 +22,15 @@ const rootRouter = express.Router();
 
 app.use(cors(corsOptions));
 
-rootRouter.use('/proizvod_cassandra_tabele', cas_proizvod_Router);
-rootRouter.use('/proizvodjac', cas_proizvodjac_Router);
-rootRouter.use('/transakcijaCassandra', cas_transakcija_Router);
-rootRouter.use('/popularniProizvodi', cas_popularno_Router);
+rootRouter.use('/cas_proizvod', cas_proizvod_Router);
+rootRouter.use('/cas_proizvodjac', cas_proizvodjac_Router);
+rootRouter.use('/cas_transakcija', cas_transakcija_Router);
+rootRouter.use('/cas_popularno', cas_popularno_Router);
 
-rootRouter.use('/neo4jProizvod', neo_proizvod_Router);
-rootRouter.use('/neo4jProdavnica', neo_prodavnica_Router);
-rootRouter.use('/korisnik', neo_korisnik_Router);
-rootRouter.use('/neo4jRadnik', neo_radnik_Router);
+rootRouter.use('/neo_proizvod', neo_proizvod_Router);
+rootRouter.use('/neo_prodavnica', neo_prodavnica_Router);
+rootRouter.use('/neo_korisnik', neo_korisnik_Router);
+rootRouter.use('/neo_radnik', neo_radnik_Router);
 
 
 app.use(express.urlencoded({ extended: false }));

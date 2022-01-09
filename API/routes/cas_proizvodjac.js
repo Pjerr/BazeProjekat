@@ -3,6 +3,8 @@ const { copyFileSync } = require('fs');
 const cassandraClient = require('../cassandraConnect');
 const router = express.Router();
 
+//Ovo se koristi da bi se dobili svi proizvodjaci neke kategorije i tipa proizvoda,
+//tj da bi se izlistalo levo korisniku da bira
 router.get('/preuzmiProizvodjace', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.proizvodjac WHERE kategorija = ? and tip = ?';
@@ -43,7 +45,8 @@ router.get('/preuzmiProizvodjaca', (req, res) =>
     }
 )
 
-//OVO BI TREBALO DA SE IZVRSI AKO /preuzmiProizvodjaca vrati prazan niz
+//OVO BI TREBALO DA SE IZVRSI AKO /preuzmiProizvodjaca vrati prazan niz, tj ako NE POSTOJI VEC taj proizvodjac
+//za konkretnu kategoriju i tip
 router.post('/dodajProizvodjaca', (req, res) =>
     {
         var allArgs = [req.body.kategorija, req.body.tip, req.body.naziv];
@@ -65,6 +68,8 @@ router.post('/dodajProizvodjaca', (req, res) =>
     }
 )
 
+//Mozda nece biti potrebno, ali moze npr da se pozove ako se svi proizvodi
+//konkretne kategorije, tipa i konkretnog proizvodjaca obrisu. Ali ne mora. Samo kazem.
 router.delete('/obrisiProizvodjaca', (req, res) =>
     {
         var allArgs =  [req.body.kategorija, req.body.tip, req.body.naziv];

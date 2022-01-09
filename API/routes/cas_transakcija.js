@@ -4,6 +4,7 @@ const cassandraClient = require('../cassandraConnect');
 const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
+//Ovo je npr za admina da moze da povuce transakcije konkretne godine/kvartala/meseca
 router.get('/preuzmiTransakcije', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ?';
@@ -23,11 +24,12 @@ router.get('/preuzmiTransakcije', (req, res) =>
     }
 )
 
+//Transakcije za konkretnu prodavnicu. Ovo sluzi za admina/radnika (da bi pogledao sve transakcije iz svoje prodavnice)
 router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
     {
-        var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ?';
-        
-        cassandraClient.execute(query, [req.body.godina, req.body.kvartal, req.body.mesec], (err,result) =>
+        var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = false and grad = ? and adresa = ?';
+
+        cassandraClient.execute(query, [req.body.godina, req.body.kvartal, req.body.mesec, req.body.grad, req.body.adresa], {prepare: true}, (err,result) =>
         {
             if(err)
             {
@@ -42,6 +44,10 @@ router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
     }
 )
 
+//1. Okida se kada se nesto kupi online. Deo se salje neu, a deo cassandri koristeci ovu funkciju.
+//2. Takodje, okida se ako radnik (za OFFLINE kupovinu) hoce da rucno unese neku kupovinu
+//      Note: ne mora da unese username korisnika, zato sto je username korisnika poslednji
+//      deo clustering key-a (ovo kazem zato sto je moguce da neko irl kupi nesto a da nema profil)
 router.post('/dodajTransakciju', (req,res) => 
     {
         var options = {year: "numeric", month: "short", day: "numeric", 
@@ -67,13 +73,17 @@ router.post('/dodajTransakciju', (req,res) =>
 
         //Online je boolean:
         var online = req.body.online;
-        var imeProdavnice = req.body.imeProdavnice;
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
         
         if(online == true)
-            imeProdavnice = "ONLINE";
+        {
+            grad = "";
+            adresa = "";
+        }
 
-        var allArgs = [godina, kvartal, mesec, online, imeProdavnice, req.body.kupljeniProizvodi, req.body.ukupnaCena, req.body.usernameKorisnika, vreme];
-        var query = 'INSERT INTO buyhub.transakcija (godina, kvartal, mesec, online, "imeProdavnice", "kupljeniProizvodi", "ukupnaCena", "usernameKorisnika", "vremeKupovine") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);';
+        var allArgs = [godina, kvartal, mesec, online, grad, adresa, req.body.kupljeniProizvodi, req.body.ukupnaCena, req.body.usernameKorisnika, vreme];
+        var query = 'INSERT INTO buyhub.transakcija (godina, kvartal, mesec, online, grad, adresa, "kupljeniProizvodi", "ukupnaCena", "usernameKorisnika", "vremeKupovine") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);';
 
         cassandraClient.execute(query, allArgs, {prepare: true}, (err, result) => 
         {
@@ -94,12 +104,26 @@ router.post('/dodajTransakciju', (req,res) =>
 //Ima li smisla da uopste brisemo transakciju/e? Kada bismo to radili?
 //Svakako, ako bismo brisali transakcije, morali bismo celu particiju ili deo nje.
 //Jedini scenario koji vidim je da brisemo ako se prodavnica zatvori?
-router.delete('/obrisiTransakciju', (req,res) =>
-    {
-        var allArgs =  [req.body.godina, req.body.kvartal, req.body.mesec, req.body.online, req.body.imeProdavnice];
 
-        //online bi trebalo da bude = 0. Mozda da se hardkodira u upitu?
-        var query = 'DELETE FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = ? and "imeProdavnice" = ?;';
+//Okej, odradila sam samo da se brisu sve transakcije jedne prodavnice. 
+//Neka postoji i neka se okine npr ako se brise prodavnica 
+//=>hardkodirala sam online = false u upitu 
+//=>Ovo se okida kada se obrise konkretna prodavnica, tj zapamti se njen grad i adresa i onda se ovo okida
+router.delete('/obrisiTransakcijeProdavnice', (req,res) =>
+    {
+        //var online = req.body.online;
+        //var grad = req.body.grad;
+        //var adresa = req.body.adresa;
+
+        /*if(online == true)
+        {
+            grad = "";
+            adresa = "";
+        }*/
+        
+        var allArgs =  [req.body.godina, req.body.kvartal, req.body.mesec, req.body.grad, req.body.adresa];
+
+        var query = 'DELETE FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = false and grad = ? and adresa = ?;';
        
         cassandraClient.execute(query, allArgs, {prepare: true}, (err,result) =>
         {

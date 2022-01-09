@@ -156,6 +156,7 @@ router.post('/zaposliRadnika', (req, res) =>
     }
 )
 
+//samo moze da se menja pozicija. Nema poente da se menja datum zaposlenja
 router.put('/izmeniPoziciju', (req, res) => 
     {
         var username = req.body.username;
@@ -209,9 +210,5 @@ router.delete('/otpustiRadnika', (req, res) =>
         )
     }
 )
-
-//Primer upita za proveru:
-//    MATCH (r: Radnik {username: 'todor.kalezic'})
-//    MATCH (p: Prodavnica {grad: 'Nis'}) RETURN r, p
 
 module.exports = router;

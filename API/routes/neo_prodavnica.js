@@ -192,7 +192,7 @@ router.post('/dodajUProdavnicu', (req, res) =>
 
 //NE MENJA BROJ PROIZVODA ZADATIM BROJEM, NEGO DODAJE TOLIKO NA TRENUTNO STANJE
 //NOTE: ovo se koristi i za dekrementiranje prilikom offline kupovine! Samo se salje -1 kao brojProizvoda
-router.put('/dodajProizvodeUMagacin', (req, res) => 
+router.put('/izmeniBrojProizvodaMagacina', (req, res) => 
     {
         var kategorija = req.body.kategorija;
         var tip = req.body.tip;

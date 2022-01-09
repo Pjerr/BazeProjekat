@@ -15,6 +15,7 @@ const neo_radnik_Router = require('./routes/neo_radnik');
 const app = express();
 const APIRouter = express.Router();
 const rootRouter = express.Router();
+
 rootRouter.use('/proizvod_cassandra_tabele', cas_proizvod_Router);
 rootRouter.use('/proizvodjac', cas_proizvodjac_Router);
 rootRouter.use('/transakcijaCassandra', cas_transakcija_Router);

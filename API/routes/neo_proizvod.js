@@ -52,4 +52,38 @@ router.delete('/obrisiProizvod', (req,res)=>{
                 });
 })
 
+//IZLISTANE PRODAVNICE U KOJIMA SE NALAZI:
+router.get('/vratiProdavnice', (req, res) => 
+    {
+        var kategorija = req.body.kategorija;
+        var tip = req.body.tip;
+        var naziv = req.body.naziv;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica)
+                    RETURN p`, {kategorija, tip, naziv})
+                    .then((result) => 
+                        {
+                            var nizProdavnica = [];
+
+                            result.records.forEach(element => 
+                            {
+                                nizProdavnica.push(element._fields[0].properties);
+                            });
+                            
+                            res.send(nizProdavnica);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 module.exports = router;

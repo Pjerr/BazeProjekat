@@ -86,4 +86,7 @@ router.get('/vratiProdavnice', (req, res) =>
     }
 )
 
+
+
+//TODO VRATI KOMENTARE ZA KONKRETAN PROIZVOD
 module.exports = router;

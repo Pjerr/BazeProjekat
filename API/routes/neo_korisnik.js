@@ -186,7 +186,7 @@ router.get('/pogledajSvojeTransakcije',(req,res)=>{
     })
 })
 
-
+//TODO PREPOURKA PROIZVODA I TODO RELACIJA OCENI
 
 module.exports = router;
 

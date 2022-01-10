@@ -88,24 +88,28 @@ router.get('/vratiProdavnice', (req, res) =>
 
 //TODO VRATI KOMENTARE ZA KONKRETAN PROIZVOD
 //valjda je ok, vidite da li hocete da ovako vracamo rezultat
-router.get('/vratiKomentare', (req, res) => 
+router.get('/vratiOceneIKomentare', (req, res) => 
     {
-        var kategorija = req.query.kategorija;
-        var tip = req.query.tip;
         var naziv = req.query.naziv;
 
         neo4jSession.readTransaction((tx) =>
             {
                 tx
-                    .run(`MATCH (n: Proizvod {naziv: $naziv})<-[rel:KOMENTARISAO]-(k: Korisnik)
-                    RETURN k.username, rel.Komentar`, {kategorija, tip, naziv})
+                    .run(`MATCH (p: Proizvod {naziv: $naziv})<-[rel:OCENIO]-(k: Korisnik), (k)-[r:KOMENTARISAO]->(p)
+                    RETURN k.username, rel.ocena, r.komentar`, {naziv})
                     .then((result) => 
                         {
                             var nizKomentara = [];
 
                             result.records.forEach(element => 
                             {
-                                nizKomentara.push(element._fields);
+                                var stavka = 
+                                {
+                                    "username": element._fields[0],
+                                    "ocena": parseInt(element._fields[1]),
+                                    "komentar": element._fields[2]
+                                }
+                                nizKomentara.push(stavka);
                             });
                             
                             res.send(nizKomentara);

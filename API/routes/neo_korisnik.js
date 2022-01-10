@@ -156,7 +156,7 @@ router.post('/komentarisiProizvod', (req,res)=>{
         tx
           .run(`MATCH (p:Proizvod{naziv : $naziv}) 
                 MATCH (k:Korisnik{username : $username })
-                CREATE (k)-[rel:KOMENTARISAO{Komentar:'${komentar}'}]->(p)`,{naziv,username})
+                CREATE (k)-[rel:KOMENTARISAO{komentar:'${komentar}'}]->(p)`,{naziv,username})
           .then((result)=>{
               res.status(200).send('Komentar uspesan')
           })
@@ -187,6 +187,30 @@ router.get('/pogledajSvojeTransakcije',(req,res)=>{
 })
 
 //TODO PREPOURKA PROIZVODA I TODO RELACIJA OCENI
+//RELACIJA OCENI:
+//router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
+router.post('/oceniProizvod', (req, res) => 
+{    
+    var username = req.body.username;
+    var ocena = req.body.ocena;
+    var naziv = req.body.naziv;
+
+    neo4jSession.writeTransaction((tx) =>
+    {
+        tx
+          .run(`MATCH (p:Proizvod{naziv : $naziv}) 
+                MATCH (k:Korisnik{username : $username })
+                CREATE (k)-[rel:OCENIO{ocena:'${ocena}'}]->(p)`, {naziv,username})
+          .then((result) =>
+          {
+              res.status(200).send('Ocenjivanje uspesno')
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+    })
+})
 
 module.exports = router;
 

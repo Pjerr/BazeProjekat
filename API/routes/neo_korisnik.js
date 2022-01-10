@@ -14,7 +14,7 @@ dotenv.config();
 router.get('/',(req,res)=>{
     
     
-    var username = req.body.username;
+    var username = req.query.username;
     neo4jSession.readTransaction((tx)=>{
         tx
         .run(`MATCH (k:Korisnik{username: $username}) RETURN k`,{username})
@@ -92,7 +92,7 @@ router.put('/azurirajKorisnika', authenticateJWTToken, async (req,res)=>{
 
 router.delete('/obrisiKorisnika', authenticateJWTToken,  (req,res)=>{
 
-    var username = req.body.username;
+    var username = req.query.username;
     neo4jSession
                 .run('MATCH (k:Korisnik{username:$username}) DELETE k', {username})
                 .then((result)=>{
@@ -146,8 +146,8 @@ router.post('/kupiProizvode', authenticateJWTToken, (req,res)=>{
 })
 
 
-router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
-    
+//router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
+router.post('/komentarisiProizvod', (req,res)=>{    
     var username = req.body.username;
     var komentar = req.body.komentar;
     var naziv = req.body.naziv;
@@ -156,7 +156,7 @@ router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
         tx
           .run(`MATCH (p:Proizvod{naziv : $naziv}) 
                 MATCH (k:Korisnik{username : $username })
-                CREATE (k)-[rel:KOMENTARISAO{Komentar:'${komentar}'}]->(p)`,{naziv,username})
+                MERGE (k)-[rel:KOMENTARISAO{komentar:'${komentar}'}]->(p)`,{naziv,username})
           .then((result)=>{
               res.status(200).send('Komentar uspesan')
           })
@@ -168,7 +168,7 @@ router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
 
 router.get('/pogledajSvojeTransakcije',(req,res)=>{
 
-    var username = req.body.username;
+    var username = req.query.username;
 
     neo4jSession.readTransaction((tx)=>{
         tx
@@ -187,6 +187,30 @@ router.get('/pogledajSvojeTransakcije',(req,res)=>{
 })
 
 //TODO PREPOURKA PROIZVODA I TODO RELACIJA OCENI
+//RELACIJA OCENI:
+//router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
+router.post('/oceniProizvod', (req, res) => 
+{    
+    var username = req.body.username;
+    var ocena = req.body.ocena;
+    var naziv = req.body.naziv;
+
+    neo4jSession.writeTransaction((tx) =>
+    {
+        tx
+          .run(`MATCH (p:Proizvod{naziv : $naziv}) 
+                MATCH (k:Korisnik{username : $username })
+                CREATE (k)-[rel:OCENIO{ocena:'${ocena}'}]->(p)`, {naziv,username})
+          .then((result) =>
+          {
+              res.status(200).send('Ocenjivanje uspesno')
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+    })
+})
 
 module.exports = router;
 

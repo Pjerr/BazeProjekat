@@ -26,11 +26,13 @@ import { ProductThumbComponent } from './components/product-thumb/product-thumb.
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { cartReducer } from './store/cart/cart.reducer';
 import { ModalModule } from './components/_modal';
+import { SearchPipe } from './pipes/search.pipe';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,6 +44,7 @@ import { ModalModule } from './components/_modal';
     AboutComponent,
     ProductDetailComponent,
     ProductThumbComponent,
+    SearchPipe,
   ],
   imports: [
     BrowserModule,
@@ -55,6 +58,9 @@ import { ModalModule } from './components/_modal';
     MatFormFieldModule,
     MatInputModule,
     ModalModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
+    ReactiveFormsModule,
     StoreModule.forRoot(
       {
         common: commonReducer,

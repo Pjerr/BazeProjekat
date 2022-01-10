@@ -29,7 +29,7 @@ router.get('/preuzmiProdavnice', (req, res) =>
 //Moze da se koristi takodje za admina kada hoce da zaposli radnika
 router.get('/preuzmiProdavniceUGradu', (req, res) =>
     {
-        var grad = req.body.grad;
+        var grad = req.query.grad;
 
         neo4jSession
                 .run('MATCH (p:Prodavnica {grad : $grad}) RETURN p', {grad : grad})
@@ -107,8 +107,8 @@ router.put('/izmeniProdavnicu', (req, res) =>
 
 router.delete('/obrisiProdavnicu', (req, res) =>
     {
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
         
         var query = 'MATCH ( p:Prodavnica {grad: $grad, adresa: $adresa} ) DELETE p';
         
@@ -130,12 +130,12 @@ router.delete('/obrisiProdavnicu', (req, res) =>
 //Vraca trenutni broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
 router.get('/vratiStanjeMagacina', (req, res) => 
     {
-        var kategorija = req.body.kategorija;
-        var tip = req.body.tip;
-        var naziv = req.body.naziv;
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
 
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
 
         neo4jSession.readTransaction((tx) =>
             {
@@ -239,12 +239,12 @@ router.put('/izmeniBrojProizvodaMagacina', (req, res) =>
 //RASKIDANJE VEZE IZMEDJU PROIZVODA I PRODAVNICE
 router.delete('/obrisiMagacin', (req, res) => 
     {
-        var kategorija = req.body.kategorija;
-        var tip = req.body.tip;
-        var naziv = req.body.naziv;
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
 
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
 
         neo4jSession.writeTransaction((tx) =>
             {

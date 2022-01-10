@@ -15,14 +15,13 @@ export class ProductThumbComponent implements OnInit {
 
   @Input() product: ProductDto | undefined = undefined;
 
-  constructor(private router: Router, private store: Store<AppState>) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
   showProductDetail(){
     if(this.product){
-      this.store.dispatch(ProductActions.selectProduct({kategorija: this.product.kategorija, tip: this.product.tip, naziv: this.product.naziv}));
       this.router.navigate(["product-detail"], {queryParams: {"kategorija":this.product.kategorija, "tip": this.product.tip, "naziv": this.product.naziv}});
     }
   }

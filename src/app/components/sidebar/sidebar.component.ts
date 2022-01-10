@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import { AppState } from 'src/app/store/app.state';
 import * as ProductCategoryActions from '../../store/productCategories/productCategories.actions';
@@ -9,26 +9,47 @@ import * as ProductCategorySelectors from '../../store/productCategories/product
 import * as CommonActions from '../../store/common/common.actions';
 import * as ProductActions from '../../store/products/product.actions';
 import { ProductsService } from 'src/app/services/products.service';
+import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnInit {
-  constructor(private store: Store<AppState>, private router: Router, private productsService: ProductsService) {}
+export class SidebarComponent implements OnInit, OnDestroy {
+  constructor(private store: Store<AppState>, private router: Router, private casProizvodService: CasProizvodService) {}
+
+  ngOnDestroy(): void {
+    if(this.productCategoriesSub)
+      this.productCategoriesSub.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.getAllCategories();
     this.initSubcategoryShown();
   }
 
-  productCategories: Observable<ProductCatergory[]> = of([]);
+  productCategoriesSub: Subscription | undefined = undefined;
+  productCategories: ProductCatergory[] = [];
+  tempCategories: any;
   isSubcategoryShown: boolean[] = [];
   getAllCategories(): void {
-    this.store.dispatch(ProductCategoryActions.loadCategoriesAndSubcategories());
-    this.productCategories = this.store.select(ProductCategorySelectors.selectAllCategories);
-    //this.productCategories = this.productsService.getAllCategories();
+    this.productCategoriesSub = this.casProizvodService.getKategorijeITipove().subscribe((data) => {
+      this.tempCategories = data;
+      this.tempCategories.forEach((element:any) => {
+        const foundElement = this.productCategories.find((category: ProductCatergory)=> category.kategorija === element.kategorija);
+        if(foundElement)
+            foundElement.tipovi.push(element.tip);
+        else{
+          let noviElement: ProductCatergory = {
+            kategorija: element.kategorija,
+            tipovi: [element.tip]
+          };
+          this.productCategories.push(noviElement);
+        }
+      });
+    });
   }
+
 
   initSubcategoryShown(): void{
     this.productCategories.forEach(()=>{
@@ -45,9 +66,7 @@ export class SidebarComponent implements OnInit {
   }
 
   moveToProductList(kategorija:string, tip: string){
-    this.store.dispatch(ProductCategoryActions.selectCategoryAndSubcategory({kategorija, tip}));
     this.store.dispatch(CommonActions.toggleSidebar({sidebarStatus: false}));
-    this.store.dispatch(ProductActions.loadProducts({ kategorija, tip }));
     this.router.navigate(["products"], {queryParams: {kategorija, tip}})
   }
 }

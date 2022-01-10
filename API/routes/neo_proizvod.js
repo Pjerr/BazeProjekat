@@ -3,7 +3,7 @@ const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
 router.get('/', (req,res)=>{
-    var nazivProizvoda = req.body.Naziv;
+    var nazivProizvoda = req.query.Naziv;
     neo4jSession
             .run('MATCH (p:Proizvod{naziv:$nazivParam}) RETURN p', {nazivParam : nazivProizvoda})
             .then((result)=>{
@@ -40,7 +40,7 @@ router.post('/dodajProizvod', (req,res)=>{
 
 
 router.delete('/obrisiProizvod', (req,res)=>{
-    var naziv = req.body.Naziv;
+    var naziv = req.query.Naziv;
     var deleteQuery = 'MATCH (p:Proizvod{naziv:$naziv}) DELETE p';
     neo4jSession
                 .run(deleteQuery, {naziv})
@@ -55,9 +55,9 @@ router.delete('/obrisiProizvod', (req,res)=>{
 //IZLISTANE PRODAVNICE U KOJIMA SE NALAZI:
 router.get('/vratiProdavnice', (req, res) => 
     {
-        var kategorija = req.body.kategorija;
-        var tip = req.body.tip;
-        var naziv = req.body.naziv;
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
 
         neo4jSession.readTransaction((tx) =>
             {
@@ -86,7 +86,43 @@ router.get('/vratiProdavnice', (req, res) =>
     }
 )
 
-
-
 //TODO VRATI KOMENTARE ZA KONKRETAN PROIZVOD
+//valjda je ok, vidite da li hocete da ovako vracamo rezultat
+router.get('/vratiOceneIKomentare', (req, res) => 
+    {
+        var naziv = req.query.naziv;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (p: Proizvod {naziv: $naziv})<-[rel:OCENIO]-(k: Korisnik), (k)-[r:KOMENTARISAO]->(p)
+                    RETURN k.username, rel.ocena, r.komentar`, {naziv})
+                    .then((result) => 
+                        {
+                            var nizKomentara = [];
+
+                            result.records.forEach(element => 
+                            {
+                                var stavka = 
+                                {
+                                    "username": element._fields[0],
+                                    "ocena": parseInt(element._fields[1]),
+                                    "komentar": element._fields[2]
+                                }
+                                nizKomentara.push(stavka);
+                            });
+                            
+                            res.send(nizKomentara);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 module.exports = router;

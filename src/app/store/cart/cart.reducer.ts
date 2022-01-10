@@ -9,7 +9,9 @@ export interface CartState extends EntityState<ProductDto> {
   products: ProductDto[];
 }
 
-const adapter = createEntityAdapter<ProductDto>();
+const adapter = createEntityAdapter<ProductDto>(
+  {selectId: (product:ProductDto) => product.naziv}
+);
 
 const initialState: CartState = adapter.getInitialState({
   products: [],

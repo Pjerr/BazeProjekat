@@ -1,7 +1,7 @@
 <div class="product-list__wrapper">
   <div class="product-list__manufacturers">
     <p class="product-list__manufacturers-title">Prodizvodjaci</p>
-    <mat-checkbox *ngFor="let product of products | async" (change)="filterByProizvodjaci($event.checked ,product.proizvodjac)">{{product.proizvodjac}}</mat-checkbox>
+    <mat-checkbox *ngFor="let proizvodjac of sviProizvodjaci | async" (change)="filterByProizvodjaci($event.checked ,proizvodjac.naziv)">{{proizvodjac.naziv}}</mat-checkbox>
   </div>
   <div class="product-list__container">
     <div class="product-list__search-filters container">
@@ -17,9 +17,9 @@
           </mat-form-field>
         </div>
         <div class="col">
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
+          <form #searchForm='ngForm' class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Pretraga po nazivu" aria-label="Search" name="searchValue" [(ngModel)]="searchValue">
+            <button class="btn btn-warning me-2" type="reset"><i class="fas fa-undo-alt"></i></button>
           </form>
         </div>
       </div>

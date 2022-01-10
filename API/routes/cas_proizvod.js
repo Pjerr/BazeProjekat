@@ -46,10 +46,10 @@ router.get('/', (req,res)=>{
   var proizvodjacQuery = 'SELECT * FROM buyhub.proizvod_proizvodjac WHERE kategorija = ? and tip = ? and proizvodjac = ?';
 
   var ascending = req.query.ascending;
-  switch(req.query.Pretraga)
+  switch(req.query.pretraga)
   {
       case "Naziv": 
-      cassandraClient.execute(nazivQuery, [req.query.Kategorija, req.query.Tip, req.query.Naziv], (err, result)=>{
+      cassandraClient.execute(nazivQuery, [req.query.kategorija, req.query.tip, req.query.naziv], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
@@ -60,7 +60,7 @@ router.get('/', (req,res)=>{
         }
     }); break;
     case "Cena": 
-      cassandraClient.execute(cenaQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
+      cassandraClient.execute(cenaQuery, [req.query.kategorija, req.query.tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
@@ -71,7 +71,7 @@ router.get('/', (req,res)=>{
         }
     }); break;
     case "Ocena": 
-      cassandraClient.execute(ocenaQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
+      cassandraClient.execute(ocenaQuery, [req.query.kategorija, req.query.tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
@@ -82,7 +82,7 @@ router.get('/', (req,res)=>{
         }
     }); break;
     case "Popust": 
-      cassandraClient.execute(popustQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
+      cassandraClient.execute(popustQuery, [req.query.kategorija, req.query.tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
@@ -93,7 +93,7 @@ router.get('/', (req,res)=>{
         }
     }); break;
     case "Proizvodjac": 
-      cassandraClient.execute(proizvodjacQuery, [req.query.Kategorija, req.query.Tip, req.query.Proizvodjac], (err, result)=>{
+      cassandraClient.execute(proizvodjacQuery, [req.query.kategorija, req.query.tip, req.query.proizvodjac], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
@@ -111,7 +111,7 @@ router.get('/', (req,res)=>{
 
 //ISTO IZ BODY IDU PARAMS, SLATI SA /r/n za svaku stavku
 router.post('/dodajUSveTabeleProizvoda', dodajProizvodNeo, (req,res)=>{
-    var allArgs = [req.body.Kategorija,req.body.Tip, req.body.Naziv, req.body.Cena, req.body.Ocena,req.body.Proizvodjac, req.body.Opis, req.body.Slika,req.body.Popust];
+    var allArgs = [req.body.kategorija,req.body.tip, req.body.naziv, req.body.cena, req.body.ocena,req.body.proizvodjac, req.body.opis, req.body.slika,req.body.popust];
     var argsArray = [];
     for(i = 0; i < 5; i++)
         {
@@ -150,11 +150,11 @@ router.delete('/obrisiIzSvihTabelaProizvoda', (req,res)=>{
                      + deletePROIZVODJACQuery + ' ' + deletePOPUSTQuery + ' APPLY BATCH';
 
     cassandraClient.execute(deleteAll,
-        [req.query.Kategorija, req.query.Tip, req.query.Naziv,
-        req.query.Kategorija, req.query.Tip, req.query.Cena, req.query.Proizvodjac, req.query.Naziv,
-        req.query.Kategorija, req.query.Tip, req.query.Ocena, req.query.Proizvodjac, req.query.Naziv,
-        req.query.Kategorija, req.query.Tip, req.query.Proizvodjac, req.query.Naziv,
-        req.query.Kategorija, req.query.Tip, req.query.Popust, req.query.Naziv],
+        [req.query.kategorija, req.query.tip, req.query.naziv,
+        req.query.kategorija, req.query.tip, req.query.cena, req.query.proizvodjac, req.query.naziv,
+        req.query.kategorija, req.query.tip, req.query.ocena, req.query.proizvodjac, req.query.naziv,
+        req.query.kategorija, req.query.tip, req.query.proizvodjac, req.query.naziv,
+        req.query.kategorija, req.query.tip, req.query.popust, req.query.naziv],
         {prepare : true},
           (err,result)=>{
         if(err){
@@ -178,37 +178,37 @@ router.delete('/obrisiIzSvihTabelaProizvoda', (req,res)=>{
 //i da bih mogao da obrisem i dodam ceo jedan red u tabelu u kojoj menjamo clustering key
 router.put('/updateProizvodOcena', authenticateJWTToken, updateOcenaNEO, (req,res)=>{
 
-    var staraOcena = (req.body.Proizvod.zbirOcena - req.body.novaOcena) / (req.body.Proizvod.brojOcena - 1);
+    var staraOcena = (req.body.proizvod.zbirOcena - req.body.novaOcena) / (req.body.proizvod.brojOcena - 1);
 
     const batchQueries = [
         {
             query : 'UPDATE buyhub.proizvod_naziv SET ocena = ? WHERE kategorija = ? and tip = ? and naziv = ?',
-            params: [parseFloat(req.body.Proizvod.zbirOcena / req.body.Proizvod.brojOcena).toFixed(2), req.body.Proizvod.kategorija, req.body.Proizvod.tip, req.body.Proizvod.naziv]
+            params: [parseFloat(req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena).toFixed(2), req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.naziv]
         }
         ,
         {
             query : 'UPDATE buyhub.proizvod_cenanaziv SET ocena = ? WHERE kategorija = ? and tip = ? and cena = ? and proizvodjac = ? and naziv = ?',
-            params: [req.body.Proizvod.zbirOcena / req.body.Proizvod.brojOcena, req.body.Proizvod.kategorija, req.body.Proizvod.tip, req.body.Proizvod.cena, req.body.proizvodjac, req.body.Proizvod.naziv]
+            params: [req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.cena, req.body.proizvodjac, req.body.proizvod.naziv]
         }
         ,
         {
             query : 'UPDATE buyhub.proizvod_proizvodjac SET ocena = ? WHERE kategorija = ? and tip = ? and proizvodjac = ? and naziv = ?',
-            params: [req.body.Proizvod.zbirOcena / req.body.Proizvod.brojOcena, req.body.Proizvod.kategorija, req.body.Proizvod.tip, req.body.proizvodjac, req.body.Proizvod.naziv]
+            params: [req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvodjac, req.body.proizvod.naziv]
 
         }
         ,
         {
             query: 'UPDATE buyhub.proizvod_popust SET ocena = ? WHERE kategorija = ? and tip = ? and popust = ? and naziv = ? ',
-            params: [req.body.Proizvod.zbirOcena / req.body.Proizvod.brojOcena, req.body.Proizvod.kategorija, req.body.Proizvod.tip, req.body.Proizvod.popust, req.body.Proizvod.naziv]
+            params: [req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.popust, req.body.proizvod.naziv]
         },
         {
             query: 'DELETE FROM buyhub.proizvod_ocenanaziv WHERE kategorija = ? and tip = ? and ocena = ? and proizvodjac = ? and naziv = ? ',
-            params:[req.body.Proizvod.kategorija,req.body.Proizvod.tip, 0 , req.body.proizvodjac, req.body.Proizvod.naziv]
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, 0 , req.body.proizvodjac, req.body.proizvod.naziv]
         }
         ,
         {
             query:'INSERT INTO buyhub.proizvod_ocenanaziv (kategorija, tip, ocena, proizvodjac,naziv,cena,opis,popust,slika ) VALUES(?,?,?,?,?,?,?,?,?)',
-            params:[req.body.Proizvod.kategorija,req.body.Proizvod.tip,req.body.Proizvod.zbirOcena / req.body.Proizvod.brojOcena,req.body.proizvodjac,req.body.Proizvod.naziv,req.body.Proizvod.cena, '', req.body.Proizvod.popust,'']
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip,req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena,req.body.proizvodjac,req.body.proizvod.naziv,req.body.proizvod.cena, '', req.body.proizvod.popust,'']
         }
     ];
 
@@ -231,9 +231,9 @@ async function updateOcenaNEO(req,res,next){
     ocena = req.body.novaOcena;
     neo4jSession.writeTransaction((tx)=>{
         tx
-        .run(`MATCH (p:Proizvod {naziv: $naziv}) SET p.brojOcena = p.brojOcena + 1, p.zbirOcena = p.zbirOcena + ${ocena} RETURN p`, {naziv:req.body.Naziv})
+        .run(`MATCH (p:Proizvod {naziv: $naziv}) SET p.brojOcena = p.brojOcena + 1, p.zbirOcena = p.zbirOcena + ${ocena} RETURN p`, {naziv:req.body.naziv})
         .then((result)=>{
-            req.body.Proizvod = result.records[0]._fields[0].properties;
+            req.body.proizvod = result.records[0]._fields[0].properties;
             next();
         })
         .catch((err)=>{
@@ -248,11 +248,11 @@ async function dodajProizvodNeo(req,res,next){
     
     var brojKupovina = 0;
     var brojOcena = 0;
-    var cena = req.body.Cena;
-    var kategorija = req.body.Kategorija;
-    var naziv = req.body.Naziv;
+    var cena = req.body.cena;
+    var kategorija = req.body.kategorija;
+    var naziv = req.body.naziv;
     var popust = 0;
-    var tip = req.body.Tip;
+    var tip = req.body.tip;
     var zbirOcena = 0;
     
     if(!naziv || popust < 0 || cena < 0 || brojKupovina < 0)

@@ -3,7 +3,7 @@ const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
 router.get('/', (req,res)=>{
-    var nazivProizvoda = req.query.Naziv;
+    var nazivProizvoda = req.query.naziv;
     neo4jSession
             .run('MATCH (p:Proizvod{naziv:$nazivParam}) RETURN p', {nazivParam : nazivProizvoda})
             .then((result)=>{
@@ -18,7 +18,7 @@ router.get('/', (req,res)=>{
             });        
 })
 
-
+//Treba slika da se doda
 router.post('/dodajProizvod', (req,res)=>{
     
     var {brojKupovina,brojOcena,cena,kategorija,naziv,popust,tip,zbirOcena} = req.body;
@@ -40,7 +40,7 @@ router.post('/dodajProizvod', (req,res)=>{
 
 
 router.delete('/obrisiProizvod', (req,res)=>{
-    var naziv = req.query.Naziv;
+    var naziv = req.query.naziv;
     var deleteQuery = 'MATCH (p:Proizvod{naziv:$naziv}) DELETE p';
     neo4jSession
                 .run(deleteQuery, {naziv})
@@ -86,7 +86,7 @@ router.get('/vratiProdavnice', (req, res) =>
     }
 )
 
-//TODO VRATI KOMENTARE ZA KONKRETAN PROIZVOD
+//Vracanje komentara i ocena za jedan proizvod
 //valjda je ok, vidite da li hocete da ovako vracamo rezultat
 router.get('/vratiOceneIKomentare', (req, res) => 
     {

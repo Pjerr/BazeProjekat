@@ -145,34 +145,64 @@ router.post('/kupiProizvode', authenticateJWTToken, (req,res)=>{
    
 })
 
+function vratiKomentarisaoRelaciju(req, res, next) 
+{
+    var username = req.body.username;
+    var naziv = req.body.naziv;
+
+    neo4jSession
+          .run(`
+                RETURN EXISTS((:Proizvod{naziv : $naziv})<-[:KOMENTARISAO]-(:Korisnik{username : $username }))`, {naziv, username})
+          .then((result) =>
+          {
+              req.body.postoji = result;
+
+              next();
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+}
 
 //router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
-router.post('/komentarisiProizvod', (req,res)=>{    
+router.post('/komentarisiProizvod', vratiKomentarisaoRelaciju, (req,res) =>
+{    
     var username = req.body.username;
     var komentar = req.body.komentar;
     var naziv = req.body.naziv;
 
-    neo4jSession.writeTransaction((tx)=>{
-        tx
-          .run(`MATCH (p:Proizvod{naziv : $naziv}) 
-                MATCH (k:Korisnik{username : $username })
-                CREATE (k)-[rel:KOMENTARISAO{komentar:'${komentar}'}]->(p)`,{naziv,username})
-          .then((result)=>{
-              res.status(200).send('Komentar uspesan')
-          })
-          .catch((err)=>{
-              res.status(500).send('NEUSPENO' + err);
-          });
-    })
+    if(req.body.postoji.records[0]._fields[0] == false)
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (p:Proizvod{naziv : $naziv}), (k:Korisnik{username : $username })
+                CREATE (p)<-[rel:KOMENTARISAO {komentar : '${komentar}'}]-(k)`, {naziv, username})
+            .then((result) =>
+            {
+                res.status(200).send('Komentarisanje uspesno')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+    else
+    {
+        res.status(400).send('Vec ste komentarisali proizvod!')
+    }
 })
 
 router.get('/pogledajSvojeTransakcije',(req,res)=>{
 
     var username = req.query.username;
 
-    neo4jSession.readTransaction((tx)=>{
+    neo4jSession.readTransaction((tx) => 
+    {
         tx
-          .run('MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) RETURN p',{username})
+          .run('MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) RETURN p', {username})
           .then((result)=>{
               var output = [];
               result.records.forEach(element => {
@@ -186,31 +216,59 @@ router.get('/pogledajSvojeTransakcije',(req,res)=>{
     })
 })
 
-//TODO PREPOURKA PROIZVODA I TODO RELACIJA OCENI
-//RELACIJA OCENI:
-//router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
-router.post('/oceniProizvod', (req, res) => 
-{    
+function vratiOcenioRelaciju(req, res, next) 
+{
     var username = req.body.username;
-    var ocena = req.body.ocena;
     var naziv = req.body.naziv;
 
-    neo4jSession.writeTransaction((tx) =>
-    {
-        tx
-          .run(`MATCH (p:Proizvod{naziv : $naziv}) 
-                MATCH (k:Korisnik{username : $username })
-                CREATE (k)-[rel:OCENIO{ocena:'${ocena}'}]->(p)`, {naziv,username})
+    neo4jSession
+          .run(`
+                RETURN EXISTS((:Proizvod{naziv : $naziv})<-[:OCENIO]-(:Korisnik{username : $username }))`, {naziv, username})
           .then((result) =>
           {
-              res.status(200).send('Ocenjivanje uspesno')
+              //res.status(200).send('Ocenjivanje uspesno')
+              req.body.postoji = result;
+
+              next();
           })
           .catch((err) =>
           {
               res.status(500).send('NEUSPENO' + err);
           });
-    })
+}
+
+//RELACIJA OCENI:
+//router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
+router.post('/oceniProizvod', vratiOcenioRelaciju, (req, res) => 
+{    
+    var username = req.body.username;
+    var ocena = req.body.ocena;
+    var naziv = req.body.naziv;
+
+    if(req.body.postoji.records[0]._fields[0] == false)
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (p:Proizvod{naziv : $naziv}), (k:Korisnik{username : $username })
+                CREATE (p)<-[rel:OCENIO {ocena : ${ocena}}]-(k)`, {naziv,username})
+            .then((result) =>
+            {
+                res.status(200).send('Ocenjivanje uspesno')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+    else
+    {
+        res.status(400).send('Vec ste ocenili proizvod!')
+    }
 })
+
+//TODO PREPOURKA PROIZVODA
 
 module.exports = router;
 

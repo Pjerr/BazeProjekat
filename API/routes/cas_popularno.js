@@ -19,7 +19,7 @@ router.get('/',(req,res)=>{
     })
 })
 
-
+//Treba slika da se doda
 router.post('/dodajNovePopularne', getPopularneProizvodeNeo, (req,res)=>{
      
     var addQuery = 'BEGIN BATCH' +
@@ -49,7 +49,8 @@ router.delete('/obrisiOceneIPopularno', (req,res)=>{
 
     var executeBoth = 'BEGIN BATCH' + deleteOcene + " " + deletePopularno + "APPLY BATCH";
 
-    cassandraClient.execute(executeBoth,[],(err,result)=>{
+    cassandraClient.execute(executeBoth,[],(err,result) =>
+    {
         if(err){
             console.log(proizvod);
             console.log('Unable to put data' + err);

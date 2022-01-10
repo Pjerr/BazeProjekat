@@ -9,6 +9,29 @@ const authenticateJWTToken = require('../auth').authenticateJWTToken;
 
 //BITNO: Nema update ovde jer je naziv clustering key za ovu tabelu, ne moze da se menja
 
+//Vraca sve kategorije i tipove
+//Note: nisu lepo sortirani 
+//Mozda moze i preko Nea:
+//MATCH (n: Proizvod)
+//RETURN DISTINCT n.kategorija, n.tip
+router.get('/vratiKategorijeTipove', (req, res) =>
+    {
+        var query = 'SELECT DISTINCT kategorija, tip FROM buyhub.proizvod_naziv';
+
+        cassandraClient.execute(query, (err, result)=>
+        {
+            if(err){
+                console.log('Unable to get data' + err);
+            }
+            else 
+            {
+                console.log(req.body);
+                res.status(200).send(result.rows)
+            }
+        })
+    }
+)
+
 /*
 Za GET se salje Kategorija i Tip zbog particije uvek, salje se Pretraga : "Naziv" ili "Cena" ili "Ocena" ili "Popust" ili "Proizvodjac"
 da bi se znalo kako da se pretrazi baza. Salje se i ascending : 0 ili 1, gde 1 znaci da se salje rastuce a 0 opadajauce

@@ -3,7 +3,7 @@
   <div class="header__cart">
     <div *ngFor="let product of cartProducts | async" class="header__cart-product card">
       <div class="product-details">
-        <img [src]="product.slika" class="img img-fluid img-thumbnail" alt="slika">
+        <img [src]="'http://localhost:5000/' + product.slika" class="img img-fluid img-thumbnail" alt="slika">
         <span class="font-weight-bold text-primary">{{product.naziv}}</span>
       </div>
         <p>{{product.cena}} rsd</p>
@@ -20,7 +20,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand me-3" href="#"><img src="../../../assets/slike/logoWithLettersColoredCut.png" alt="logo" class="logo"></a>
+      <a class="navbar-brand me-3" href="#"><img src="../../../assets/logoWithLettersColoredCut.png" alt="logo" class="logo"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

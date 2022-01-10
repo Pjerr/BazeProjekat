@@ -1,5 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const path = require('path');
+
+var dir = path.join(__dirname);
 
 const cas_proizvod_Router = require('./routes/cas_proizvod');
 const cas_proizvodjac_Router = require('./routes/cas_proizvodjac');
@@ -20,6 +24,8 @@ const app = express();
 const APIRouter = express.Router();
 const rootRouter = express.Router();
 
+app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
+
 app.use(cors(corsOptions));
 
 rootRouter.use('/cas_proizvod', cas_proizvod_Router);
@@ -36,7 +42,7 @@ rootRouter.use('/neo_radnik', neo_radnik_Router);
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(express.static('slike'))
+app.use(express.static(dir));
 
 app.use('/', rootRouter);
 

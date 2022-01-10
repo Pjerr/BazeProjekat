@@ -26,7 +26,7 @@ router.get('/preuzmiRadnike', (req, res) =>
 
 router.get('/preuzmiRadnika', (req, res) =>
     {
-        var usernameRadnika = req.body.username;
+        var usernameRadnika = req.query.username;
 
         neo4jSession
                 .run('MATCH (r:Radnik {username : $usernameParam}) RETURN r', {usernameParam : usernameRadnika})
@@ -77,7 +77,7 @@ router.post('/dodajRadnika', (req, res) =>
 
 router.delete('/obrisiRadnika', (req, res) =>
     {
-        var username = req.body.username;
+        var username = req.query.username;
         
         var deleteQuery = 'MATCH (r:Radnik {username: $username} ) DELETE r';
         
@@ -97,9 +97,9 @@ router.delete('/obrisiRadnika', (req, res) =>
 //Veza sa prodavnicom:
 router.get('/preuzmiZaposlenje', (req, res) => 
     {
-        var username = req.body.username;
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
+        var username = req.query.username;
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
 
         neo4jSession.readTransaction((tx) =>
             {
@@ -187,9 +187,9 @@ router.put('/izmeniPoziciju', (req, res) =>
 
 router.delete('/otpustiRadnika', (req, res) => 
     {
-        var username = req.body.username;
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
+        var username = req.query.username;
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
 
         neo4jSession.writeTransaction((tx) =>
             {

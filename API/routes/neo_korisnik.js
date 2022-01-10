@@ -14,7 +14,7 @@ dotenv.config();
 router.get('/',(req,res)=>{
     
     
-    var username = req.body.username;
+    var username = req.query.username;
     neo4jSession.readTransaction((tx)=>{
         tx
         .run(`MATCH (k:Korisnik{username: $username}) RETURN k`,{username})
@@ -92,7 +92,7 @@ router.put('/azurirajKorisnika', authenticateJWTToken, async (req,res)=>{
 
 router.delete('/obrisiKorisnika', authenticateJWTToken,  (req,res)=>{
 
-    var username = req.body.username;
+    var username = req.query.username;
     neo4jSession
                 .run('MATCH (k:Korisnik{username:$username}) DELETE k', {username})
                 .then((result)=>{
@@ -146,8 +146,8 @@ router.post('/kupiProizvode', authenticateJWTToken, (req,res)=>{
 })
 
 
-router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
-    
+//router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
+router.post('/komentarisiProizvod', (req,res)=>{    
     var username = req.body.username;
     var komentar = req.body.komentar;
     var naziv = req.body.naziv;
@@ -168,7 +168,7 @@ router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
 
 router.get('/pogledajSvojeTransakcije',(req,res)=>{
 
-    var username = req.body.username;
+    var username = req.query.username;
 
     neo4jSession.readTransaction((tx)=>{
         tx

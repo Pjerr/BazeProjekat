@@ -9,7 +9,7 @@ router.get('/preuzmiTransakcije', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ?';
         
-        cassandraClient.execute(query, [req.body.godina, req.body.kvartal, req.body.mesec], (err,result) =>
+        cassandraClient.execute(query, [req.query.godina, req.query.kvartal, req.query.mesec], (err,result) =>
         {
             if(err)
             {
@@ -29,7 +29,7 @@ router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = false and grad = ? and adresa = ?';
 
-        cassandraClient.execute(query, [req.body.godina, req.body.kvartal, req.body.mesec, req.body.grad, req.body.adresa], {prepare: true}, (err,result) =>
+        cassandraClient.execute(query, [req.query.godina, req.query.kvartal, req.query.mesec, req.query.grad, req.query.adresa], {prepare: true}, (err,result) =>
         {
             if(err)
             {
@@ -121,7 +121,7 @@ router.delete('/obrisiTransakcijeProdavnice', (req,res) =>
             adresa = "";
         }*/
         
-        var allArgs =  [req.body.godina, req.body.kvartal, req.body.mesec, req.body.grad, req.body.adresa];
+        var allArgs =  [req.query.godina, req.query.kvartal, req.query.mesec, req.query.grad, req.query.adresa];
 
         var query = 'DELETE FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = false and grad = ? and adresa = ?;';
        
@@ -129,12 +129,12 @@ router.delete('/obrisiTransakcijeProdavnice', (req,res) =>
         {
             if(err)
             {
-                console.log(req.body);
+                console.log(req.query);
                 console.log('Unable to delete data' + err);
             }
             else 
             {
-                console.log(req.body);
+                console.log(req.query);
                 res.status(200).send(result);
             }
         })

@@ -25,7 +25,7 @@ router.get('/vratiKategorijeTipove', (req, res) =>
             }
             else 
             {
-                console.log(req.body);
+                console.log(req.query);
                 res.status(200).send(result.rows)
             }
         })
@@ -45,61 +45,61 @@ router.get('/', (req,res)=>{
   var popustQuery = 'SELECT * FROM buyhub.proizvod_popust WHERE kategorija = ? and tip = ?';
   var proizvodjacQuery = 'SELECT * FROM buyhub.proizvod_proizvodjac WHERE kategorija = ? and tip = ? and proizvodjac = ?';
 
-  var ascending = req.body.ascending;
-  switch(req.body.Pretraga)
+  var ascending = req.query.ascending;
+  switch(req.query.Pretraga)
   {
       case "Naziv": 
-      cassandraClient.execute(nazivQuery, [req.body.Kategorija, req.body.Tip, req.body.Naziv], (err, result)=>{
+      cassandraClient.execute(nazivQuery, [req.query.Kategorija, req.query.Tip, req.query.Naziv], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(result.rows)
         }
     }); break;
     case "Cena": 
-      cassandraClient.execute(cenaQuery, [req.body.Kategorija, req.body.Tip], (err, result)=>{
+      cassandraClient.execute(cenaQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(ascending == 1 ? result.rows : result.rows.reverse())
         }
     }); break;
     case "Ocena": 
-      cassandraClient.execute(ocenaQuery, [req.body.Kategorija, req.body.Tip], (err, result)=>{
+      cassandraClient.execute(ocenaQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(ascending == 1 ? result.rows : result.rows.reverse())
         }
     }); break;
     case "Popust": 
-      cassandraClient.execute(popustQuery, [req.body.Kategorija, req.body.Tip], (err, result)=>{
+      cassandraClient.execute(popustQuery, [req.query.Kategorija, req.query.Tip], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(ascending == 1 ? result.rows : result.rows.reverse())
         }
     }); break;
     case "Proizvodjac": 
-      cassandraClient.execute(proizvodjacQuery, [req.body.Kategorija, req.body.Tip, req.body.Proizvodjac], (err, result)=>{
+      cassandraClient.execute(proizvodjacQuery, [req.query.Kategorija, req.query.Tip, req.query.Proizvodjac], (err, result)=>{
         if(err){
             console.log('Unable to get data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(result.rows)
         }
     }); break;
@@ -150,20 +150,20 @@ router.delete('/obrisiIzSvihTabelaProizvoda', (req,res)=>{
                      + deletePROIZVODJACQuery + ' ' + deletePOPUSTQuery + ' APPLY BATCH';
 
     cassandraClient.execute(deleteAll,
-        [req.body.Kategorija, req.body.Tip, req.body.Naziv,
-        req.body.Kategorija, req.body.Tip, req.body.Cena, req.body.Proizvodjac, req.body.Naziv,
-        req.body.Kategorija, req.body.Tip, req.body.Ocena, req.body.Proizvodjac, req.body.Naziv,
-        req.body.Kategorija, req.body.Tip, req.body.Proizvodjac, req.body.Naziv,
-        req.body.Kategorija, req.body.Tip, req.body.Popust, req.body.Naziv],
+        [req.query.Kategorija, req.query.Tip, req.query.Naziv,
+        req.query.Kategorija, req.query.Tip, req.query.Cena, req.query.Proizvodjac, req.query.Naziv,
+        req.query.Kategorija, req.query.Tip, req.query.Ocena, req.query.Proizvodjac, req.query.Naziv,
+        req.query.Kategorija, req.query.Tip, req.query.Proizvodjac, req.query.Naziv,
+        req.query.Kategorija, req.query.Tip, req.query.Popust, req.query.Naziv],
         {prepare : true},
           (err,result)=>{
         if(err){
-            console.log(req.body);
+            console.log(req.query);
             console.log('Unable to delete data' + err);
         }
         else 
         {
-            console.log(req.body);
+            console.log(req.query);
             res.status(200).send(result);
         }
     })

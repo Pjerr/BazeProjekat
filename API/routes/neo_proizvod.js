@@ -3,7 +3,7 @@ const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
 router.get('/', (req,res)=>{
-    var nazivProizvoda = req.body.Naziv;
+    var nazivProizvoda = req.query.Naziv;
     neo4jSession
             .run('MATCH (p:Proizvod{naziv:$nazivParam}) RETURN p', {nazivParam : nazivProizvoda})
             .then((result)=>{
@@ -40,7 +40,7 @@ router.post('/dodajProizvod', (req,res)=>{
 
 
 router.delete('/obrisiProizvod', (req,res)=>{
-    var naziv = req.body.Naziv;
+    var naziv = req.query.Naziv;
     var deleteQuery = 'MATCH (p:Proizvod{naziv:$naziv}) DELETE p';
     neo4jSession
                 .run(deleteQuery, {naziv})
@@ -55,9 +55,9 @@ router.delete('/obrisiProizvod', (req,res)=>{
 //IZLISTANE PRODAVNICE U KOJIMA SE NALAZI:
 router.get('/vratiProdavnice', (req, res) => 
     {
-        var kategorija = req.body.kategorija;
-        var tip = req.body.tip;
-        var naziv = req.body.naziv;
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
 
         neo4jSession.readTransaction((tx) =>
             {
@@ -86,7 +86,39 @@ router.get('/vratiProdavnice', (req, res) =>
     }
 )
 
-
-
 //TODO VRATI KOMENTARE ZA KONKRETAN PROIZVOD
+//valjda je ok, vidite da li hocete da ovako vracamo rezultat
+router.get('/vratiKomentare', (req, res) => 
+    {
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {naziv: $naziv})<-[rel:KOMENTARISAO]-(k: Korisnik)
+                    RETURN k.username, rel.Komentar`, {kategorija, tip, naziv})
+                    .then((result) => 
+                        {
+                            var nizKomentara = [];
+
+                            result.records.forEach(element => 
+                            {
+                                nizKomentara.push(element._fields);
+                            });
+                            
+                            res.send(nizKomentara);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 module.exports = router;

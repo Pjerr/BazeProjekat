@@ -9,7 +9,7 @@ router.get('/preuzmiProizvodjace', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.proizvodjac WHERE kategorija = ? and tip = ?';
         
-        cassandraClient.execute(query, [req.body.kategorija, req.body.tip], (err, result) =>
+        cassandraClient.execute(query, [req.query.kategorija, req.query.tip], (err, result) =>
         {
             if(err)
             {
@@ -17,7 +17,7 @@ router.get('/preuzmiProizvodjace', (req, res) =>
             }
             else 
             {
-                console.log(req.body);
+                console.log(req.query);
                 res.status(200).send(result.rows)
             }
         });
@@ -30,7 +30,7 @@ router.get('/preuzmiProizvodjaca', (req, res) =>
     {
         var query = 'SELECT * FROM buyhub.proizvodjac WHERE kategorija = ? and tip = ? and naziv = ?';
         
-        cassandraClient.execute(query, [req.body.kategorija, req.body.tip, req.body.naziv], (err, result) =>
+        cassandraClient.execute(query, [req.query.kategorija, req.query.tip, req.query.naziv], (err, result) =>
         {
             if(err)
             {
@@ -38,7 +38,7 @@ router.get('/preuzmiProizvodjaca', (req, res) =>
             }
             else 
             {
-                console.log(req.body);
+                //console.log(req.body);
                 res.status(200).send(result.rows)
             }
         });
@@ -72,7 +72,7 @@ router.post('/dodajProizvodjaca', (req, res) =>
 //konkretne kategorije, tipa i konkretnog proizvodjaca obrisu. Ali ne mora. Samo kazem.
 router.delete('/obrisiProizvodjaca', (req, res) =>
     {
-        var allArgs =  [req.body.kategorija, req.body.tip, req.body.naziv];
+        var allArgs =  [req.query.kategorija, req.query.tip, req.query.naziv];
 
         var query = 'DELETE FROM buyhub.proizvodjac WHERE kategorija = ? and tip = ? and naziv = ?;';
        
@@ -80,12 +80,12 @@ router.delete('/obrisiProizvodjaca', (req, res) =>
         {
             if(err)
             {
-                console.log(req.body);
+                console.log(req.query);
                 console.log('Unable to delete data' + err);
             }
             else 
             {
-                console.log(req.body);
+                console.log(req.query);
                 res.status(200).send(result);
             }
         })

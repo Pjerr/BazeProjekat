@@ -1,6 +1,6 @@
 CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Graficke kartice', naziv: 'AMD RADEON RX580 XFX', cena: 50000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0, slika: 'slike/RACUNARSKE_KOMPONENTE/GRAFICKE_KARTICE/AMD_RADEON_RX580_XFX.jpg', proizvodjac: 'XFX', opis: '8GB 
 DDR5 
-xDP/HDMI/D-DVI-D/256bit/RX-580P8DFD6', });
+xDP/HDMI/D-DVI-D/256bit/RX-580P8DFD6'});
 
 CREATE (n:Proizvod {kategorija: 'Racunarske komponente', tip: 'Graficke kartice', naziv: 'PALIT nVidia GeForce RTX 3080 Ti GameRock', cena: 1000000, popust: 0, zbirOcena: 0, brojOcena: 0, brojKupovina: 0, slika: 'slike/RACUNARSKE_KOMPONENTE/GRAFICKE_KARTICE/PALIT_nVidia_GeForce_RTX_3080_Ti_GameRock.jpg', proizvodjac: 'PALIT', opis: '12GB 
 GDDR6X 

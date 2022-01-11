@@ -17,4 +17,31 @@ export class CasProizvodjacService {
     params = params.append("tip", tip);
     return this.httpClient.get<Proizvodjac[]>(`${environment.apiURL}cas_proizvodjac/preuzmiProizvodjace`, {params: params});
   }
+
+
+  //QUESTION: NAZIV verovatno naziv proizvodjaca?
+  getSpecificProizvodjac(kategorija: string, tip: string, naziv:string){
+    let params = new HttpParams();
+    params = params.append("kategorija", kategorija);
+    params = params.append("tip", tip);
+    params = params.append("naziv", naziv);
+    return this.httpClient.get<Proizvodjac>(`${environment.apiURL}cas_proizvodjac/preuzmiProizvodjaca`, {params: params});
+  }
+
+  addProizvodjac(kategorija: string, tip: string, naziv:string){
+    const body = {
+      kategorija,
+      tip,
+      naziv
+    }
+    return this.httpClient.post(`${environment.apiURL}cas_proizvodjac/dodajProizvodjaca`, body);
+  }
+
+  deleteProizvodjac(kategorija: string, tip: string, naziv:string){
+    let params = new HttpParams();
+    params = params.append("kategorija", kategorija);
+    params = params.append("tip", tip);
+    params = params.append("naziv", naziv);
+    return this.httpClient.delete(`${environment.apiURL}cas_proizvodjac/obrisiProizvodjaca`, {params: params});
+  }
 }

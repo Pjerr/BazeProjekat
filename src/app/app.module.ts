@@ -33,6 +33,9 @@ import { cartReducer } from './store/cart/cart.reducer';
 import { ModalModule } from './components/_modal';
 import { SearchPipe } from './pipes/search.pipe';
 import { ToastrModule } from 'ngx-toastr';
+import { TransakcijeComponent } from './components/transakcije/transakcije.component';
+import { ProductManagementComponent } from './components/product-management/product-management.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,6 +48,8 @@ import { ToastrModule } from 'ngx-toastr';
     ProductDetailComponent,
     ProductThumbComponent,
     SearchPipe,
+    TransakcijeComponent,
+    ProductManagementComponent
   ],
   imports: [
     BrowserModule,

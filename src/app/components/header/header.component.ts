@@ -22,6 +22,9 @@ export class HeaderComponent implements OnInit {
   sidebarSub: Subscription | undefined = undefined;
   sidebarStatus: boolean = false;
 
+  //user definise da li je kupac ili prodavac ili admin
+  user: string = 'p';
+
   ngOnInit(): void {
     this.sidebarStatus$ = this.store.select(
       CommonSelectors.selectSidebarStatus

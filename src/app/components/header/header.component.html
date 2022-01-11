@@ -1,3 +1,4 @@
+<div class="user-header" *ngIf="user=='u'">
 <jw-modal id="cart">
   <h3>Ovo je vasa korpa: </h3>
   <div class="header__cart">
@@ -43,4 +44,29 @@
         </ul>
       </div>
     </div>
-</nav>
+  </nav>
+</div>
+
+<div class="prodavac-header" *ngIf="user=='p'">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand me-3" href="#"><img src="../../../assets/logoWithLettersColoredCut.png" alt="logo" class="logo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/control-panel">Proizvodi</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/">Narucivanje</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/transakcije">Transakcije</a>
+              </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>

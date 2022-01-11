@@ -5,7 +5,7 @@ const neo4jSession = require('../neo4jConnection');
 const cassandraClient = require('../cassandraConnect');
 const router = express.Router();
 
-const authenticateJWTToken = require('../auth').authenticateJWTToken;
+// const authenticateJWTToken = require('../auth').authenticateJWTToken;
 
 //BITNO: Nema update ovde jer je naziv clustering key za ovu tabelu, ne moze da se menja
 
@@ -176,7 +176,7 @@ router.delete('/obrisiIzSvihTabelaProizvoda', (req,res)=>{
 //Mora da se posalje ceo proizvod sa fronta, da bih mogao da ga nadjem
 //u tabelama gde nije samo naziv clustering key
 //i da bih mogao da obrisem i dodam ceo jedan red u tabelu u kojoj menjamo clustering key
-router.put('/updateProizvodOcena', authenticateJWTToken, updateOcenaNEO, (req,res)=>{
+router.put('/updateProizvodOcena', /*authenticateJWTToken,*/ updateOcenaNEO, (req,res)=>{
 
     var staraOcena = (req.body.proizvod.zbirOcena - req.body.novaOcena) / (req.body.proizvod.brojOcena - 1);
 
@@ -203,7 +203,7 @@ router.put('/updateProizvodOcena', authenticateJWTToken, updateOcenaNEO, (req,re
         },
         {
             query: 'DELETE FROM buyhub.proizvod_ocenanaziv WHERE kategorija = ? and tip = ? and ocena = ? and proizvodjac = ? and naziv = ? ',
-            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, 0 , req.body.proizvodjac, req.body.proizvod.naziv]
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, staraOcena , req.body.proizvodjac, req.body.proizvod.naziv]
         }
         ,
         {
@@ -245,7 +245,7 @@ async function updateOcenaNEO(req,res,next){
 
 //salji mi i proslu vrednost popusta da bih mogao da nadjem u cassandri lepo sve
 // req.body.stariPopust
-router.put('/updateProizvodPopust', authenticateJWTToken, updatePopustNEO, (req,res)=>{
+router.put('/updateProizvodPopust', /*authenticateJWTToken,*/ updatePopustNEO, (req,res)=>{
 
     const batchQueries = [
         {

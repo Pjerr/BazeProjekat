@@ -245,7 +245,7 @@ async function updateOcenaNEO(req,res,next){
 
 //salji mi i proslu vrednost popusta da bih mogao da nadjem u cassandri lepo sve
 // req.body.stariPopust
-router.put('/updateProizvodPopust', /*authenticateJWTToken,*/ updatePopustNEO, (req,res)=>{
+router.put('/updateProizvodPopust', authenticateJWTToken, updatePopustNEO, (req,res)=>{
 
     const batchQueries = [
         {

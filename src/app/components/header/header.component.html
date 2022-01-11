@@ -4,10 +4,8 @@
   <div class="header__cart">
     <div *ngFor="let product of cartProducts | async" class="header__cart-product card">
       <div class="product-details">
-        <img [src]="'http://localhost:5000/' + product.slika" class="img img-fluid img-thumbnail" alt="slika">
-        <span class="font-weight-bold text-primary">{{product.naziv}}</span>
+        <span class="font-weight-bold text-primary">{{product.naziv}} </span> <span>{{product.cena}} rsd</span>
       </div>
-        <p>{{product.cena}} rsd</p>
     </div>
     <div>
       <p>Ukupna cena: TODO</p>
@@ -60,12 +58,14 @@
                 <a class="nav-link" routerLink="/control-panel">Proizvodi</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" routerLink="/">Narucivanje</a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" routerLink="/transakcije">Transakcije</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" routerLink="/order-products">Narucivanje</a>
+              </li>
         </ul>
+        <span class="header__welcome-text px-3">Zdravo [insert name here]</span>
+        <button class="btn btn-danger">Logout</button>
       </div>
     </div>
   </nav>

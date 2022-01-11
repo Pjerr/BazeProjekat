@@ -35,6 +35,7 @@ import { SearchPipe } from './pipes/search.pipe';
 import { ToastrModule } from 'ngx-toastr';
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
 import { ProductManagementComponent } from './components/product-management/product-management.component';
+import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { ProductManagementComponent } from './components/product-management/prod
     ProductThumbComponent,
     SearchPipe,
     TransakcijeComponent,
-    ProductManagementComponent
+    ProductManagementComponent,
+    OrderProductsComponent
   ],
   imports: [
     BrowserModule,

@@ -6,6 +6,7 @@ import { ProductDetailComponent } from './components/product-detail/product-deta
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { ProductManagementComponent } from './components/product-management/product-management.component';
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
+import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,10 @@ const routes: Routes = [
   {
     path: 'control-panel',
     component: ProductManagementComponent
+  },
+  {
+    path: 'order-products',
+    component: OrderProductsComponent
   }
 ];
 

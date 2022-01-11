@@ -22,8 +22,11 @@ export class HeaderComponent implements OnInit {
   sidebarSub: Subscription | undefined = undefined;
   sidebarStatus: boolean = false;
 
+  priceSub: Subscription | undefined = undefined;
+  totalPrice: number | undefined = undefined;
+
   //user definise da li je kupac ili prodavac ili admin
-  user: string = 'p';
+  user: string = 'u';
 
   ngOnInit(): void {
     this.sidebarStatus$ = this.store.select(
@@ -33,6 +36,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.sidebarSub?.unsubscribe();
+    this.priceSub?.unsubscribe();
   }
 
   toggleCategories(): void {
@@ -57,5 +61,9 @@ export class HeaderComponent implements OnInit {
   loadCartProducts(): void {
     console.log('loading cart!');
     this.cartProducts = this.store.select(CartSelectors.selectAllProducts);
+  }
+
+  getFullPriceOfProducts(){
+    
   }
 }

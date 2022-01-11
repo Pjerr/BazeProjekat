@@ -32,6 +32,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
 import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
 import { SellingProductsComponent } from './components/worker/selling-products/selling-products.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { SellingProductsComponent } from './components/worker/selling-products/s
     MatFormFieldModule,
     MatInputModule,
     ModalModule,
+    ScrollingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     ReactiveFormsModule,

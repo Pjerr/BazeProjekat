@@ -120,20 +120,23 @@ export class NeoProdavnicaService {
     );
   }
 
-  //TODO : sacekaj kale
-  dektementirajBrojProizvodaMagacina(naziv: string, grad: string, adresa: string, brojProizvoda: number) {
+  dektementirajBrojProizvodaMagacina(
+    grad: string,
+    adresa: string,
+    nizNaziva: string[],
+    nizBrojaProizvoda: number[]
+  ) {
     const body = {
-      naziv,
       grad,
       adresa,
-      brojProizvoda
-    }
+      nizNaziva,
+      nizBrojaProizvoda,
+    };
 
     return this.httpClient.put(
       `${environment.apiURL}neo_prodavnica/dekrementirajBrojProizvodaMagacina`,
       body,
       { responseType: 'text' }
     );
-
   }
 }

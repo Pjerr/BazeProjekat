@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProductDto } from '../models/product/productDto';
 
@@ -30,7 +31,7 @@ export class CasTransakcijaService {
     mesec: string,
     grad: string,
     adresa: string
-  ) {
+  ): Observable<any[]> {
     let params = new HttpParams();
     params = params.append('godina', godina);
     params = params.append('kvartal', kvartal);
@@ -38,7 +39,7 @@ export class CasTransakcijaService {
     params = params.append('grad', grad);
     params = params.append('adresa', adresa);
 
-    return this.httpClient.get(
+    return this.httpClient.get<any[]>(
       `${environment.apiURL}cas_transakcija/preuzmiTransakcijeIzProdavnice`,
       {
         params: params,

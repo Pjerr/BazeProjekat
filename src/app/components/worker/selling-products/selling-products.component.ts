@@ -79,6 +79,7 @@ export class SellingProductsComponent implements OnInit {
   }
 
   initGradAndAdresaProdavnice() {
+    this.productsForSelling = undefined;
     this.neoRadnikService
       .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic')
       .subscribe((prodavnica: Prodavnica) => {
@@ -168,11 +169,18 @@ export class SellingProductsComponent implements OnInit {
     console.log(this.prodavnica);
     //API CALL - I TO DOSTA KOMADA OVDE
     let nizNaziva: string[] = [];
+    let nizBrojaProizvoda: number[] = [];
     let ukupnaCena: number = 0;
     if (this.productsForSelling) {
       nizNaziva = this.productsForSelling.map((element: ProductToSell) => {
         return element.product.naziv;
       });
+
+      nizBrojaProizvoda = this.productsForSelling.map(
+        (element: ProductToSell) => {
+          return element.brojProizvoda;
+        }
+      );
 
       ukupnaCena = this.productsForSelling
         .map(
@@ -196,32 +204,36 @@ export class SellingProductsComponent implements OnInit {
           ukupnaCena,
           'bogdan.petrov'
         )
+        .pipe(take(1))
         .subscribe(() => {
-          this.toastrService.success("CASS DOBAR", "Success");
-          // setTimeout(() => {
-          //   if (this.productsForSelling) {
-          //     this.productsForSelling.forEach((element: ProductToSell) => {
-          //       let naziv = element.product.naziv;
-          //       let brojProizvoda = element.brojProizvoda;
-          //       if (this.prodavnica)
-          //         this.neoProdavnicaService.dektementirajBrojProizvodaMagacina(
-          //           naziv,
-          //           this.prodavnica.grad,
-          //           this.prodavnica.adresa,
-          //           brojProizvoda
-          //         ).pipe(take(1)).subscribe(()=>{
-          //           this.toastrService.success("NEO_PRODAVNICA dekrement dobar", "Success");
-          //         });
-          //     });
-          //   }
-          // });
-
-          //OPCIONO AKO POSTOJI USERNAME
-          setTimeout(()=>{
-            this.neoKorisnikService.kupiProizvode("bogdan.petrov", nizNaziva).subscribe(()=>{
-              this.toastrService.success("NEO_KORISNIK uspesno", "Success");
-            });
-          })
+          this.toastrService.success('CASS DOBAR', 'Success');
+          setTimeout(() => {
+            if (this.prodavnica)
+              this.neoProdavnicaService
+                .dektementirajBrojProizvodaMagacina(
+                  this.prodavnica.grad,
+                  this.prodavnica.adresa,
+                  nizNaziva,
+                  nizBrojaProizvoda
+                )
+                .pipe(take(1))
+                .subscribe(() => {
+                  this.toastrService.success('NEO_DEKREMENT DOBAR', 'Sucess');
+                  //OPCIONO, AKO IMA USERNAME
+                  setTimeout(() => {
+                    this.neoKorisnikService
+                      .kupiProizvode('bogdan.petrov', nizNaziva)
+                      .pipe(take(1))
+                      .subscribe(() => {
+                        this.toastrService.success(
+                          'NEO_KORISNIK uspesno',
+                          'Success'
+                        );
+                        this.initGradAndAdresaProdavnice();
+                      });
+                  });
+                });
+          });
         });
   }
 }

@@ -235,7 +235,7 @@ router.delete('/obrisiMagacin', (req, res) =>
 //PREDLOG-----------------------------------------------------------------------------------:
 router.put('/dekrementirajBrojProizvodaMagacina', (req, res) => 
     {
-        var nizNaziva = req.body.nizNaziv; 
+        var nizNaziva = req.body.nizNaziva; 
 
         var grad = req.body.grad;
         var adresa = req.body.adresa;
@@ -247,13 +247,14 @@ router.put('/dekrementirajBrojProizvodaMagacina', (req, res) =>
         neo4jSession.writeTransaction((tx) =>
             {
                nizNaziva.forEach((naziv)=>{
-                brojProizvoda = nizBrojaProizvoda[index++];
+                brojProizvoda = nizBrojaProizvoda[index];
                 tx
                 .run(`MATCH (n: Proizvod {naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
                     SET rel.brojProizvoda = rel.brojProizvoda - ${brojProizvoda}
                     RETURN rel`, {naziv, grad, adresa})
                 .then((result) => 
                     {
+                        index++;
                         console.log(`Prosao dekrement po redu ${index}`);
                     }
                 )
@@ -265,8 +266,7 @@ router.put('/dekrementirajBrojProizvodaMagacina', (req, res) =>
                })
             }
         )
-
-        res.status(200).send('Uspesno smanjen broj proizvoda magacina!')
+        res.status(200).send('Uspesno dekrementiranje');
     }
 )
 

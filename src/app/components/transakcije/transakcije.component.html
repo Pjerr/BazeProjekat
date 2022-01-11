@@ -1,6 +1,6 @@
 <div class="transakcije__wrapper container-fluid">
     <div class="row">
-        <div class="transakcije__pretraga col">
+        <div class="transakcije__pretraga col" *ngIf="prodavnica">
             <form [formGroup]="transakcijeForm" (ngSubmit)="pretraziTransakcije()" class="transakcije__pretraga-form">
                 <mat-form-field class="example-full-width" appearance="fill">
                     <mat-label>Godina</mat-label>
@@ -21,45 +21,66 @@
                     </mat-select>
                 </mat-form-field>
 
-
-                <!--OVO TREBA DA SE OBRISE-->
-                <mat-form-field class="example-full-width" appearance="fill">
-                <mat-label>Grad</mat-label>
-                <input matInput formControlName="grad" required>
-                </mat-form-field>
-
-                <mat-form-field class="example-full-width" appearance="fill">
-                <mat-label>Adresa</mat-label>
-                <input matInput formControlName="adresa" required>
-                </mat-form-field>
-                <!--OVO TREBA DA SE OBRISE-->
-
-                <mat-form-field appearance="fill" *ngIf="prodavnice">
+                <!--PRODAVAC DEO-->
+                <mat-form-field class="example-full-width" appearance="fill" *ngIf="userRole==='p'">
                     <mat-label>Grad</mat-label>
+                    <input matInput required [disabled]="true" [value]="gradRadnika">
+                </mat-form-field>
+    
+                <mat-form-field class="example-full-width" appearance="fill" *ngIf="userRole==='p'">
+                    <mat-label>Adresa</mat-label>
+                    <input matInput required [disabled]="true" [value]="adresaRadnika">
+                </mat-form-field>
+                <!--PRODAVAC DEO GOTOV-->
+
+                <!--ADMIN DEO-->
+                <mat-form-field appearance="fill" *ngIf="userRole==='a'">
+                    <mat-label>Gradovi</mat-label>
                     <mat-select formControlName="mesec" required>
-                        <mat-option *ngFor="let grad of gradovi" [value]="grad">
-                        {{grad}}
-                        </mat-option>
+                    <mat-option *ngFor="let mesec of meseci" [value]="mesec">
+                        {{mesec}}
+                    </mat-option>
                     </mat-select>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill" *ngIf="prodavnice">
-                    <mat-label>Adresa</mat-label>
+                <!--DINAMICKI SE UCITAVAJU ADRESE NAKON STO SE SELEKTUJE GRAD-->
+                <mat-form-field appearance="fill" *ngIf="userRole==='a'">
+                    <mat-label>Adrese</mat-label>
                     <mat-select formControlName="mesec" required>
-                        <mat-option *ngFor="let adresa of adrese" [value]="adresa">
-                        {{adresa}}
-                        </mat-option>
+                    <mat-option *ngFor="let mesec of meseci" [value]="mesec">
+                        {{mesec}}
+                    </mat-option>
                     </mat-select>
                 </mat-form-field>
+                <!--ADMIN DEO GOTOV-->
 
                 <button class="btn btn-primary" type="submit" [disabled]="!transakcijeForm.valid">Pretrazi</button>
             </form>
         </div>
-        <div class="transakcije__pregled col">
-            KAKO IZGLEDA TRANSAKCIJA?
-            <div class="transakcije__transakcija" *ngFor="let transakcija of transakcije | async">
-                KAKO IZGLEDA TRANSAKCIJA?
-            </div>
+        <div class="transakcije__pregled col-8" *ngIf="transakcije">
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Online</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Kupljeni proizvodi</th>
+                    <th scope="col">Ukupna cena (rsd)</th>
+                    <th scope="col">Vreme kupovine</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transakcija of transakcije; let i = index">
+                        <th scope="row">{{i}}</th>
+                        <td *ngIf="transakcija.online">Da</td>
+                        <td *ngIf="!transakcija.online">Ne</td>
+                        <td>{{transakcija.usernameKorisnika}}</td>
+                        <td>{{transakcija.kupljeniProizvodi}}</td>
+                        <td>{{transakcija.ukupnaCena}}</td>
+                        <td>{{transakcija.vremeKupovine}}</td>
+                    </tr>
+                </tbody>
+              </table>
         </div>
     </div>
 </div>

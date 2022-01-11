@@ -203,7 +203,7 @@ router.put('/updateProizvodOcena'/*, authenticateJWTToken*/, updateOcenaNEO, (re
         },
         {
             query: 'DELETE FROM buyhub.proizvod_ocenanaziv WHERE kategorija = ? and tip = ? and ocena = ? and proizvodjac = ? and naziv = ? ',
-            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, 0 , req.body.proizvodjac, req.body.proizvod.naziv]
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, staraOcena , req.body.proizvodjac, req.body.proizvod.naziv]
         }
         ,
         {

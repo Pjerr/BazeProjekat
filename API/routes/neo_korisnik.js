@@ -181,7 +181,7 @@ router.post('/komentarisiProizvod', vratiKomentarisaoRelaciju, (req,res) =>
                 CREATE (p)<-[rel:KOMENTARISAO {komentar : '${komentar}'}]-(k)`, {naziv, username})
             .then((result) =>
             {
-                res.status(200).send('Komentarisanje uspesno')
+                res.status(200).send(req.body);
             })
             .catch((err) =>
             {

@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, of, Subscription, take } from 'rxjs';
@@ -8,7 +14,7 @@ import * as CartActions from '../../store/cart/cart.actions';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { NeoProizvodService } from 'src/app/services/neo-proizvod.service';
 import { NeoKorisnikService } from 'src/app/services/neo-korisnik.service';
-import * as CartSelectors from "../../store/cart/cart.selectors";
+import * as CartSelectors from '../../store/cart/cart.selectors';
 import { UserKomentar } from 'src/app/models/user/userComment';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -18,7 +24,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
 })
-export class ProductDetailComponent implements OnInit, OnDestroy {
+export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private store: Store<AppState>,
     private route: ActivatedRoute,
@@ -49,6 +55,17 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.product) {
+      const kategorija = this.route.snapshot.queryParamMap.get('kategorija');
+      const tip = this.route.snapshot.queryParamMap.get('tip');
+      const naziv = this.route.snapshot.queryParamMap.get('naziv');
+      if (kategorija != null && tip != null && naziv != null) {
+        this.loadProduct(kategorija, tip, naziv);
+      }
+    }
+  }
+
   ngOnDestroy(): void {
     this.productSub?.unsubscribe();
     this.commentSub?.unsubscribe();
@@ -61,21 +78,14 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe((product) => {
         this.product = product[0];
-        this.loadAllComments(kategorija, tip, this.product.naziv);
+        this.loadAllComments(this.product.naziv);
       });
   }
 
   //Would get more than a string, probably something like an object holding a comment and some user info
-  loadAllComments(
-    kategorija: string,
-    tip: string,
-    nazivProizvoda: string
-  ): void {
-    this.comments = this.neoProizvodService.getAllCommentsForProduct(
-      kategorija,
-      tip,
-      nazivProizvoda
-    );
+  loadAllComments(nazivProizvoda: string): void {
+    this.comments =
+      this.neoProizvodService.getAllCommentsForProduct(nazivProizvoda);
   }
 
   //TODO: popravi ovu fju, testiraj comment i rating!
@@ -83,7 +93,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
     if (this.userComment.value != '') {
       if (this.product) {
         const forSend = {
-          username: 'bodgan.petrov',
+          username: 'sasa.novkovic',
           komentar: this.userComment.value,
           naziv: this.product.naziv,
         };
@@ -94,11 +104,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
             setTimeout(() => {
               if (this.product) {
                 console.log('loading new comments!');
-                this.loadAllComments(
-                  this.product.kategorija,
-                  this.product.tip,
-                  this.product.naziv
-                );
+                this.loadAllComments(this.product.naziv);
               }
             });
           });
@@ -118,36 +124,33 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   //TODO: kada se obezbedi log in, ide username korisnika! fix
   rateProduct(rating: number): void {
     if (this.product) {
-      const forSend = {
-        username: 'bogdan.petrov',
-        ocena: rating,
-        naziv: this.product.naziv,
-      };
-
+      const naziv = this.product.naziv;
       this.ratingSub = this.casProizvodService
-        .updateCassandraOcenaProizvoda(this.product)
-        .subscribe(() => {
-          setTimeout(() => {
-            if (this.product)
+        .updateCassandraOcenaProizvoda(this.product, rating)
+        .subscribe(
+          () => {
+            setTimeout(() => {
               this.neoKorisnikService.rateProduct(
-                'bogdan.petrov',
+                'sasa.novkovic',
                 rating,
-                this.product.naziv
+                naziv
               );
-          });
+            });
 
-          setTimeout(() => {
-            if (this.product) {
-              const kategorija =
-                this.route.snapshot.queryParamMap.get('kategorija');
-              const tip = this.route.snapshot.queryParamMap.get('tip');
-              const naziv = this.route.snapshot.queryParamMap.get('naziv');
-              if (kategorija != null && tip != null && naziv != null) {
-                this.loadProduct(kategorija, tip, naziv);
+            setTimeout(() => {
+              if (this.product) {
+                const kategorija =
+                  this.route.snapshot.queryParamMap.get('kategorija');
+                const tip = this.route.snapshot.queryParamMap.get('tip');
+                const naziv = this.route.snapshot.queryParamMap.get('naziv');
+                if (kategorija != null && tip != null && naziv != null) {
+                  this.loadProduct(kategorija, tip, naziv);
+                }
               }
-            }
-          });
-        });
+            });
+          },
+          () => this.toastrService.error('Doslo je do greske', 'Error')
+        );
 
       this.rated = true;
       this.clickedOnRate = false;
@@ -161,19 +164,19 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   //QUESTION: how to make cart not remove items once you step out of the page?
   addToCart(): void {
     console.log('ADDING!');
-    if (this.product){
+    if (this.product) {
       this.store.dispatch(CartActions.addToCart({ product: this.product }));
-      this.toastrService.success("Dodat proizvod u korpu","Success");
+      this.toastrService.success('Dodat proizvod u korpu', 'Success');
     }
   }
 
   removeFromCart(): void {
     console.log('REMOVING!');
-    if (this.product){
+    if (this.product) {
       this.store.dispatch(
         CartActions.removeFromCart({ product: this.product })
       );
-      this.toastrService.info("Izbacen proizvod iz korpe", "Info");
+      this.toastrService.info('Izbacen proizvod iz korpe', 'Info');
     }
   }
 }

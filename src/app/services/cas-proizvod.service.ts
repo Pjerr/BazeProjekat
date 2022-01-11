@@ -14,23 +14,23 @@ export class CasProizvodService {
 
   getCassandraProizvodi(kategorija: string, tip: string, naziv: string, proizvodjac: string, pretraga: string, ascending: number): Observable<ProductDto[]>{
     let params = new HttpParams();
-    params = params.append("Kategorija", kategorija);
-    params = params.append("Tip", tip);
-    params = params.append("Proizvodjac", proizvodjac);
-    params = params.append("Naziv", naziv);
+    params = params.append("kategorija", kategorija);
+    params = params.append("tip", tip);
+    params = params.append("proizvodjac", proizvodjac);
+    params = params.append("naziv", naziv);
     params = params.append("ascending", ascending);
-    params = params.append("Pretraga", pretraga);
+    params = params.append("pretraga", pretraga);
     return this.httpClient.get<ProductDto[]>(`${environment.apiURL}cas_proizvod`, {params: params});
   }
 
   deleteCassandraProizvod(kategorija: string, tip: string, naziv: string, proizvodjac: string, ocena: number, cena: number){
     let params = new HttpParams();
-    params = params.append("Kategorija", kategorija);
-    params = params.append("Tip", tip);
-    params = params.append("Proizvodjac", proizvodjac);
-    params = params.append("Naziv", naziv);
-    params = params.append("Cena", cena);
-    params = params.append("Ocena", ocena);
+    params = params.append("kategorija", kategorija);
+    params = params.append("tip", tip);
+    params = params.append("proizvodjac", proizvodjac);
+    params = params.append("naziv", naziv);
+    params = params.append("cena", cena);
+    params = params.append("ocena", ocena);
     return this.httpClient.delete(`${environment.apiURL}cas_proizvod/obrisatiIzSvihTabelaProizvoda`, {params: params})
   }
 
@@ -42,16 +42,17 @@ export class CasProizvodService {
 
   }
 
-  updateCassandraOcenaProizvoda(product: ProductDto){
+  updateCassandraOcenaProizvoda(product: ProductDto, novaOcena: number){
     const body = {
-      kategorija: product.kategorija,
-      tip: product.tip,
       naziv: product.naziv,
-      cena: product.cena,
-      novaOcena: product.ocena,
-      proizvodjac: product.proizvodjac,
-      popust: product.popust
+      novaOcena,
+      proizvodjac: product.proizvodjac
     }
-    return this.httpClient.put(`${environment.apiURL}cas_proizvod/updateProizvodOcena`, body);
+    console.log(body);
+    return this.httpClient.put(`${environment.apiURL}cas_proizvod/updateProizvodOcena`, {
+      naziv: product.naziv,
+      novaOcena,
+      proizvodjac: product.proizvodjac
+    });
   }
 }

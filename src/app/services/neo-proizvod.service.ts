@@ -10,10 +10,8 @@ import { UserKomentar } from '../models/user/userComment';
 export class NeoProizvodService {
   constructor(private httpClient: HttpClient) {}
 
-  getAllCommentsForProduct(kategorija: string, tip: string, naziv: string): Observable<UserKomentar[]> {
+  getAllCommentsForProduct(naziv: string): Observable<UserKomentar[]> {
     let params = new HttpParams();
-    params = params.append('kategorija', kategorija);
-    params = params.append('tip', tip);
     params = params.append('naziv', naziv);
 
     return this.httpClient.get<UserKomentar[]>(`${environment.apiURL}neo_proizvod/vratiOceneIKomentare`, {

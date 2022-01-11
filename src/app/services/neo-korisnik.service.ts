@@ -17,7 +17,7 @@ export class NeoKorisnikService {
     console.log(body);
     return this.httpClient.post(
       `${environment.apiURL}neo_korisnik/komentarisiProizvod`,
-      body,
+      {username, komentar, naziv},
       { responseType: 'text' }
     );
   }
@@ -31,7 +31,7 @@ export class NeoKorisnikService {
     console.log(body);
     return this.httpClient.post(
       `${environment.apiURL}neo_korisnik/oceniProizvod`,
-      body,
+      {username, ocena, naziv},
       { responseType: 'text' }
     );
   }

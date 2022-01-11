@@ -127,23 +127,24 @@ router.get('/preuzmiZaposlenje', (req, res) =>
     }
 )
 
-router.post('/zaposliRadnika', (req, res) => 
+router.get('/preuzmiInfoOProdavnici', (req, res) => 
     {
-        var username = req.body.username;
-        var grad = req.body.grad;
-        var adresa = req.body.adresa;
-        var pozicija = req.body.pozicija;
-        var datum = req.body.datum;
+        var username = req.query.username;
 
-        neo4jSession.writeTransaction((tx) =>
+        neo4jSession.readTransaction((tx) =>
             {
                 tx
-                    .run(`MATCH (r: Radnik {username: $username})
-                        MATCH (p: Prodavnica {grad: $grad, adresa: $adresa})
-                        CREATE (r)-[rel:RADI_U { pozicija: '${pozicija}', datumZaposlenja: '${datum}'}]->(p)`, {username, grad, adresa})
+                    .run(`MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica)
+                        RETURN p`, {username})
                     .then((result) => 
                         {
-                            res.status(200).send('Uspesno zaposljen radnik!')
+                            var info = [];
+
+                            result.records.forEach(element => {
+                                info.push(element._fields[0].properties);
+                            });
+
+                            res.send(info);
                         }
                     )
                     .catch((error) => 
@@ -155,6 +156,57 @@ router.post('/zaposliRadnika', (req, res) =>
         )
     }
 )
+
+//Ogranicenje da ne moze da se dvaput kreira relacija izmedju radnika i neke prodavnice
+function vratiRadiURelaciju(req, res, next) 
+{
+    var username = req.body.username;
+
+    neo4jSession
+          .run(`RETURN EXISTS((:Prodavnica)<-[:RADI_U]-(:Radnik{username : $username }))`, 
+                {username})
+          .then((result) =>
+          {
+              req.body.postoji = result;
+
+              next();
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+}
+
+router.post('/zaposliRadnika', vratiRadiURelaciju, (req, res) =>
+{    
+    var username = req.body.username;
+    var grad = req.body.grad;
+    var adresa = req.body.adresa;
+    var pozicija = req.body.pozicija;
+    var datum = req.body.datum;
+
+    if(req.body.postoji.records[0]._fields[0] == false)
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (r: Radnik {username: $username}), (p: Prodavnica {grad: $grad, adresa: $adresa})
+                CREATE (r)-[rel:RADI_U { pozicija: '${pozicija}', datumZaposlenja: '${datum}'}]->(p)`, {username, grad, adresa})
+            .then((result) =>
+            {
+                res.status(200).send('Uspesno zaposljen radnik!')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+    else
+    {
+        res.status(400).send('Radnik je vec zaposljen!')
+    }
+})
 
 //samo moze da se menja pozicija. Nema poente da se menja datum zaposlenja
 router.put('/izmeniPoziciju', (req, res) => 
@@ -210,5 +262,6 @@ router.delete('/otpustiRadnika', (req, res) =>
         )
     }
 )
+
 
 module.exports = router;

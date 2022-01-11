@@ -1,6 +1,7 @@
 <div class="product-detail__wrapper" *ngIf="product">
     <div class="product_detail__product-card card">
         <div class="product-detail__general">
+            <p>{{product.naziv}}</p>
             <img [src]="'http://localhost:5000/' + product.slika" alt="picture" class="img img-fluid rounded mx-auto d-block product-detail__image">
             <div class="product-detail__rating_and_price">
                 <div class="product-detail__rating-box">

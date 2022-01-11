@@ -86,11 +86,7 @@ export class CasProizvodService {
     console.log(body);
     return this.httpClient.put(
       `${environment.apiURL}cas_proizvod/updateProizvodOcena`,
-      {
-        naziv: product.naziv,
-        novaOcena,
-        proizvodjac: product.proizvodjac,
-      }
+      body
     );
   }
 

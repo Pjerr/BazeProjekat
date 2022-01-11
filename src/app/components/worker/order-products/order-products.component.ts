@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, Subscription } from 'rxjs';
+import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import { ProductDto } from 'src/app/models/product/productDto';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
+import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
+import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
 import { ModalService } from '../../_modal';
 
 @Component({
@@ -15,6 +18,8 @@ import { ModalService } from '../../_modal';
 export class OrderProductsComponent implements OnInit {
   constructor(
     private casProizvodService: CasProizvodService,
+    private neoRadnikService: NeoRadnikService,
+    private neoProdavnicaService: NeoProdavnicaService,
     private modalService: ModalService,
     private toastrService: ToastrService
   ) {}
@@ -89,7 +94,6 @@ export class OrderProductsComponent implements OnInit {
   }
 
   openModalForOrder(product: ProductDto, modalName: string) {
-    console.log(`${product}`);
     this.productForOrdering = product;
     this.modalService.open(modalName);
   }
@@ -98,7 +102,15 @@ export class OrderProductsComponent implements OnInit {
     console.log(this.productForOrdering);
     console.log(numberOfProductsToOrder);
     if(numberOfProductsToOrder > 0){
-      console.log("should call API");
+      this.neoRadnikService.getInfoOProdavniciUKojojRadiRadnik("todor.kalezic").subscribe((prodavnica)=>{
+        console.log(prodavnica);
+        setTimeout(()=>{
+          if(this.productForOrdering)
+            this.neoProdavnicaService.naruciProizvod(this.productForOrdering, prodavnica, numberOfProductsToOrder).subscribe(()=>{
+              this.toastrService.success("Uspesno naruceni proizvodi!", "Success");
+            });
+        })
+      })
     }
     else{
       this.toastrService.error("Unesite validan broj", "Error");

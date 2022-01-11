@@ -99,6 +99,18 @@ export class NeoKorisnikService {
     );
   }
 
+
+  kupiProizvode(username: string, nizProizvoda: string[]){
+    const body = {
+      username,
+      nizProizvoda
+    }
+    return this.httpClient.post(
+      `${environment.apiURL}neo_korisnik/kupiProizvode`,
+      body,
+      { responseType: 'text' }
+    );
+  }
   //TODO: pitaj koja ruta od tri u neo_korisnik da se iskoristi
   getPreporukeProizvoda() {}
 }

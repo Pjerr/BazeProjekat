@@ -1,1 +1,65 @@
-<p>transakcije works!</p>
+<div class="transakcije__wrapper container-fluid">
+    <div class="row">
+        <div class="transakcije__pretraga col">
+            <form [formGroup]="transakcijeForm" (ngSubmit)="pretraziTransakcije()" class="transakcije__pretraga-form">
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Godina</mat-label>
+                    <input matInput formControlName="godina" required>
+                </mat-form-field>
+
+                <mat-form-field class="example-full-width" appearance="fill">
+                    <mat-label>Kvartal</mat-label>
+                    <input matInput formControlName="kvartal" required>
+                </mat-form-field>
+                
+                <mat-form-field appearance="fill">
+                    <mat-label>Mesec</mat-label>
+                    <mat-select formControlName="mesec" required>
+                    <mat-option *ngFor="let mesec of meseci" [value]="mesec">
+                        {{mesec}}
+                    </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+
+                <!--OVO TREBA DA SE OBRISE-->
+                <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Grad</mat-label>
+                <input matInput formControlName="grad" required>
+                </mat-form-field>
+
+                <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Adresa</mat-label>
+                <input matInput formControlName="adresa" required>
+                </mat-form-field>
+                <!--OVO TREBA DA SE OBRISE-->
+
+                <mat-form-field appearance="fill" *ngIf="prodavnice">
+                    <mat-label>Grad</mat-label>
+                    <mat-select formControlName="mesec" required>
+                        <mat-option *ngFor="let grad of gradovi" [value]="grad">
+                        {{grad}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" *ngIf="prodavnice">
+                    <mat-label>Adresa</mat-label>
+                    <mat-select formControlName="mesec" required>
+                        <mat-option *ngFor="let adresa of adrese" [value]="adresa">
+                        {{adresa}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <button class="btn btn-primary" type="submit" [disabled]="!transakcijeForm.valid">Pretrazi</button>
+            </form>
+        </div>
+        <div class="transakcije__pregled col">
+            KAKO IZGLEDA TRANSAKCIJA?
+            <div class="transakcije__transakcija" *ngFor="let transakcija of transakcije | async">
+                KAKO IZGLEDA TRANSAKCIJA?
+            </div>
+        </div>
+    </div>
+</div>

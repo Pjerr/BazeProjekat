@@ -54,7 +54,7 @@ router.post('/dodajTransakciju', (req,res) =>
                         hour: "2-digit", minute: "2-digit", hour12: false,
                         timeZoneName: "short", timeZone: "CET"};
         var datum = new Intl.DateTimeFormat(["rs-RS"], options).format;
-        console.log(datum().toString().split(' ')[0].toUpperCase());
+        //console.log(datum().toString().split(' ')[0].toUpperCase());
         
         var meseci = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
 

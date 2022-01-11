@@ -1,3 +1,5 @@
+@import "../../../assets/colors.scss";
+
 .nav-item{
     cursor: pointer;
 }
@@ -29,5 +31,9 @@ ul{
 }
 
 .header__welcome-text{
-    color: white;
+    color: $white;
+}
+
+.active{
+    color: $white;
 }

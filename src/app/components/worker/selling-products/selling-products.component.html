@@ -1,7 +1,7 @@
-<div class="container">
+<div class="container-fluid">
     <div class="row">
-        <div class="col">
-            <div class="selling-products__product-categories">
+        <!-- <div class="col">
+            <div class="selling-products__product-categories-div">
                 <ul class="selling-products__product-categories">
                     <li class="selling-products__category" *ngFor="let category of productCategories;  let i = index" (mouseenter)="toggleSubcategories(i)" (mouseleave)="hideSubcategories(i)">
                         <h4 class="selling-products__category-name">{{category.kategorija}}</h4>
@@ -13,32 +13,33 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> -->
     
         <div class="col">
-            <div class="selling-products__products">
-                <div *ngIf="!products" class="selling-products__init-title">
-                    <h2>IZABERITE KATEGORIJU I TIP DA BI SUZILI PRETRAGU ZA KUPOVINU</h2>
-                </div>
-                <div class="selling-products__product" *ngFor="let product of products | async">
-                    <div class="product-thumb__wrapper card" *ngIf="product" (click)="addToSellList(product)">
-                        <img [src]="'http://localhost:5000/' + product.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
-                        <h5>{{product.naziv}}</h5>
-                        <p class="product-price">{{product.cena}} rsd</p>
-                        <small>{{product.ocena}}<i class="fas fa-star product-thumb__fa-star"></i></small>
+            <div class="selling-products__products" *ngIf="products">
+                <div class="selling-products__product" *ngFor="let element of products">
+                    <div class="product-thumb__wrapper card" *ngIf="element.proizvod" (click)="addToSellList(element.proizvod)">
+                        <img [src]="'http://localhost:5000/' + element.proizvod.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
+                        <h5>{{element.proizvod.naziv}}</h5>
+                        <p class="product-price">{{element.proizvod.cena}} rsd</p>
+                        <small *ngIf="element.proizvod.brojOcena > 0">{{element.proizvod.zbirOcena / element.proizvod.brojOcena}}<i class="fas fa-star product-thumb__fa-star"></i></small>
+                        <small *ngIf="element.proizvod.brojOcena == 0">Nema ocenu <i class="fas fa-star product-thumb__fa-star"></i></small>
+                        <small>Trenutno na stanju: {{element.brojProizvoda}}</small>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="col products-to-sell" *ngIf="productsForSelling">
-            <h3 *ngIf="productsForSelling.length > 0">Ovo je lista proizvoda za prodaju</h3>
-            <div class="product-to-sell" *ngFor="let product of productsForSelling">
-                <div class="product-details">
-                    <span class="font-weight-bold text-primary">{{product.naziv}} </span> <span>{{product.cena}} rsd</span>
-                    <button class="btn btn-danger" (click)="removeItemFromSellList(product)"><i class="fas fa-trash"></i></button>
+            <h4 *ngIf="productsForSelling.length > 0">Ovo je lista proizvoda za prodaju</h4>
+            <div class="product-to-sell" *ngFor="let element of productsForSelling">
+                <div class="product-details card">
+                    <span class="font-weight-bold text-primary">{{element.product.naziv}} </span> <span>{{element.product.cena}} rsd</span>
+                    <p>Trenutno za kupovinu: {{element.brojProizvoda}}</p>
+                    <button class="btn btn-danger" (click)="reduceNumberFromSellList(element.product)"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
+            <button class="btn btn-primary" (click)="kupiProizvode()">Kupi</button>
         </div>
     </div>
 </div>

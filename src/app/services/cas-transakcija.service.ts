@@ -47,7 +47,7 @@ export class CasTransakcijaService {
   }
 
   //DORADI OVU FJU, kupljeniProizvodi su nazivi a username je "" ako nema nalog
-  addTransakcija(online: boolean, grad: string, adresa: string, kupljeniProizvodi: string[], ukupnaCena: number ,username:string) {
+  addTransakcija(online: boolean, grad: string, adresa: string, kupljeniProizvodi: string, ukupnaCena: number ,username:string) {
     
     const body = {
       online,
@@ -55,7 +55,7 @@ export class CasTransakcijaService {
       adresa,
       kupljeniProizvodi,
       ukupnaCena,
-      username
+      usernameKorisnika:username
     }
     
     return this.httpClient.post(`${environment.apiURL}cas_transakcija/dodajTransakciju`, body);

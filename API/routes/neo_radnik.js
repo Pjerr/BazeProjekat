@@ -132,13 +132,15 @@ router.get('/preuzmiInfoOProdavnici', (req, res) =>
                         RETURN p`, {username})
                     .then((result) => 
                         {
-                            var info = [];
+                            var prodavnica = result.records[0]._fields[0].properties;
 
-                            result.records.forEach(element => {
-                                info.push(element._fields[0].properties);
-                            });
+                            // var info = [];
 
-                            res.send(info);
+                            // result.records.forEach(element => {
+                            //     info.push(element._fields[0].properties);
+                            // });
+
+                            res.send(prodavnica);
                         }
                     )
                     .catch((error) => 

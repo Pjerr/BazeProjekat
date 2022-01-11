@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Prodavnica } from '../models/prodavnica';
 import { Radnik } from '../models/user/radnik';
 
 @Injectable({
@@ -80,11 +81,11 @@ export class NeoRadnikService {
     );
   }
 
-  getInfoOProdavniciUKojojRadiRadnik(username: string) {
+  getInfoOProdavniciUKojojRadiRadnik(username: string): Observable<Prodavnica> {
     let params = new HttpParams();
     params = params.append('username', username);
 
-    return this.httpClient.get(
+    return this.httpClient.get<Prodavnica>(
       `${environment.apiURL}neo_radnik/preuzmiInfoOProdavnici`,
       {
         params: params,

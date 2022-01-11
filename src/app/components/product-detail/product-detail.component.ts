@@ -93,7 +93,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
     if (this.userComment.value != '') {
       if (this.product) {
         const forSend = {
-          username: 'sasa.novkovic',
+          username: 'marko.njusic',
           komentar: this.userComment.value,
           naziv: this.product.naziv,
         };
@@ -125,38 +125,23 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   rateProduct(rating: number): void {
     if (this.product) {
       const naziv = this.product.naziv;
-      this.ratingSub = this.casProizvodService
-        .updateCassandraOcenaProizvoda(this.product, rating)
-        .subscribe(
-          () => {
-            setTimeout(() => {
-              this.neoKorisnikService.oceniProizvod(
-                'sasa.novkovic',
-                rating,
-                naziv
-              );
-            });
+      const kategorija = this.product.kategorija;
+      const tip = this.product.tip;
 
-            setTimeout(() => {
-              if (this.product) {
-                const kategorija =
-                  this.route.snapshot.queryParamMap.get('kategorija');
-                const tip = this.route.snapshot.queryParamMap.get('tip');
-                const naziv = this.route.snapshot.queryParamMap.get('naziv');
-                if (kategorija != null && tip != null && naziv != null) {
-                  this.loadProduct(kategorija, tip, naziv);
-                }
-              }
-            });
-          },
-          () => this.toastrService.error('Doslo je do greske', 'Error')
-        );
+      //TODO UNSUBSCRIBE
+      this.casProizvodService.updateCassandraOcenaProizvoda(this.product, rating).subscribe(()=>{
+        setTimeout(()=>{
+          this.neoKorisnikService.oceniProizvod("marko.njusic", rating, naziv).subscribe(()=>{
+            this.loadProduct(kategorija, tip, naziv);
+            this.toastrService.success("Oba api dobra", "Success");
+          });
+        })
+      });
 
       this.rated = true;
       this.clickedOnRate = false;
     } else {
-      //tostrService
-      console.log('GRESKA PRI OCENJIVANJU');
+      this.toastrService.error("WHOPS", "Error");
     }
   }
 

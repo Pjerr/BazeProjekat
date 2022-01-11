@@ -103,7 +103,7 @@ router.delete('/obrisiKorisnika', authenticateJWTToken,  (req,res)=>{
                 });
 })
 
-router.post('/kupiProizvode', authenticateJWTToken, (req,res)=>{
+router.post('/kupiProizvode', /*authenticateJWTToken,*/ (req,res)=>{
     //username Korisnika kaže ko je kupio
     //niz naziva Proizvoda je sve ono što je kupio
     //neka se sabere i posalje ukupna cena sa fronta

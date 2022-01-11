@@ -178,8 +178,10 @@ router.delete('/obrisiIzSvihTabelaProizvoda', (req,res)=>{
 //i da bih mogao da obrisem i dodam ceo jedan red u tabelu u kojoj menjamo clustering key
 router.put('/updateProizvodOcena', /*authenticateJWTToken,*/ updateOcenaNEO, (req,res)=>{
 
-    var staraOcena = (req.body.proizvod.zbirOcena - req.body.novaOcena) / (req.body.proizvod.brojOcena - 1);
-
+    var staraOcena = 0
+    if(req.body.proizvod.brojOcena != 1)
+        staraOcena = (req.body.proizvod.zbirOcena - req.body.novaOcena) / (req.body.proizvod.brojOcena - 1);
+ 
     const batchQueries = [
         {
             query : 'UPDATE buyhub.proizvod_naziv SET ocena = ? WHERE kategorija = ? and tip = ? and naziv = ?',

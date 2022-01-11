@@ -47,9 +47,6 @@
     
         <div class="col-8">
             <div class="order-products__products">
-                <div *ngIf="!products" class="order-products__init-title">
-                    <h2>IZABERITE KATEGORIJU I TIP DA BI SUZILI PRETRAGU</h2>
-                </div>
                 <div class="order-products__product" *ngFor="let product of products | async">
                     <div class="product-thumb__wrapper card" *ngIf="product" (click)="openModalForOrder(product, 'modal')">
                         <img [src]="'http://localhost:5000/' + product.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">

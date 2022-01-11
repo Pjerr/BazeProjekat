@@ -76,12 +76,12 @@ export class NeoProdavnicaService {
     );
   }
 
-  getSveProizvodeProdavnice(prodavnica: Prodavnica) {
+  getSveProizvodeProdavnice(prodavnica: Prodavnica): Observable<any[]> {
     let params = new HttpParams();
     params = params.append('grad', prodavnica.grad);
     params = params.append('adresa', prodavnica.adresa);
 
-    return this.httpClient.get(
+    return this.httpClient.get<any[]>(
       `${environment.apiURL}neo_prodavnica/vratiSveProizvodeProdavnice`,
       { params: params }
     );
@@ -115,10 +115,25 @@ export class NeoProdavnicaService {
 
     return this.httpClient.post(
       `${environment.apiURL}neo_prodavnica/naruciProizvod`,
-      body
+      body,
+      { responseType: 'text' }
     );
   }
 
   //TODO : sacekaj kale
-  dektementirajBrojProizvodaMagacina() {}
+  dektementirajBrojProizvodaMagacina(naziv: string, grad: string, adresa: string, brojProizvoda: number) {
+    const body = {
+      naziv,
+      grad,
+      adresa,
+      brojProizvoda
+    }
+
+    return this.httpClient.put(
+      `${environment.apiURL}neo_prodavnica/dekrementirajBrojProizvodaMagacina`,
+      body,
+      { responseType: 'text' }
+    );
+
+  }
 }

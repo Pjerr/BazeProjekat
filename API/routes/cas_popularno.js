@@ -23,11 +23,11 @@ router.get('/',(req,res)=>{
 router.post('/dodajNovePopularne', getPopularneProizvodeNeo, (req,res)=>{
      
     var addQuery = 'BEGIN BATCH' +
-                ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
-               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
-               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
-               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
-               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);' +
+                ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);' +
+               ' INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);' +
                ' APPLY BATCH';
      //var addQuery = "INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip) VALUES (?,?,?,?,?,?);";
      cassandraClient.execute(addQuery, req.body.argsArray,
@@ -35,7 +35,7 @@ router.post('/dodajNovePopularne', getPopularneProizvodeNeo, (req,res)=>{
                         if(err){
                             console.log('Unable to put data' + err);
                         }
-                    })          
+                    })       
 
     res.status(200).send(req.body.argsArray);                    
     
@@ -67,9 +67,9 @@ async function getPopularneProizvodeNeo(req,res,next){
     neo4jSession.readTransaction((tx)=>{
         tx
         .run('MATCH (p:Proizvod) \
-        WHERE p.brojKupovina = 0 \
-        and p.brojOcena = 0 \
-        and p.zbirOcena / (p.brojOcena+1) = 0\
+        WHERE p.brojKupovina = 10 \
+        and p.brojOcena = 5 \
+        and p.zbirOcena / (p.brojOcena+1) >=2\
          RETURN p LIMIT 5')
          .then((result)=>{
             var argsArray = [];
@@ -79,7 +79,7 @@ async function getPopularneProizvodeNeo(req,res,next){
                 var elemUnpacked = element._fields[0].properties;
                 argsArray.push('POPULARNO', elemUnpacked.zbirOcena/(elemUnpacked.brojOcena+1),
                 elemUnpacked.cena,elemUnpacked.kategorija,elemUnpacked.naziv,
-                elemUnpacked.tip);
+                elemUnpacked.tip, elemUnpacked.slika);
             });
             req.body.argsArray = argsArray;
             next();

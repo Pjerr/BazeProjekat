@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
 const path = require('path');
 
 var dir = path.join(__dirname);
@@ -24,7 +23,6 @@ const app = express();
 const APIRouter = express.Router();
 const rootRouter = express.Router();
 
-app.use(helmet.frameguard({ action: 'SAMEORIGIN' }));
 
 app.use(cors(corsOptions));
 

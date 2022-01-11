@@ -181,7 +181,7 @@ router.post('/komentarisiProizvod', vratiKomentarisaoRelaciju, (req,res) =>
                 CREATE (p)<-[rel:KOMENTARISAO {komentar : '${komentar}'}]-(k)`, {naziv, username})
             .then((result) =>
             {
-                res.status(200).send(req.body);
+                res.status(200).send('Komentarisanje uspesno')
             })
             .catch((err) =>
             {
@@ -270,5 +270,82 @@ router.post('/oceniProizvod', vratiOcenioRelaciju, (req, res) =>
 
 //TODO PREPOURKA PROIZVODA
 
+//isto iz req.query idu param i to req.query.username
+
+//Nalazi 5 korisnika koji su najslicniji po ukusu kao dati korisnik i nalazi proizvode koje su
+//oni najbolje ocenili a da ih dati korisnik nije kupio
+router.get('/preporuceniProizvodiMetodaPrva',(req,res)=>{
+
+    var username = req.query.username;
+
+    var listaPreporucenihProizvoda = [];
+
+    neo4jSession
+                .run('MATCH (k1:Korisnik{username:$username})-[r:OCENIO]->(p:Proizvod) \
+                      WITH k1,avg(r.ocena) as k1_mean \
+                      MATCH (k1)-[r1:OCENIO]->(p:Proizvod)<-[r2:OCENIO]-(k2:Korisnik) \
+                      WITH k1, k1_mean, k2, COLLECT({r1:r1, r2:r2}) AS ocene WHERE size(ocene) > 5 \
+                      MATCH (k2)-[rel:OCENIO]->[p:Proizvod] \
+                      WITH k1, k1_mean, k2, avg(rel.ocena) AS u2_mean, ocene \
+                      UNWIND ocene as o \
+                      WITH sum( (o.r1.ocena - k1_mean) * (o.r2.ocena - k2_mean) ) AS nom \
+                      sqrt(sum( (o.r1.ocena - k1_mean)^2 + (o.r2.ocena - k2_mean)^2 )) as denom \
+                      k1,k2 WHERE denom <> 0 \
+                      WITH k1,k2, nom/denom as pearson \
+                      ORDER BY pearson DESC LIMIT 10 \
+                      MATCH(k2)-[r:OCENIO]->(p:Proizvod) WHERE NOT EXISTS ((k1)-[:KUPIO]->(p) ) \
+                      RETURN p, SUM(pearson * o.ocena) as score \
+                      ORDER BY score DESC LIMIT 20', {username}
+                      )
+                .then((result)=>{
+                    res.status(200).send(result.records);
+                })
+                .catch((err)=>{
+                    res.status(500).send('Preporuka ne radi' + err);
+                });
+})
+
+//Korisnici koji su kupili ovo sto si ti, kupili su jos i...
+//req.query.username je parametar
+router.get('/preporuceniProizvodiMetodaDruga', (req,res)=>{
+
+    var username = req.body.username;
+    neo4jSession
+                .run('MATCH (k:Korisnik{username:$username})-[rel:KUPIO]->(p:Proizvod)<-[rel2:KUPIO]-(k2:Korisnik)-[rel3:KUPIO]->(p2:Proizvod) \
+                      WHERE k.username <> k2.username and p.naziv <> p2.naziv \
+                      RETURN p2 LIMIT 6', {username})
+                .then((result)=>{
+                    res.status(200).send(result.records);
+                })
+                .catch((err)=>{
+                    res.status(500).send('Preporuka 2 ne radi' + err);
+                });
+
+})
+
+
+//ovo gleda koje kategorije i tip proizvoda korisnik kupuje i predlaze mu iy tih kategorija/tipova
+//proizvode koje nije jos uvek kupio
+//isto je iz req.query.username korisnik
+router.get('/preporuceniProizvodiMetodaTreca', (req,res)=>{
+
+    var username = req.query.username;
+
+    neo4jSession
+                .run('MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) \
+                      MATCH (p2:Proizvod) WHERE p.naziv <> p2.naziv AND \
+                      p2.kategorija = p.kategorija \
+                      or p2.tip = p.tip or p2.proizvodjac = p.proizvodjac \
+                      MATCH (k:Korisnik)-[rel:KUPIO]->(p2) \
+                      WITH avg(rel.ocena) as mean \
+                      RETURN p2, mean \
+                      ORDER BY mean DESC LIMIT 10', {username})
+                .then((result)=>{
+                    res.status(200).send(result.records);
+                })
+                .catch((err)=>{
+                    res.status(500).send('Preporuka 3 ne radi' + err);
+                });
+})
 module.exports = router;
 

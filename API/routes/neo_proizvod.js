@@ -18,18 +18,37 @@ router.get('/', (req,res)=>{
             });        
 })
 
-//Treba slika da se doda
+
+router.get('/startsWithPretraga',(req,res)=>{
+    
+    var naziv = req.query.naziv;
+    neo4jSession
+                .run(`MATCH (p:Proizvod) WHERE p.naziv STARTS WITH ${naziv} RETURN p`)
+                .then((result)=>{
+                    var arrayParam = [];
+                    result.records.forEach(record => {
+                        arrayParam.push(record._fields[0].properties);
+                    });
+                    res.status(200).send(arrayParam);
+                })
+                .catch((err)=>{
+                    res.status(500).send('NECE STARTS WITH ' + err );
+                });
+
+})
+
+
 router.post('/dodajProizvod', (req,res)=>{
     
-    var {brojKupovina,brojOcena,cena,kategorija,naziv,popust,tip,zbirOcena} = req.body;
+    var {brojKupovina,brojOcena,cena,kategorija,naziv,opis,popust,proizvodjac, slika, tip,zbirOcena} = req.body;
 
     
     if(!naziv || popust < 0 || cena < 0 || brojKupovina < 0)
         res.status(400).send('Bad request params');
     
-    const addQuery = 'MERGE (p:Proizvod{brojKupovina : $brojKupovina,brojOcena : $brojOcena,cena : $cena,kategorija:$kategorija,naziv:$naziv,popust:$popust,tip:$tip,zbirOcena:$zbirOcena}) RETURN p';
+    const addQuery = 'MERGE (p:Proizvod{brojKupovina : $brojKupovina,brojOcena : $brojOcena,cena : $cena, kategorija:$kategorija , naziv:$naziv , opis:$opis, popust:$popust, proizvodjac:$proizvodjac, slika:$slika, tip:$tip, zbirOcena:$zbirOcena}) RETURN p';
     neo4jSession
-                .run(addQuery,{brojKupovina,brojOcena,cena,kategorija,naziv,popust,tip,zbirOcena})
+                .run(addQuery,{brojKupovina,brojOcena,cena,kategorija,naziv,opis,popust,proizvodjac,slika, tip,zbirOcena})
                 .then((result)=>{
                     res.send(result);
                 })

@@ -163,6 +163,38 @@ router.get('/vratiStanjeMagacina', (req, res) =>
     }
 )
 
+//Vraca sve relacije - PROVERITI POSLE 
+router.get('/vratiSveProizvodeProdavnice', (req, res) => 
+    {
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod)-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                    RETURN rel`, {grad, adresa})
+                    .then((result) => 
+                        {
+                            var info = [];
+
+                            result.records.forEach(element => {
+                                info.push(element._fields[0].properties);
+                            });
+
+                            res.send(info);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 //KREIRA vezu izmedju proizvoda i prodavnice ALI se postavlja i inicijalni
 //broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
 router.post('/dodajUProdavnicu', (req, res) => 

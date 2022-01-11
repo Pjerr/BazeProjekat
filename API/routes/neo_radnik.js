@@ -127,6 +127,36 @@ router.get('/preuzmiZaposlenje', (req, res) =>
     }
 )
 
+router.get('/preuzmiInfoOProdavnici', (req, res) => 
+    {
+        var username = req.query.username;
+
+        neo4jSession.readTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica)
+                        RETURN p`, {username})
+                    .then((result) => 
+                        {
+                            var info = [];
+
+                            result.records.forEach(element => {
+                                info.push(element._fields[0].properties);
+                            });
+
+                            res.send(info);
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
 router.post('/zaposliRadnika', (req, res) => 
     {
         var username = req.body.username;

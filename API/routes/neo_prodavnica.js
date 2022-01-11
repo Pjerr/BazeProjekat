@@ -127,11 +127,9 @@ router.delete('/obrisiProdavnicu', (req, res) =>
 
 //Veza sa proizvodom - PRIVREMENO OVDE. TREBA DA BUDE KOD PROIZVODA:
 
-//Vraca trenutni broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
+//Vraca trenutni broj proizvoda konkretnog naziva u magacinu
 router.get('/vratiStanjeMagacina', (req, res) => 
     {
-        var kategorija = req.query.kategorija;
-        var tip = req.query.tip;
         var naziv = req.query.naziv;
 
         var grad = req.query.grad;
@@ -140,8 +138,8 @@ router.get('/vratiStanjeMagacina', (req, res) =>
         neo4jSession.readTransaction((tx) =>
             {
                 tx
-                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
-                    RETURN rel`, {kategorija, tip, naziv, grad, adresa})
+                    .run(`MATCH (n: Proizvod {naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                    RETURN rel`, {naziv, grad, adresa})
                     .then((result) => 
                         {
                             var info = [];
@@ -173,16 +171,23 @@ router.get('/vratiSveProizvodeProdavnice', (req, res) =>
             {
                 tx
                     .run(`MATCH (n: Proizvod)-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
-                    RETURN rel`, {grad, adresa})
+                    RETURN n, rel`, {grad, adresa})
                     .then((result) => 
                         {
-                            var info = [];
+                            var nizInfo = [];
 
-                            result.records.forEach(element => {
-                                info.push(element._fields[0].properties);
+                            result.records.forEach(element => 
+                            {
+                                var info =
+                                {
+                                    proizvod : element._fields[0].properties,
+                                    brojProizvoda : element._fields[1].properties.brojProizvoda
+                                }
+
+                                nizInfo.push(info);
                             });
 
-                            res.send(info);
+                            res.send(nizInfo);
                         }
                     )
                     .catch((error) => 
@@ -195,6 +200,140 @@ router.get('/vratiSveProizvodeProdavnice', (req, res) =>
     }
 )
 
+
+
+//RASKIDANJE VEZE IZMEDJU PROIZVODA I PRODAVNICE
+router.delete('/obrisiMagacin', (req, res) => 
+    {
+        var kategorija = req.query.kategorija;
+        var tip = req.query.tip;
+        var naziv = req.query.naziv;
+
+        var grad = req.query.grad;
+        var adresa = req.query.adresa;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        DELETE rel`, {kategorija, tip, naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno obrisan proizvod/magacin!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+//PREDLOG-----------------------------------------------------------------------------------:
+router.put('/dekrementirajBrojProizvodaMagacina', (req, res) => 
+    {
+        var naziv = req.body.naziv;
+
+        var grad = req.body.grad;
+        var adresa = req.body.adresa;
+        
+        var brojProizvoda = req.body.brojProizvoda;
+
+        neo4jSession.writeTransaction((tx) =>
+            {
+                tx
+                    .run(`MATCH (n: Proizvod {naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                        SET rel.brojProizvoda = rel.brojProizvoda - ${brojProizvoda}
+                        RETURN rel`, {naziv, grad, adresa})
+                    .then((result) => 
+                        {
+                            res.status(200).send('Uspesno smanjen broj proizvoda magacina!')
+                        }
+                    )
+                    .catch((error) => 
+                        {
+                            res.status(500).send('Neuspesno' + error);
+                        }
+                    );
+            }
+        )
+    }
+)
+
+function vratiUMagacinuRelaciju(req, res, next) 
+{
+    var naziv = req.body.naziv;
+
+    var grad = req.body.grad;
+    var adresa = req.body.adresa;
+
+    neo4jSession
+          .run(`
+                RETURN EXISTS((:Proizvod{naziv : $naziv})-[:U_MAGACINU]->(:Prodavnica {grad: $grad, adresa: $adresa}))`, {naziv, grad, adresa})
+          .then((result) =>
+          {
+              req.body.postoji = result;
+
+              next();
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+}
+
+router.post('/naruciProizvod', vratiUMagacinuRelaciju, (req,res) =>
+{    
+    var naziv = req.body.naziv;
+
+    var grad = req.body.grad;
+    var adresa = req.body.adresa;
+
+    var brojProizvoda = req.body.brojProizvoda;
+
+    if(req.body.postoji.records[0]._fields[0] == false)
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (p:Proizvod{naziv : $naziv}), (prod:Prodavnica {grad: $grad, adresa: $adresa})
+                CREATE (prod)<-[rel:U_MAGACINU {brojProizvoda : ${brojProizvoda}}]-(p)
+                RETURN rel`, {naziv, grad, adresa})
+            .then((result) =>
+            {
+                res.status(200).send('Uspesno narucivanje proizvoda')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+    else
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (p:Proizvod{naziv : $naziv})-[rel:U_MAGACINU]->(prod:Prodavnica {grad: $grad, adresa: $adresa})
+                SET rel.brojProizvoda = rel.brojProizvoda + ${brojProizvoda}
+                RETURN rel`, {naziv, grad, adresa})
+            .then((result) =>
+            {
+                res.status(200).send('Uspesno narucivanje proizvoda')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+})
+
+//UMESTO OVOG:
+/*
 //KREIRA vezu izmedju proizvoda i prodavnice ALI se postavlja i inicijalni
 //broj proizvoda te kategorije, tog tipa i tog naziva u magacinu
 router.post('/dodajUProdavnicu', (req, res) => 
@@ -267,35 +406,7 @@ router.put('/izmeniBrojProizvodaMagacina', (req, res) =>
         )
     }
 )
-
-//RASKIDANJE VEZE IZMEDJU PROIZVODA I PRODAVNICE
-router.delete('/obrisiMagacin', (req, res) => 
-    {
-        var kategorija = req.query.kategorija;
-        var tip = req.query.tip;
-        var naziv = req.query.naziv;
-
-        var grad = req.query.grad;
-        var adresa = req.query.adresa;
-
-        neo4jSession.writeTransaction((tx) =>
-            {
-                tx
-                    .run(`MATCH (n: Proizvod {kategorija: $kategorija, tip: $tip, naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
-                        DELETE rel`, {kategorija, tip, naziv, grad, adresa})
-                    .then((result) => 
-                        {
-                            res.status(200).send('Uspesno obrisan proizvod/magacin!')
-                        }
-                    )
-                    .catch((error) => 
-                        {
-                            res.status(500).send('Neuspesno' + error);
-                        }
-                    );
-            }
-        )
-    }
-)
+*/
+//-------------------------------------------------------------------------------------------------
 
 module.exports = router;

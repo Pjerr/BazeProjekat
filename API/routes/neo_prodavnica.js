@@ -26,6 +26,28 @@ router.get('/preuzmiProdavnice', (req, res) =>
     }
 )
 
+router.get('/preuzmiDistinctGradoveProdavnica', (req, res) =>
+    {
+        neo4jSession
+                .run('MATCH (p:Prodavnica) RETURN DISTINCT p.grad', { })
+                .then((result) =>
+                {
+                    var nizGradova = [];
+
+                    result.records.forEach(element => 
+                    {
+                        nizGradova.push(element._fields[0]);
+                    });
+
+                    res.send(nizGradova);
+                })
+                .catch((err) =>
+                {
+                    res.status(500).send('Neo4j not working' + err);
+                });        
+    }
+)
+
 //Moze da se koristi takodje za admina kada hoce da zaposli radnika
 router.get('/preuzmiProdavniceUGradu', (req, res) =>
     {

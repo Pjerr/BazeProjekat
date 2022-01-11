@@ -235,31 +235,38 @@ router.delete('/obrisiMagacin', (req, res) =>
 //PREDLOG-----------------------------------------------------------------------------------:
 router.put('/dekrementirajBrojProizvodaMagacina', (req, res) => 
     {
-        var naziv = req.body.naziv;
+        var nizNaziva = req.body.nizNaziv; 
 
         var grad = req.body.grad;
         var adresa = req.body.adresa;
         
-        var brojProizvoda = req.body.brojProizvoda;
+        var nizBrojaProizvoda = req.body.nizBrojaProizvoda;
 
+        var index = 0;
+        var brojProizvoda = 0;
         neo4jSession.writeTransaction((tx) =>
             {
+               nizNaziva.forEach((naziv)=>{
+                brojProizvoda = nizBrojaProizvoda[index++];
                 tx
-                    .run(`MATCH (n: Proizvod {naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
-                        SET rel.brojProizvoda = rel.brojProizvoda - ${brojProizvoda}
-                        RETURN rel`, {naziv, grad, adresa})
-                    .then((result) => 
-                        {
-                            res.status(200).send('Uspesno smanjen broj proizvoda magacina!')
-                        }
-                    )
-                    .catch((error) => 
-                        {
-                            res.status(500).send('Neuspesno' + error);
-                        }
-                    );
+                .run(`MATCH (n: Proizvod {naziv: $naziv})-[rel:U_MAGACINU]->(p: Prodavnica {grad: $grad, adresa: $adresa})
+                    SET rel.brojProizvoda = rel.brojProizvoda - ${brojProizvoda}
+                    RETURN rel`, {naziv, grad, adresa})
+                .then((result) => 
+                    {
+                        console.log(`Prosao dekrement po redu ${index}`);
+                    }
+                )
+                .catch((error) => 
+                    {
+                        res.status(500).send('Neuspesno' + error);
+                    }
+                );
+               })
             }
         )
+
+        res.status(200).send('Uspesno smanjen broj proizvoda magacina!')
     }
 )
 

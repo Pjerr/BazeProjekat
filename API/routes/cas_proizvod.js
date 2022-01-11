@@ -208,7 +208,7 @@ router.put('/updateProizvodOcena', authenticateJWTToken, updateOcenaNEO, (req,re
         ,
         {
             query:'INSERT INTO buyhub.proizvod_ocenanaziv (kategorija, tip, ocena, proizvodjac,naziv,cena,opis,popust,slika ) VALUES(?,?,?,?,?,?,?,?,?)',
-            params:[req.body.proizvod.kategorija,req.body.proizvod.tip,req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena,req.body.proizvodjac,req.body.proizvod.naziv,req.body.proizvod.cena, '', req.body.proizvod.popust,'']
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip,req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena,req.body.proizvodjac,req.body.proizvod.naziv,req.body.proizvod.cena, req.body.proizvod.opis, req.body.proizvod.popust,req.body.proizvod.slika]
         }
     ];
 

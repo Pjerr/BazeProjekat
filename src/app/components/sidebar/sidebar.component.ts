@@ -4,11 +4,7 @@ import { Store } from '@ngrx/store';
 import { Observable, of, Subscription } from 'rxjs';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import { AppState } from 'src/app/store/app.state';
-import * as ProductCategoryActions from '../../store/productCategories/productCategories.actions';
-import * as ProductCategorySelectors from '../../store/productCategories/productCategories.selectors';
 import * as CommonActions from '../../store/common/common.actions';
-import * as ProductActions from '../../store/products/product.actions';
-import { ProductsService } from 'src/app/services/products.service';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 @Component({
   selector: 'app-sidebar',

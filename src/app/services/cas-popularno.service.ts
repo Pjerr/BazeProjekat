@@ -14,6 +14,7 @@ export class CasPopularnoService {
     return this.httpClient.get(`${environment.apiURL}cas_popularno`);
   }
 
+  //TEST THIS
   addCassandraPopularni(proizvodi: ProductDto[]){
     return this.httpClient.post(`${environment.apiURL}cas_popularno/dodajNovePopularne`, proizvodi);
   }

@@ -4,9 +4,9 @@ import { AboutComponent } from './components/about/about.component';
 import { HomepageComponent } from './components/homepage/homepage.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
-import { ProductManagementComponent } from './components/product-management/product-management.component';
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
 import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
+import { SellingProductsComponent } from './components/worker/selling-products/selling-products.component';
 
 const routes: Routes = [
   {
@@ -30,8 +30,8 @@ const routes: Routes = [
     component: TransakcijeComponent
   },
   {
-    path: 'control-panel',
-    component: ProductManagementComponent
+    path: 'selling-products',
+    component: SellingProductsComponent
   },
   {
     path: 'order-products',

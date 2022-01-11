@@ -5,7 +5,7 @@ const neo4jSession = require('../neo4jConnection');
 const cassandraClient = require('../cassandraConnect');
 const router = express.Router();
 
-// const authenticateJWTToken = require('../auth').authenticateJWTToken;
+const authenticateJWTToken = require('../auth').authenticateJWTToken;
 
 //BITNO: Nema update ovde jer je naziv clustering key za ovu tabelu, ne moze da se menja
 
@@ -245,7 +245,7 @@ async function updateOcenaNEO(req,res,next){
 
 //salji mi i proslu vrednost popusta da bih mogao da nadjem u cassandri lepo sve
 // req.body.stariPopust
-router.put('/updateProizvodPopust', authenticateJWTToken, updatePopustNEO, (req,res)=>{
+router.put('/updateProizvodPopust', /*authenticateJWTToken,*/ updatePopustNEO, (req,res)=>{
 
     const batchQueries = [
         {

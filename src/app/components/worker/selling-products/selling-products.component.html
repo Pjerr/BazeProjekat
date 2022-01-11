@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="selling-products__product-categories">
+                <ul class="selling-products__product-categories">
+                    <li class="selling-products__category" *ngFor="let category of productCategories;  let i = index" (mouseenter)="toggleSubcategories(i)" (mouseleave)="hideSubcategories(i)">
+                        <h4 class="selling-products__category-name">{{category.kategorija}}</h4>
+                        <ul class="selling-products__subcategories" *ngIf="isSubcategoryShown[i]">
+                            <li (click)="loadProducts(category.kategorija, tip)" *ngFor="let tip of category.tipovi" class="selling-products__subcategory">
+                                {{tip}}
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    
+        <div class="col">
+            <div class="selling-products__products">
+                <div *ngIf="!products" class="selling-products__init-title">
+                    <h2>IZABERITE KATEGORIJU I TIP DA BI SUZILI PRETRAGU ZA KUPOVINU</h2>
+                </div>
+                <div class="selling-products__product" *ngFor="let product of products | async">
+                    <div class="product-thumb__wrapper card" *ngIf="product" (click)="addToSellList(product)">
+                        <img [src]="'http://localhost:5000/' + product.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
+                        <h5>{{product.naziv}}</h5>
+                        <p class="product-price">{{product.cena}} rsd</p>
+                        <small>{{product.ocena}}<i class="fas fa-star product-thumb__fa-star"></i></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col products-to-sell" *ngIf="productsForSelling">
+            <h3 *ngIf="productsForSelling.length > 0">Ovo je lista proizvoda za prodaju</h3>
+            <div class="product-to-sell" *ngFor="let product of productsForSelling">
+                <div class="product-details">
+                    <span class="font-weight-bold text-primary">{{product.naziv}} </span> <span>{{product.cena}} rsd</span>
+                    <button class="btn btn-danger" (click)="removeItemFromSellList(product)"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

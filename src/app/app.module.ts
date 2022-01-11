@@ -14,11 +14,7 @@ import { AboutComponent } from './components/about/about.component';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { environment } from 'src/environments/environment';
-import { productsReducer } from './store/products/products.reducer';
-import { productsCategoriesReducer } from './store/productCategories/productCategories.reducer';
 import { EffectsModule } from '@ngrx/effects';
-import { ProductsEffects } from './store/products/products.effects';
-import { ProductsCategoriesEffects } from './store/productCategories/productCategories.effects';
 import { commonReducer } from './store/common/common.reducer';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductThumbComponent } from './components/product-thumb/product-thumb.component';
@@ -34,8 +30,8 @@ import { ModalModule } from './components/_modal';
 import { SearchPipe } from './pipes/search.pipe';
 import { ToastrModule } from 'ngx-toastr';
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
-import { ProductManagementComponent } from './components/product-management/product-management.component';
 import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
+import { SellingProductsComponent } from './components/worker/selling-products/selling-products.component';
 
 @NgModule({
   declarations: [
@@ -50,8 +46,8 @@ import { OrderProductsComponent } from './components/worker/order-products/order
     ProductThumbComponent,
     SearchPipe,
     TransakcijeComponent,
-    ProductManagementComponent,
-    OrderProductsComponent
+    OrderProductsComponent,
+    SellingProductsComponent
   ],
   imports: [
     BrowserModule,
@@ -71,8 +67,6 @@ import { OrderProductsComponent } from './components/worker/order-products/order
     StoreModule.forRoot(
       {
         common: commonReducer,
-        products: productsReducer,
-        productCategories: productsCategoriesReducer,
         cart: cartReducer
       },
       {
@@ -83,7 +77,7 @@ import { OrderProductsComponent } from './components/worker/order-products/order
         },
       }
     ),
-    EffectsModule.forRoot([ProductsEffects, ProductsCategoriesEffects]),
+    EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   providers: [],

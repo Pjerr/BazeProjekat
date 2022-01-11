@@ -9,7 +9,7 @@ import { ProductDto } from '../models/product/productDto';
 export class CasTransakcijaService {
   constructor(private httpClient: HttpClient) {}
 
-  //QUESTION: da li je ovo number ili string
+  //QUESTION: da li je godina i kvartal number ili string?
   getAllTransakcije(godina: number, kvartal: number, mesec: string) {
     let params = new HttpParams();
     params = params.append('godina', godina);

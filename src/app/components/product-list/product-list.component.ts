@@ -7,8 +7,6 @@ import { Proizvodjac } from 'src/app/models/product/proizvodjac';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { CasProizvodjacService } from 'src/app/services/cas-proizvodjac.service';
 import { AppState } from 'src/app/store/app.state';
-import * as ProductActions from '../../store/products/product.actions';
-import * as ProductSelectors from '../../store/products/products.selectors';
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',

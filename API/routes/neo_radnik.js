@@ -32,14 +32,8 @@ router.get('/preuzmiRadnika', (req, res) =>
                 .run('MATCH (r:Radnik {username : $usernameParam}) RETURN r', {usernameParam : usernameRadnika})
                 .then((result) =>
                 {
-                    var nizRadnika = [];
-
-                    result.records.forEach(element => 
-                    {
-                        nizRadnika.push(element._fields[0].properties);
-                    });
-
-                    res.send(nizRadnika);
+                    var radnik = result.records[0]._fields[0].properties;
+                    res.send(radnik);
                 })
                 .catch((err) =>
                 {

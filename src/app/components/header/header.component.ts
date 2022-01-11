@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   totalPrice: number | undefined = undefined;
 
   //user definise da li je kupac ili prodavac ili admin
-  user: string = 'u';
+  user: string = 'p';
 
   ngOnInit(): void {
     this.sidebarStatus$ = this.store.select(

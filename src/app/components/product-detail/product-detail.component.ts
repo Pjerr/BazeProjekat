@@ -85,7 +85,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   //Would get more than a string, probably something like an object holding a comment and some user info
   loadAllComments(nazivProizvoda: string): void {
     this.comments =
-      this.neoProizvodService.getAllCommentsForProduct(nazivProizvoda);
+      this.neoProizvodService.getKomentariIOceneZaProizvod(nazivProizvoda);
   }
 
   //TODO: popravi ovu fju, testiraj comment i rating!
@@ -99,7 +99,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
         };
 
         this.commentSub = this.neoKorisnikService
-          .leaveComment(forSend.username, forSend.komentar, forSend.naziv)
+          .ostaviKomentar(forSend.username, forSend.komentar, forSend.naziv)
           .subscribe(() => {
             setTimeout(() => {
               if (this.product) {
@@ -130,7 +130,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
         .subscribe(
           () => {
             setTimeout(() => {
-              this.neoKorisnikService.rateProduct(
+              this.neoKorisnikService.oceniProizvod(
                 'sasa.novkovic',
                 rating,
                 naziv

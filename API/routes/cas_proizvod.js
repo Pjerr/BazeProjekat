@@ -243,6 +243,72 @@ async function updateOcenaNEO(req,res,next){
     
 }
 
+//salji mi i proslu vrednost popusta da bih mogao da nadjem u cassandri lepo sve
+// req.body.stariPopust
+router.put('/updateProizvodPopust', authenticateJWTToken, updatePopustNEO, (req,res)=>{
+
+    const batchQueries = [
+        {
+            query : 'UPDATE buyhub.proizvod_naziv SET popust = ? WHERE kategorija = ? and tip = ? and naziv = ?',
+            params: [req.body.popust, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.naziv]
+        }
+        ,
+        {
+            query : 'UPDATE buyhub.proizvod_cenanaziv SET popust = ? WHERE kategorija = ? and tip = ? and cena = ? and proizvodjac = ? and naziv = ?',
+            params: [req.body.popust, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.cena, req.body.proizvod.proizvodjac, req.body.proizvod.naziv]
+        }
+        ,
+        {
+            query : 'UPDATE buyhub.proizvod_proizvodjac SET popust = ? WHERE kategorija = ? and tip = ? and proizvodjac = ? and naziv = ?',
+            params: [req.body.popust, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.proizvodjac, req.body.proizvod.naziv]
+
+        }
+        ,
+        {
+            query: 'UPDATE buyhub.proizvod_ocenanaziv SET popust = ? WHERE kategorija = ? and tip = ? and ocena = ? and proizvodjac = ? and naziv = ? ',
+            params: [req.body.popust, req.body.proizvod.kategorija, req.body.proizvod.tip, req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena, req.body.proizvod.proizvodjac, req.body.proizvod.naziv]
+        },
+        {
+            query: 'DELETE FROM buyhub.proizvod_popust WHERE kategorija = ? and tip = ? and popust = ? and naziv = ? ',
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip, req.body.stariPopust , req.body.proizvod.naziv]
+        }
+        ,
+        {
+            query:'INSERT INTO buyhub.proizvod_popust(kategorija, tip, ocena, proizvodjac,naziv,cena,opis,popust,slika ) VALUES(?,?,?,?,?,?,?,?,?)',
+            params:[req.body.proizvod.kategorija,req.body.proizvod.tip,req.body.proizvod.zbirOcena / req.body.proizvod.brojOcena,req.body.proizvod.proizvodjac,req.body.proizvod.naziv,req.body.proizvod.cena, req.body.proizvod.opis, req.body.popust,req.body.proizvod.slika]
+        }
+    ];
+
+    cassandraClient.batch(batchQueries,
+                            {prepare : true},(err,result)=>{
+                                if(err){
+                                    console.log(req.body);
+                                    console.log('Unable to do whole update' + err.message);
+                                }
+                                else 
+                                {
+                                    console.log(req.body);
+                                    res.status(200).send(result);
+                                }
+                            })
+})
+
+
+async function updatePopustNEO(req,res,next)
+{
+    var popust = req.body.popust;
+    var naziv = req.body.naziv;
+    neo4jSession
+                .run(`MATCH (p:Proizvod{naziv:$naziv}) SET p.popust = ${popust} RETURN p`, {naziv})
+                .then((result)=>{
+                    req.body.proizvod = result.records[0]._fields[0].properties;
+                    next();
+                })
+                .catch((err)=>{
+                    res.status(500).send('NEO4J update POPUST ne radi' + err);
+                });
+}
+
 
 async function dodajProizvodNeo(req,res,next){
     

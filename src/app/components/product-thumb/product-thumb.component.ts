@@ -1,7 +1,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 
 @Component({
   selector: 'app-product-thumb',
@@ -10,7 +10,7 @@ import { ProductDto } from 'src/app/models/product/productDto';
 })
 export class ProductThumbComponent implements OnInit {
 
-  @Input() product: ProductDto | undefined = undefined;
+  @Input() product: ProductCass | undefined = undefined;
 
   constructor(private router: Router) { }
 

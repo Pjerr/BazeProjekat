@@ -1,4 +1,4 @@
-export interface ProductDto{
+export interface ProductCass{
     kategorija: string,
     tip: string,
     naziv: string,

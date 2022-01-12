@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ProductCatergory } from '../models/product/productCatergoryDto';
@@ -11,8 +11,8 @@ import { ProductCatergory } from '../models/product/productCatergoryDto';
 export class CasProizvodService {
   constructor(private httpClient: HttpClient) {}
 
-  getKategorijeITipove() {
-    return this.httpClient.get(
+  getKategorijeITipove(): Observable<any[]> {
+    return this.httpClient.get<any[]>(
       `${environment.apiURL}cas_proizvod/vratiKategorijeTipove`
     );
   }
@@ -24,7 +24,7 @@ export class CasProizvodService {
     proizvodjac: string,
     pretraga: string,
     ascending: number
-  ): Observable<ProductDto[]> {
+  ): Observable<ProductCass[]> {
     let params = new HttpParams();
     params = params.append('kategorija', kategorija);
     params = params.append('tip', tip);
@@ -32,13 +32,13 @@ export class CasProizvodService {
     params = params.append('naziv', naziv);
     params = params.append('ascending', ascending);
     params = params.append('pretraga', pretraga);
-    return this.httpClient.get<ProductDto[]>(
+    return this.httpClient.get<ProductCass[]>(
       `${environment.apiURL}cas_proizvod`,
       { params: params }
     );
   }
 
-  addCassandraProizvod(product: ProductDto) {
+  addCassandraProizvod(product: ProductCass) {
     const body = {
       kategorija: product.kategorija,
       tip: product.tip,
@@ -57,27 +57,23 @@ export class CasProizvodService {
   }
 
   deleteCassandraProizvod(
-    kategorija: string,
-    tip: string,
-    naziv: string,
-    proizvodjac: string,
-    ocena: number,
-    cena: number
+    product: ProductCass
   ) {
     let params = new HttpParams();
-    params = params.append('kategorija', kategorija);
-    params = params.append('tip', tip);
-    params = params.append('proizvodjac', proizvodjac);
-    params = params.append('naziv', naziv);
-    params = params.append('cena', cena);
-    params = params.append('ocena', ocena);
+    params = params.append('kategorija', product.kategorija);
+    params = params.append('tip', product.tip);
+    params = params.append('proizvodjac', product.proizvodjac);
+    params = params.append('naziv', product.naziv);
+    params = params.append('cena', product.cena);
+    params = params.append('ocena', product.ocena);
+    params = params.append('popust', product.popust);
     return this.httpClient.delete(
-      `${environment.apiURL}cas_proizvod/obrisatiIzSvihTabelaProizvoda`,
+      `${environment.apiURL}cas_proizvod/obrisiIzSvihTabelaProizvoda`,
       { params: params }
     );
   }
 
-  updateCassandraOcenaProizvoda(product: ProductDto, novaOcena: number) {
+  updateCassandraOcenaProizvoda(product: ProductCass, novaOcena: number) {
     const body = {
       naziv: product.naziv,
       novaOcena,
@@ -90,15 +86,19 @@ export class CasProizvodService {
     );
   }
 
-  //QUESTION: sta se sve salje?
-  updateCassandraPopustProizvoda(product: ProductDto, novPopust: number) {
+  updateCassandraPopustProizvoda(product: ProductCass, novPopust: number) {
     const body = {
+      kategrija: product.kategorija,
+      tip: product.tip,
+      proizvodjac: product.proizvodjac,
+      cena: product.cena,
+      ocena: product.ocena,
       naziv: product.naziv,
       stariPopust: product.popust,
       popust: novPopust,
     };
 
-    return this.httpClient.post(
+    return this.httpClient.put(
       `${environment.apiURL}cas_proizvod/updateProizvodPopust`,
       body
     );

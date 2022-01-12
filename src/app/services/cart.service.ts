@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProductCartCass } from '../models/cart/productCartCass';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +18,7 @@ export class CartService {
     this.cartProducts = [];
   }
 
-  addToCart(product: ProductDto) {
+  addToCart(product: ProductCass) {
     let index = this.cartProducts.findIndex((el: ProductCartCass) => {
       return el.product.naziv === product.naziv;
     });

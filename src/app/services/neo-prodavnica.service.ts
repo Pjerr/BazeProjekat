@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Prodavnica } from '../models/prodavnica';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 
 @Injectable({
   providedIn: 'root',
@@ -64,7 +64,7 @@ export class NeoProdavnicaService {
     );
   }
 
-  getStanjeMagacina(product: ProductDto, prodavnica: Prodavnica) {
+  getStanjeMagacina(product: ProductCass, prodavnica: Prodavnica) {
     let params = new HttpParams();
     params = params.append('grad', prodavnica.grad);
     params = params.append('adresa', prodavnica.adresa);
@@ -87,7 +87,7 @@ export class NeoProdavnicaService {
     );
   }
 
-  deleteMagacin(product: ProductDto, prodavnica: Prodavnica) {
+  deleteMagacin(product: ProductCass, prodavnica: Prodavnica) {
     let params = new HttpParams();
     params = params.append('grad', prodavnica.grad);
     params = params.append('adresa', prodavnica.adresa);
@@ -102,7 +102,7 @@ export class NeoProdavnicaService {
   }
 
   naruciProizvod(
-    product: ProductDto,
+    product: ProductCass,
     prodavnica: Prodavnica,
     brojProizvoda: number
   ) {

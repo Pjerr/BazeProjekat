@@ -1,5 +1,5 @@
-import { ProductDto } from "../product/productDto";
+import { ProductCass } from "../product/productCass";
 
 export interface Cart{
-    products: ProductDto[];
+    products: ProductCass[];
 }

@@ -1,6 +1,6 @@
-import { ProductDto } from '../product/productDto';
+import { ProductCass } from '../product/productCass';
 
 export interface ProductCartCass {
-  product: ProductDto;
+  product: ProductCass;
   brojProizvoda: number;
 }

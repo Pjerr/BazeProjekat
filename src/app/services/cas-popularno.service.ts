@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class CasPopularnoService {
   }
 
   //TEST THIS
-  addCassandraPopularni(proizvodi: ProductDto[]){
+  addCassandraPopularni(proizvodi: ProductCass[]){
     return this.httpClient.post(`${environment.apiURL}cas_popularno/dodajNovePopularne`, proizvodi);
   }
 

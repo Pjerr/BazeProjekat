@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, of, Subscription } from 'rxjs';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 import { Proizvodjac } from 'src/app/models/product/proizvodjac';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { CasProizvodjacService } from 'src/app/services/cas-proizvodjac.service';
@@ -35,7 +35,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
   queryParamMapSub: Subscription | undefined = undefined;
 
   //OBJECTS
-  products: Observable<ProductDto[]> = of([]);
+  products: Observable<ProductCass[]> = of([]);
   sviProizvodjaci: Observable<Proizvodjac[]> = of([]);
 
   //FILTERS

@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit {
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   //user definise da li je kupac ili prodavac ili admin
-  user: string = 'u';
+  user: string = 'a';
 
   ngOnInit(): void {
     this.sidebarStatus$ = this.store.select(

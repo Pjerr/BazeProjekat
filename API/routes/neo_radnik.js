@@ -259,5 +259,33 @@ router.delete('/otpustiRadnika', (req, res) =>
     }
 )
 
+router.get('/vratiSvePodatkeORadniku', (req,res)=>{
+
+
+    var username = req.query.username;
+
+    neo4jSession.readTransaction((tx)=>{
+        tx
+          .run("MATCH (r:Radnik{username:$username})-[rel:RADI_U]->(p:Prodavnica) RETURN r,rel,p",{username})
+          .then((result)=>{
+
+              var niz = [];
+
+              result.records[0]._fields.forEach(element => {
+                  niz.push(element.properties);
+              });
+
+              objekatZaSlanje = {...niz[0], ...niz[1], ...niz[2]};
+
+              res.status(200).send(objekatZaSlanje);
+          })
+          .catch((err)=>{
+              res.status(500).send('NECE GET SVE O RADNIIKU ' + err);
+          });
+    })
+    //MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica)
+    //MATCH (r:Radnik {username : $usernameParam}) RETURN r
+})
+
 
 module.exports = router;

@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 
 @Pipe({
   name: 'search'
 })
 export class SearchPipe implements PipeTransform {
 
-  transform(products: ProductDto[], naziv: string): ProductDto[] {
+  transform(products: ProductCass[], naziv: string): ProductCass[] {
     if (!products || !naziv) return products;
 
     return products.filter((product) =>

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { ProductDto } from '../models/product/productDto';
+import { ProductCass } from '../models/product/productCass';
 import { ProductNeo } from '../models/product/productNeo';
 import { UserKomentar } from '../models/user/userComment';
 
@@ -62,7 +62,7 @@ export class NeoProizvodService {
 
   //MOZDA :PRODUCTNEO umesto :PRODUCTDTO, proveri kada dodjes do admina
   //verovatno je svejedno!
-  getProdavnice(product: ProductDto) {
+  getProdavnice(product: ProductCass) {
     let params = new HttpParams();
     params = params.append('naziv', product.naziv);
     params = params.append('kategorija', product.kategorija);

@@ -5,7 +5,7 @@ import { Observable, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { ProductCartNeo } from 'src/app/models/cart/productCartNeo';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 import { ProductNeo } from 'src/app/models/product/productNeo';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service';

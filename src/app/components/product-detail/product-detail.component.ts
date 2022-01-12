@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, of, Subscription, take } from 'rxjs';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 import { AppState } from 'src/app/store/app.state';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { NeoProizvodService } from 'src/app/services/neo-proizvod.service';
@@ -39,7 +39,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   ratingSub: Subscription | undefined = undefined;
   commentSub: Subscription | undefined = undefined;
   //OBJECTS
-  product: ProductDto | undefined = undefined;
+  product: ProductCass | undefined = undefined;
   comments: Observable<UserKomentar[]> | undefined = undefined;
   //HELP VARS
   rated: boolean = false; //moramo da preuzmemo nekako od korisnika + da ogranicimo da mogu da ratuju samo oni koji su logovani

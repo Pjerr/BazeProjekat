@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of, Subscription } from 'rxjs';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
 import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
@@ -38,10 +38,10 @@ export class OrderProductsComponent implements OnInit {
   productCategories: ProductCatergory[] = [];
 
   //OBSV
-  products: Observable<ProductDto[]> | undefined = undefined;
+  products: Observable<ProductCass[]> | undefined = undefined;
 
   //HELP VARS
-  productForOrdering : ProductDto | undefined = undefined;
+  productForOrdering : ProductCass | undefined = undefined;
   tempCategories: any;
   isSubcategoryShown: boolean[] = [];
   numberToOrder = new FormControl(0);
@@ -93,7 +93,7 @@ export class OrderProductsComponent implements OnInit {
     );
   }
 
-  openModalForOrder(product: ProductDto, modalName: string) {
+  openModalForOrder(product: ProductCass, modalName: string) {
     this.productForOrdering = product;
     this.modalService.open(modalName);
   }

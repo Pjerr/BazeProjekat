@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, Subject, take, takeUntil } from 'rxjs';
 import { ProductCartCass } from 'src/app/models/cart/productCartCass';
-import { ProductDto } from 'src/app/models/product/productDto';
+import { ProductCass } from 'src/app/models/product/productCass';
 import { CartService } from 'src/app/services/cart.service';
 import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service';
 import { NeoKorisnikService } from 'src/app/services/neo-korisnik.service';
@@ -25,7 +25,7 @@ export class CartComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  cartProductsObv: Observable<ProductDto[]> = of([]);
+  cartProductsObv: Observable<ProductCass[]> = of([]);
   cartProducts: ProductCartCass[] | undefined = undefined;
   ukupnaCena: number = 0;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -93,7 +93,7 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeFromCart(productToRemove: ProductDto) {
+  removeFromCart(productToRemove: ProductCass) {
     if (this.cartProducts) {
       let index = this.cartProducts.findIndex(
         (element: ProductCartCass) =>

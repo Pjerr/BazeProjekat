@@ -1,6 +1,6 @@
 <div class="transakcije__wrapper container-fluid">
     <div class="row">
-        <div class="transakcije__pretraga col" *ngIf="prodavnica">
+        <div class="transakcije__pretraga col">
             <form [formGroup]="transakcijeForm" (ngSubmit)="pretraziTransakcije()" class="transakcije__pretraga-form">
                 <mat-form-field class="example-full-width" appearance="fill">
                     <mat-label>Godina</mat-label>
@@ -36,9 +36,9 @@
                 <!--ADMIN DEO-->
                 <mat-form-field appearance="fill" *ngIf="userRole==='a'">
                     <mat-label>Gradovi</mat-label>
-                    <mat-select formControlName="mesec" required>
-                    <mat-option *ngFor="let mesec of meseci" [value]="mesec">
-                        {{mesec}}
+                    <mat-select formControlName="grad" required (selectionChange)="izaberiGrad()">
+                    <mat-option *ngFor="let grad of gradovi" [value]="grad">
+                        {{grad}}
                     </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -46,9 +46,9 @@
                 <!--DINAMICKI SE UCITAVAJU ADRESE NAKON STO SE SELEKTUJE GRAD-->
                 <mat-form-field appearance="fill" *ngIf="userRole==='a'">
                     <mat-label>Adrese</mat-label>
-                    <mat-select formControlName="mesec" required>
-                    <mat-option *ngFor="let mesec of meseci" [value]="mesec">
-                        {{mesec}}
+                    <mat-select formControlName="adresa" required [disabled]="!gradIzabran">
+                    <mat-option *ngFor="let adresa of adrese" [value]="adresa">
+                        {{adresa}}
                     </mat-option>
                     </mat-select>
                 </mat-form-field>

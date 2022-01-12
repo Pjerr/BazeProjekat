@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of, Subscription, take } from 'rxjs';
+import { Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service';
 import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
@@ -21,33 +21,42 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.initGradAndAdresaProdavnice();
-    // this.prodavniceSub = this.neoProdavnicaService.getAllProdavnice().subscribe((prodavnice)=>{
-    //   console.log(prodavnice);
-    //   prodavnice.forEach(prodavnica => {
-    //     this.gradovi.push(prodavnica.grad);
-    //     this.adrese.push(prodavnica.adresa);
-    //   });
-    // })
+    if (this.userRole === 'p') this.initGradAndAdresaProdavniceRadnik();
+    else if (this.userRole === 'a') this.initSviGradoviIAdrese();
   }
 
   ngOnDestroy(): void {
-    this.prodavniceSub?.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   //SUBS
-  prodavniceSub: Subscription | undefined = undefined;
+  destroy$: Subject<boolean> = new Subject();
   //OBV
   prodavnice: Observable<Prodavnica[]> | undefined = undefined;
-  transakcije: any | undefined = undefined;  //NE ZNAM STA DOBIJAM TACNO, mozda mogu da napravim model za to i cak bi i trebalo
+  transakcije: any | undefined = undefined; //NE ZNAM STA DOBIJAM TACNO, mozda mogu da napravim model za to i cak bi i trebalo
   prodavnica: Prodavnica | undefined = undefined;
   //HELP VARS
-  meseci = ["JAN", "FEB", "MAR", "APR", "MAJ", "JUN", "JUL", "AVG", "SEP", "OKT", "NOV", "DEC"];
-  userRole = 'p';
-  gradRadnika : string = "";
-  adresaRadnika: string = "";
+  meseci = [
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAJ',
+    'JUN',
+    'JUL',
+    'AVG',
+    'SEP',
+    'OKT',
+    'NOV',
+    'DEC',
+  ];
+  userRole = 'a';
+  gradRadnika: string = '';
+  adresaRadnika: string = '';
 
   gradovi: string[] = [];
+  gradIzabran: boolean = false;
   adrese: string[] = [];
 
   transakcijeForm = new FormGroup({
@@ -58,13 +67,28 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     adresa: new FormControl(''),
   });
 
-  initGradAndAdresaProdavnice() {
+  initGradAndAdresaProdavniceRadnik() {
     this.neoRadnikService
-      .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic').pipe(take(1))
+      .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic')
+      .pipe(takeUntil(this.destroy$))
       .subscribe((prodavnica: Prodavnica) => {
         this.prodavnica = prodavnica;
         this.gradRadnika = this.prodavnica.grad;
-        this.adresaRadnika = this.prodavnica.adresa
+        this.adresaRadnika = this.prodavnica.adresa;
+      });
+  }
+
+  initSviGradoviIAdrese() {
+    this.neoProdavnicaService
+      .getAllProdavnice()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((prodavnice) => {
+        console.log(prodavnice);
+        prodavnice.forEach((prodavnica) => {
+          const nadjenGrad = this.gradovi.find((grad:string)=> grad === prodavnica.grad);
+          if(!nadjenGrad)
+            this.gradovi.push(prodavnica.grad);
+        });
       });
   }
 
@@ -74,23 +98,59 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     let godina = paramsForSearch.godina;
     let kvartal = paramsForSearch.kvartal;
     let mesec = paramsForSearch.mesec;
-    if(!this.prodavnica){
-      let grad = paramsForSearch.grad;
-      let adresa = paramsForSearch.adresa;
-    }
+    let grad = '';
+    let adresa = '';
 
-    if(this.userRole === "p"){
-      this.casTransakcijaService.getTransakcijeProdavnice(parseInt(godina), parseInt(kvartal), mesec, this.gradRadnika, this.adresaRadnika).subscribe((info)=>{
-        if(info.length > 0){
+    if (this.userRole === 'p') {
+      this.casTransakcijaService
+        .getTransakcijeProdavnice(
+          parseInt(godina),
+          parseInt(kvartal),
+          mesec,
+          this.gradRadnika,
+          this.adresaRadnika
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((info) => {
+          if (info.length > 0) {
+            this.transakcije = info;
+          } else
+            this.toastrService.info(
+              'Ne postoje transakcije u ovom periodu',
+              'Info'
+            );
+        });
+    } else {
+      grad = paramsForSearch.grad;
+      adresa = paramsForSearch.adresa;
+      this.casTransakcijaService
+      .getTransakcijeProdavnice(
+        parseInt(godina),
+        parseInt(kvartal),
+        mesec,
+        grad,
+        adresa
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((info) => {
+        if (info.length > 0) {
           this.transakcije = info;
-        }
-        else this.toastrService.info("Ne postoje transakcije u ovom periodu", "Info");
+        } else
+          this.toastrService.info(
+            'Ne postoje transakcije u ovom periodu',
+            'Info'
+          );
       });
-    } else{
-      //ADMIN DEO!
     }
+  }
 
-    //API CALL
-    //this.transakcije = this.casTransakcijaService.getTransakcijeProdavnice(godina, kvartal, mesec, grad, adresa);
+  izaberiGrad(){
+    const grad = this.transakcijeForm.value.grad;
+    this.neoProdavnicaService.getProdavniceUGradu(grad).pipe(takeUntil(this.destroy$)).subscribe((info)=>{
+      info.forEach(element => {
+        this.adrese.push(element.adresa);
+      });
+    })
+    this.gradIzabran = true;
   }
 }

@@ -1,0 +1,62 @@
+<jw-modal id="updateRadnikModal">
+    <form #form='ngForm' (ngSubmit)="izmeniRadnika(selectedRadnik)" *ngIf="selectedRadnik">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Nova pozicija</mat-label>
+            <input matInput [formControl]="novaPoz">
+        </mat-form-field>
+        <button class="btn btn-success" type="submit"><i class="fas fa-check"></i></button>
+    </form>
+    <button class="btn btn-danger" (click)="closeModal('updateRadnikModal')"><i class="fas fa-backspace"></i></button>
+</jw-modal>
+
+<jw-modal id="dodajRadnikModal">
+    <form [formGroup]="addForm" (ngSubmit)="dodajRadnika()">
+        <div class="form-inputs">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username" required>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Password</mat-label>
+                <input matInput formControlName="password" required minlength="5">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Ime</mat-label>
+                <input matInput formControlName="ime" required>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Prezime</mat-label>
+                <input matInput formControlName="prezime" required>
+            </mat-form-field>
+        </div>
+        <button class="btn btn-success" type="submit" [disabled]="!addForm.valid"><i class="fas fa-check"></i></button>
+    </form>
+    <button class="btn btn-danger" (click)="closeModal('dodajRadnikModal')"><i class="fas fa-backspace"></i></button>
+</jw-modal>
+
+<div class="container">
+    <div class="row">
+            <div class="radnik card" *ngFor="let radnik of radnici | async">
+                <div class="radnik-wrapper">
+                    <div class="radnik-opste">
+                        <p class="radnik-ime">{{radnik.ime}} {{radnik.prezime}}</p>
+                        <small>Username: {{radnik.username}}</small>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <div class="col">
+                        <button class="btn btn-primary" (click)="zaposliRadnika(radnik.username)"><i class="fas fa-handshake"></i></button>
+                        <button class="btn btn-warning" (click)="openModal('updateRadnikModal', radnik)"><i class="fas fa-user-edit"></i></button>
+                        <button class="btn btn-danger" (click)="otpustiRadnika(radnik)"><i class="fas fa-user-minus"></i></button>
+                        <button class="btn btn-danger" (click)="izbrisiRadnika(radnik.username)"><i class="fas fa-user-times"></i></button>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div>
+        <button class="btn btn-primary" (click)="openModal('dodajRadnikModal')"><i class="fas fa-user-plus"></i></button>
+    </div>
+</div>

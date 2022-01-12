@@ -25,7 +25,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { cartReducer } from './store/cart/cart.reducer';
 import { ModalModule } from './components/_modal';
 import { SearchPipe } from './pipes/search.pipe';
 import { ToastrModule } from 'ngx-toastr';
@@ -33,6 +32,10 @@ import { TransakcijeComponent } from './components/transakcije/transakcije.compo
 import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
 import { SellingProductsComponent } from './components/worker/selling-products/selling-products.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { CartComponent } from './components/cart/cart.component';
+import { AProizvodiComponent } from './components/admin/a-proizvodi/a-proizvodi.component';
+import { ARadniciComponent } from './components/admin/a-radnici/a-radnici.component';
+import { AProdavniceComponent } from './components/admin/a-prodavnice/a-prodavnice.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +51,11 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     SearchPipe,
     TransakcijeComponent,
     OrderProductsComponent,
-    SellingProductsComponent
+    SellingProductsComponent,
+    CartComponent,
+    AProizvodiComponent,
+    ARadniciComponent,
+    AProdavniceComponent
   ],
   imports: [
     BrowserModule,
@@ -68,8 +75,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ReactiveFormsModule,
     StoreModule.forRoot(
       {
-        common: commonReducer,
-        cart: cartReducer
+        common: commonReducer
       },
       {
         metaReducers: !environment.production ? [] : [],

@@ -10,14 +10,13 @@ import { Store } from '@ngrx/store';
 import { Observable, of, Subscription, take } from 'rxjs';
 import { ProductDto } from 'src/app/models/product/productDto';
 import { AppState } from 'src/app/store/app.state';
-import * as CartActions from '../../store/cart/cart.actions';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { NeoProizvodService } from 'src/app/services/neo-proizvod.service';
 import { NeoKorisnikService } from 'src/app/services/neo-korisnik.service';
-import * as CartSelectors from '../../store/cart/cart.selectors';
 import { UserKomentar } from 'src/app/models/user/userComment';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { CartService } from 'src/app/services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -31,6 +30,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
     private casProizvodService: CasProizvodService,
     private neoProizvodService: NeoProizvodService,
     private neoKorisnikService: NeoKorisnikService,
+    private cartSerivce: CartService,
     private toastrService: ToastrService
   ) {}
 
@@ -148,20 +148,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   //TODO: implement cart, make an api call every time someone adds or removes something from cart?
   //QUESTION: how to make cart not remove items once you step out of the page?
   addToCart(): void {
-    console.log('ADDING!');
     if (this.product) {
-      this.store.dispatch(CartActions.addToCart({ product: this.product }));
+      // this.store.dispatch(CartActions.addToCart({ product: this.product }));
+      this.cartSerivce.addToCart(this.product);
       this.toastrService.success('Dodat proizvod u korpu', 'Success');
-    }
-  }
-
-  removeFromCart(): void {
-    console.log('REMOVING!');
-    if (this.product) {
-      this.store.dispatch(
-        CartActions.removeFromCart({ product: this.product })
-      );
-      this.toastrService.info('Izbacen proizvod iz korpe', 'Info');
     }
   }
 }

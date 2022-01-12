@@ -1,11 +1,12 @@
 <div class="product-detail__wrapper" *ngIf="product">
     <div class="product_detail__product-card card">
         <div class="product-detail__general">
-            <p>{{product.naziv}}</p>
+            <h4 class="product-detail__product-title">{{product.naziv}}</h4>
             <img [src]="'http://localhost:5000/' + product.slika" alt="picture" class="img img-fluid rounded mx-auto d-block product-detail__image">
             <div class="product-detail__rating_and_price">
+                <h4>Cena: {{product.cena}} rsd</h4>
                 <div class="product-detail__rating-box">
-                    <h3 *ngIf="!clickedOnRate">Ocena: {{product.ocena}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="openRating()"></i></h3>
+                    <h5 *ngIf="!clickedOnRate">Ocena: {{product.ocena}}<i class="fas fa-star product-detail__fa-star" data-bs-toggle="tooltip" data-bs-placement="top" title="Rate this product" (click)="openRating()"></i></h5>
                     <div class="rating" *ngIf="clickedOnRate">
                         <p>Izaberite zeljenu ocenu</p>
                         <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(5)"></i>
@@ -15,16 +16,14 @@
                         <i class="fas fa-star product-detail__fa-star-for-rating" (click)="rateProduct(1)"></i>
                     </div>
                 </div>
-                <h3>Cena: {{product.cena}} rsd</h3>
                 <button class="btn btn-success" (click)="addToCart()">Dodaj u korpu</button>
-                <button class="btn btn-danger" (click)="removeFromCart()">Izbaci iz korpe</button>
             </div>
         </div>
         <hr>
         <div class="product-detail__description">
-            <h4>Opis:</h4>
+            <h5>Opis:</h5>
             <p>{{product.opis}}</p>
-            <h4>Proizvodjac:</h4>
+            <h5>Proizvodjac:</h5>
             <p>{{product.proizvodjac}}</p>
         </div>
     </div>
@@ -32,7 +31,7 @@
         <form #commentForm='ngForm' (submit)="leaveComment()">
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Ostavite komentar</mat-label>
-                <textarea matInput placeholder="Ex. Ovo je super proizvod!" [formControl]="userComment"></textarea>
+                <textarea matInput placeholder="Ex. Ovo je super proizvod!" [formControl]="userComment" [maxlength]="100"></textarea>
             </mat-form-field>
             <button class="btn btn-success mx-3" type="submit"><i class="fas fa-share"></i></button>
         </form>
@@ -44,9 +43,9 @@
                     <div class="user d-flex flex-row align-items-center">
                         <span><small class="font-weight-bold text-primary">{{comment.username}} </small> 
                         <small class="font-weight-bold">{{comment.komentar}}</small>
-                        <small>{{comment.ocena}} <i class="fas fa-star product-detail__fa-star"></i></small>
-                        </span> 
-                    </div>
+                    </span> 
+                </div>
+                <small class="mx-2"><i class="fas fa-star product-detail__fa-star"></i>{{comment.ocena}}</small>
                 </div>
             </div>
         </div>

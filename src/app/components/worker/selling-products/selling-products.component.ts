@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription, take } from 'rxjs';
+import { Observable, Subject, Subscription, take, takeUntil } from 'rxjs';
+import { ProductCartNeo } from 'src/app/models/cart/productCartNeo';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import { ProductDto } from 'src/app/models/product/productDto';
@@ -11,10 +12,6 @@ import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service'
 import { NeoKorisnikService } from 'src/app/services/neo-korisnik.service';
 import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
 import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
-interface ProductToSell {
-  product: ProductNeo;
-  brojProizvoda: number;
-}
 @Component({
   selector: 'app-selling-products',
   templateUrl: './selling-products.component.html',
@@ -31,24 +28,23 @@ export class SellingProductsComponent implements OnInit {
   ) {}
 
   ngOnDestroy(): void {
-    if (this.productCategoriesSub) this.productCategoriesSub.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   ngOnInit(): void {
-    //this.getAllCategories();
-    this.initSubcategoryShown();
     this.initGradAndAdresaProdavnice();
   }
 
   //SUBS
-  productCategoriesSub: Subscription | undefined = undefined;
   productCategories: ProductCatergory[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   //OBSV
   products: any;
 
   //HELP VARS
-  productsForSelling: ProductToSell[] | undefined = undefined;
+  productsForSelling: ProductCartNeo[] | undefined = undefined;
   numberOfProductsForSelling: number[] | undefined = undefined;
 
   tempCategories: any;
@@ -56,32 +52,10 @@ export class SellingProductsComponent implements OnInit {
   numberToOrder = new FormControl(0);
   prodavnica: Prodavnica | undefined = undefined;
 
-  getAllCategories(): void {
-    this.productCategoriesSub = this.casProizvodService
-      .getKategorijeITipove()
-      .subscribe((data) => {
-        this.tempCategories = data;
-        this.tempCategories.forEach((element: any) => {
-          const foundElement = this.productCategories.find(
-            (category: ProductCatergory) =>
-              category.kategorija === element.kategorija
-          );
-          if (foundElement) foundElement.tipovi.push(element.tip);
-          else {
-            let noviElement: ProductCatergory = {
-              kategorija: element.kategorija,
-              tipovi: [element.tip],
-            };
-            this.productCategories.push(noviElement);
-          }
-        });
-      });
-  }
-
   initGradAndAdresaProdavnice() {
     this.productsForSelling = undefined;
     this.neoRadnikService
-      .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic')
+      .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic').pipe(takeUntil(this.destroy$))
       .subscribe((prodavnica: Prodavnica) => {
         this.prodavnica = prodavnica;
         setTimeout(() => {
@@ -90,26 +64,10 @@ export class SellingProductsComponent implements OnInit {
       });
   }
 
-  initSubcategoryShown(): void {
-    this.productCategories.forEach(() => {
-      this.isSubcategoryShown.push(false);
-    });
-  }
-
-  toggleSubcategories(index: number) {
-    this.isSubcategoryShown[index] = !this.isSubcategoryShown[index];
-  }
-
-  hideSubcategories(index: number) {
-    this.isSubcategoryShown[index] = false;
-  }
-
   loadProducts(prodavnica: Prodavnica) {
-    let nizProizvoda: any;
     this.neoProdavnicaService
-      .getSveProizvodeProdavnice(prodavnica)
+      .getSveProizvodeProdavnice(prodavnica).pipe(takeUntil(this.destroy$))
       .subscribe((niz) => {
-        //this.products = niz.map((element:any)=> (element.proizvod));
         niz.sort((el1, el2) => {
           if (el1.proizvod.naziv > el2.proizvod.naziv) return 1;
           else if (el1.proizvod.naziv < el2.proizvod.naziv) {
@@ -120,14 +78,13 @@ export class SellingProductsComponent implements OnInit {
       });
   }
 
-  //QUESTION: da li ovde mogu samo niz imena da pravim ili treba ceo objekat?
   addToSellList(product: ProductNeo) {
     if (this.productsForSelling) {
-      let index = this.productsForSelling.findIndex((el: ProductToSell) => {
+      let index = this.productsForSelling.findIndex((el: ProductCartNeo) => {
         return el.product.naziv === product.naziv;
       });
       if (index == -1) {
-        let productToPush: ProductToSell = {
+        let productToPush: ProductCartNeo = {
           product: product,
           brojProizvoda: 1,
         };
@@ -137,7 +94,7 @@ export class SellingProductsComponent implements OnInit {
       }
     } else {
       this.productsForSelling = [];
-      let productToPush: ProductToSell = {
+      let productToPush: ProductCartNeo = {
         product: product,
         brojProizvoda: 1,
       };
@@ -148,7 +105,7 @@ export class SellingProductsComponent implements OnInit {
   reduceNumberFromSellList(productToRemove: ProductNeo) {
     if (this.productsForSelling) {
       const index = this.productsForSelling.findIndex(
-        (el: ProductToSell) => el.product.naziv === productToRemove.naziv
+        (el: ProductCartNeo) => el.product.naziv === productToRemove.naziv
       );
       if (this.productsForSelling[index].brojProizvoda == 1) {
         this.productsForSelling.splice(index, 1);
@@ -161,30 +118,27 @@ export class SellingProductsComponent implements OnInit {
     }
   }
 
-  //TODO
+  //TODO ako imas vremena - brises celu stavku bez obzira koliko ima kopija
   removeItemFromSellList() {}
 
   kupiProizvode() {
-    console.log(this.productsForSelling);
-    console.log(this.prodavnica);
-    //API CALL - I TO DOSTA KOMADA OVDE
     let nizNaziva: string[] = [];
     let nizBrojaProizvoda: number[] = [];
     let ukupnaCena: number = 0;
     if (this.productsForSelling) {
-      nizNaziva = this.productsForSelling.map((element: ProductToSell) => {
+      nizNaziva = this.productsForSelling.map((element: ProductCartNeo) => {
         return element.product.naziv;
       });
 
       nizBrojaProizvoda = this.productsForSelling.map(
-        (element: ProductToSell) => {
+        (element: ProductCartNeo) => {
           return element.brojProizvoda;
         }
       );
 
       ukupnaCena = this.productsForSelling
         .map(
-          (element: ProductToSell) =>
+          (element: ProductCartNeo) =>
             (element.product.cena -
               (element.product.cena * element.product.popust) / 100) *
             element.brojProizvoda
@@ -204,9 +158,8 @@ export class SellingProductsComponent implements OnInit {
           ukupnaCena,
           'bogdan.petrov'
         )
-        .pipe(take(1))
+        .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
-          this.toastrService.success('CASS DOBAR', 'Success');
           setTimeout(() => {
             if (this.prodavnica)
               this.neoProdavnicaService
@@ -216,17 +169,20 @@ export class SellingProductsComponent implements OnInit {
                   nizNaziva,
                   nizBrojaProizvoda
                 )
-                .pipe(take(1))
+                .pipe(takeUntil(this.destroy$))
                 .subscribe(() => {
-                  this.toastrService.success('NEO_DEKREMENT DOBAR', 'Sucess');
+                  this.toastrService.success('Uspesno ste kupili proizvode', 'Sucess');
                   //OPCIONO, AKO IMA USERNAME
+                  // if(username != ""){
+                    //tu ide treci api call
+                  // }
                   setTimeout(() => {
                     this.neoKorisnikService
                       .kupiProizvode('bogdan.petrov', nizNaziva)
-                      .pipe(take(1))
+                      .pipe(takeUntil(this.destroy$))
                       .subscribe(() => {
                         this.toastrService.success(
-                          'NEO_KORISNIK uspesno',
+                          'Uspesno ste zabelezili kupovinu sa nalogom',
                           'Success'
                         );
                         this.initGradAndAdresaProdavnice();

@@ -12,11 +12,16 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
+    margin-top: 15px;
 }
 
+.product-detail__product-title{
+    text-align: center;
+    color: blue;
+}
 .product-detail__image{
-    width: 600px;
-    height: 450px;
+    width: 500px;
+    height: 350px;
 }
 
 .product-detail__comments{

@@ -115,7 +115,6 @@ router.post('/kupiProizvode', /*authenticateJWTToken,*/ (req,res)=>{
 
     var username = req.body.username;
     var nizProizvoda = req.body.nizProizvoda;
-    var ukupnaCena = req.body.ukupnaCena;
 
     let currentDate = new Date();
     let datum = `${currentDate.getDate()} / ${currentDate.getMonth()+1} / ${currentDate.getFullYear()} `;

@@ -68,7 +68,7 @@ async function getPopularneProizvodeNeo(req,res,next){
         tx
         .run('MATCH (p:Proizvod) \
         WHERE p.brojKupovina >= 10 \
-        and p.brojOcena <> 0 \
+        and p.brojOcena > 4 \
         and p.zbirOcena / (p.brojOcena) > 3\
          RETURN p LIMIT 5')
          .then((result)=>{

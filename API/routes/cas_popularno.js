@@ -67,10 +67,9 @@ async function getPopularneProizvodeNeo(req,res,next){
     neo4jSession.readTransaction((tx)=>{
         tx
         .run('MATCH (p:Proizvod) \
-        WHERE p.brojKupovina = 10 \
-        and p.brojOcena = 5 \
+        WHERE p.brojKupovina >= 10 \
         and p.brojOcena <> 0 \
-        and p.zbirOcena / (p.brojOcena) >=2\
+        and p.zbirOcena / (p.brojOcena) > 3\
          RETURN p LIMIT 5')
          .then((result)=>{
             var argsArray = [];

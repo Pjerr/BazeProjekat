@@ -69,7 +69,8 @@ async function getPopularneProizvodeNeo(req,res,next){
         .run('MATCH (p:Proizvod) \
         WHERE p.brojKupovina = 10 \
         and p.brojOcena = 5 \
-        and p.zbirOcena / (p.brojOcena+1) >=2\
+        and p.brojOcena <> 0 \
+        and p.zbirOcena / (p.brojOcena) >=2\
          RETURN p LIMIT 5')
          .then((result)=>{
             var argsArray = [];
@@ -77,7 +78,7 @@ async function getPopularneProizvodeNeo(req,res,next){
             result.records.forEach(element=>{
                 
                 var elemUnpacked = element._fields[0].properties;
-                argsArray.push('POPULARNO', elemUnpacked.zbirOcena/(elemUnpacked.brojOcena+1),
+                argsArray.push('POPULARNO', elemUnpacked.zbirOcena/(elemUnpacked.brojOcena),
                 elemUnpacked.cena,elemUnpacked.kategorija,elemUnpacked.naziv,
                 elemUnpacked.tip, elemUnpacked.slika);
             });

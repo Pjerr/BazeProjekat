@@ -11,7 +11,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { AboutComponent } from './components/about/about.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { environment } from 'src/environments/environment';
 import { EffectsModule } from '@ngrx/effects';
@@ -36,6 +36,8 @@ import { CartComponent } from './components/cart/cart.component';
 import { AProizvodiComponent } from './components/admin/a-proizvodi/a-proizvodi.component';
 import { ARadniciComponent } from './components/admin/a-radnici/a-radnici.component';
 import { AProdavniceComponent } from './components/admin/a-prodavnice/a-prodavnice.component';
+import { JwtHelperService, JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { TokenInterceptorService } from './services/token-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -88,7 +90,15 @@ import { AProdavniceComponent } from './components/admin/a-prodavnice/a-prodavni
     EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
-  providers: [],
+  providers: [
+    {provide:JWT_OPTIONS, useValue:JWT_OPTIONS},
+    JwtHelperService,
+    {
+      provide:HTTP_INTERCEPTORS,
+      useClass:TokenInterceptorService,
+      multi:true
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

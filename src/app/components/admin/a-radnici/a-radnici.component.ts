@@ -3,14 +3,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, take, takeUntil } from 'rxjs';
 import { Radnik } from 'src/app/models/user/radnik';
+import { RadnikIRadnoMesto } from 'src/app/models/user/radnikIRadnoMesto';
 import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
 import { ModalService } from '../../_modal';
-
-interface CeoRadnik {
-  radnik: Radnik;
-  zaposlenje: any;
-  prodavnica: any;
-}
 
 @Component({
   selector: 'app-a-radnici',
@@ -25,14 +20,13 @@ export class ARadniciComponent implements OnInit, OnDestroy {
   ) {}
 
   destroy$: Subject<boolean> = new Subject<boolean>();
-  radnici: Observable<Radnik[]> | undefined = undefined;
-  selectedRadnik: Radnik | undefined = undefined;
+  radnici: Observable<RadnikIRadnoMesto[]> | undefined = undefined;
+  selectedRadnik: RadnikIRadnoMesto | undefined = undefined;
 
   novaPoz: FormControl = new FormControl('');
 
   zaposliForm: FormGroup = new FormGroup({
-    username: new FormControl(''),
-    grad : new FormControl(''),
+    grad: new FormControl(''),
     adresa: new FormControl(''),
     pozicija: new FormControl(''),
     datum: new FormControl(''),
@@ -40,7 +34,7 @@ export class ARadniciComponent implements OnInit, OnDestroy {
 
   addForm: FormGroup = new FormGroup({
     username: new FormControl(''),
-    ime : new FormControl(''),
+    ime: new FormControl(''),
     prezime: new FormControl(''),
     password: new FormControl(''),
   });
@@ -50,33 +44,81 @@ export class ARadniciComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  ngOnInit(): void {
-    this.loadRadnici();
+  ngOnInit(): void {}
+
+  loadZaposljeniRadnici() {
+    this.radnici = this.neoRadnikService.getSviRadniciSavInfoZaposljeni();
   }
 
-  loadRadnici() {
-    this.radnici = this.neoRadnikService.getAllRadnici();
+  loadNezaposljeniRadnici() {
+    this.radnici = this.neoRadnikService.getSviRadniciSavInfoNezaposljeni();
   }
 
   //OVO SE OKIDA SAMO AKO NEMA PRODAVNICU U KOJOJ RADI
   zaposliRadnika(username: string) {
+      const grad = this.zaposliForm.value.grad;
+      const adresa =  this.zaposliForm.value.adresa;
+      const datum = this.zaposliForm.value.datum;
+      const pozicija = this.zaposliForm.value.pozicija;
 
+    this.neoRadnikService.zaposliRadnika(username, grad, adresa, pozicija, datum).pipe(takeUntil(this.destroy$)).subscribe({
+      complete: ()=>{
+        this.toastrService.success("Uspeno ste zaposlili radnika", "Success");
+        this.modalService.close("zaposliRadnikModal");
+        this.loadZaposljeniRadnici();
+      },
+      error: ()=>{
+        this.toastrService.error("Greska pri zaposljavanju", "Error");
+      }
+    });
   }
 
-  izmeniRadnika(radnik: Radnik) {
-    //NA KRAJU API POZIVA RESETUJ FORM CONTROL
-    //TREBA MI I GRAD I ADRESA DA BIH MOGAO DA PROMENIM POZ
-    this.novaPoz.setValue('');
+  izmeniRadnika(sviPodaciORadniku: RadnikIRadnoMesto) {
+    this.neoRadnikService
+      .updatePozicijaRadnika(sviPodaciORadniku, this.novaPoz.value)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        complete: () => {
+          this.toastrService.success('Uspesno izmenjen radnik', 'Success');
+          this.modalService.close('updateRadnikModal');
+          this.novaPoz.setValue('');
+          this.loadZaposljeniRadnici();
+        },
+        error: () => {
+          this.toastrService.error(
+            'Doslo je do greske prilikom izmene',
+            'Error'
+          );
+        },
+      });
   }
 
-  otpustiRadnika(radnik: Radnik) {
-    //TREBA MI GRAD I ADRESA DA BIH OTPUSTIO RADNIKA
+  otpustiRadnika(radnik: RadnikIRadnoMesto) {
+    this.neoRadnikService.fireRadnik(radnik).pipe(takeUntil(this.destroy$)).subscribe({
+      complete: () => {
+        this.toastrService.success("Uspesno otpusten radnik!", "Success");
+        this.loadZaposljeniRadnici();
+      },
+      error: () =>{
+        this.toastrService.error("Doslo je do greske prilikom otpustanja", "Error");
+      }
+    })
   }
 
-  izbrisiRadnika(username: string) {
-    // this.neoRadnikService.deleteRadnik(username).subscribe(() => {
-    //   this.toastrService.success('Uspesno obrisan radnik iz baze', 'Success');
-    // });
+  izbrisiRadnika(radnik: RadnikIRadnoMesto) {
+    this.neoRadnikService.deleteRadnik(radnik.username).subscribe({
+      complete: () => {
+        this.toastrService.success('Uspesno obrisan radnik iz baze', 'Success');
+        if(radnik.pozicija === "") this.loadNezaposljeniRadnici();
+        else this.loadZaposljeniRadnici();
+      },
+      error: () => {
+        this.toastrService.error(
+          'Doslo je do greske prilikom brisanja',
+          'Error'
+        );
+      },
+    });
   }
 
   dodajRadnika() {
@@ -84,20 +126,37 @@ export class ARadniciComponent implements OnInit, OnDestroy {
       ime: this.addForm.value.ime,
       prezime: this.addForm.value.prezime,
       username: this.addForm.value.username,
-      password: this.addForm.value.password
-    }
+      password: this.addForm.value.password,
+    };
     this.addForm.reset();
-    console.log(radnikToAdd);
-    // this.neoRadnikService.addRadnik(radnikToAdd).pipe(takeUntil(this.destroy$)).subscribe(()=>{
-    //   this.toastrService.success("Uspesno dodat radnik", "Success");
-    //   this.modalService.close('dodajRadnikModal');
-    // })
+    this.neoRadnikService
+      .addRadnik(radnikToAdd)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toastrService.success('Uspesno dodat radnik', 'Success');
+        },
+        complete: () => {
+          setTimeout(() => {
+            this.loadNezaposljeniRadnici();
+            this.modalService.close('dodajRadnikModal');
+          });
+        },
+        error: () => {
+          this.toastrService.error(
+            'Doslo je do greske prilikom kreiranja',
+            'Error'
+          );
+          this.modalService.close('dodajRadnikModal');
+        },
+      });
   }
 
-  openModal(modalID: string, radnik?: Radnik) {
-    if(radnik)
+  openModal(modalID: string, radnik?: RadnikIRadnoMesto) {
+    if (radnik) {
       this.selectedRadnik = radnik;
-    this.modalService.open(modalID);
+      this.modalService.open(modalID);
+    } else this.modalService.open(modalID);
   }
 
   closeModal(modalID: string) {

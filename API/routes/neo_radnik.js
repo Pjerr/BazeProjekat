@@ -246,7 +246,7 @@ router.delete('/otpustiRadnika', (req, res) =>
                         DELETE rel`, {username, grad, adresa})
                     .then((result) => 
                         {
-                            res.status(200).send('Uspesno otpusten radnik!')
+                            res.status(200).send(result)
                         }
                     )
                     .catch((error) => 
@@ -285,6 +285,62 @@ router.get('/vratiSvePodatkeORadniku', (req,res)=>{
     })
     //MATCH (r: Radnik {username: $username})-[rel:RADI_U]->(p: Prodavnica)
     //MATCH (r:Radnik {username : $usernameParam}) RETURN r
+})
+
+router.get('/getSviRadniciSavInfoZaposleni',(req,res)=>{
+
+    neo4jSession.readTransaction((tx)=>{
+        tx
+          .run('MATCH (r:Radnik)-[rel:RADI_U]->(p:Prodavnica) RETURN r,rel,p')
+          .then((result)=>{
+              var nizRezultata = [];
+              result.records.forEach((element)=>{
+                  var pomocniNiz = [];
+                  var fields = element._fields;
+                  fields.forEach((field)=>{
+                    pomocniNiz.push(field.properties);
+                  })
+                  nizRezultata.push({...pomocniNiz[0], ...pomocniNiz[1], ...pomocniNiz[2]});
+              })
+
+              res.status(200).send(nizRezultata);
+          })
+          .catch((err)=>{
+              res.status(500).send('NECE GET ZA SVE RADNIKE ' + err);
+          });
+    })
+})
+
+router.get('/getSviRadniciSavInfoNezaposleni',(req,res)=>{
+
+    neo4jSession.readTransaction((tx)=>{
+        tx
+          .run('MATCH (r:Radnik) WHERE NOT (r)-[:RADI_U]->(:Prodavnica) RETURN r')
+          .then((result)=>{
+              var nizRezultata = [];
+              result.records.forEach((element)=>{
+                  var ceoRadnik = {
+                    username: element._fields[0].properties.username,
+                    prezime: element._fields[0].properties.prezime,
+                    ime: element._fields[0].properties.ime,
+                    password: element._fields[0].properties.password,
+                    pozicija: "",
+                    datumZaposlenja: "",
+                    telefon: "",
+                    adresa: "",
+                    radnoVreme: "",
+                    email: "",
+                    grad: ""
+                  }
+                  nizRezultata.push(ceoRadnik);
+              })
+
+              res.status(200).send(nizRezultata);
+          })
+          .catch((err)=>{
+              res.status(500).send('NECE GET ZA SVE RADNIKE ' + err);
+          });
+    })
 })
 
 

@@ -11,6 +11,7 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { TransakcijeComponent } from './components/transakcije/transakcije.component';
 import { OrderProductsComponent } from './components/worker/order-products/order-products.component';
 import { SellingProductsComponent } from './components/worker/selling-products/selling-products.component';
+import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [
   {
@@ -19,43 +20,84 @@ const routes: Routes = [
   },
   {
     path: 'products',
-    component: ProductListComponent
+    component: ProductListComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"u"
+    // }
   },
   {
     path: 'product-detail',
-    component: ProductDetailComponent
+    component: ProductDetailComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"u"
+    // }
   },
   {
     path: 'about',
-    component: AboutComponent
+    component: AboutComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"u"
+    // }
   },
+  //TODO: fix this route guard, na kraju krajeva ne mora da postoji za ovo guard
   {
     path: 'transakcije',
-    component: TransakcijeComponent
+    component: TransakcijeComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role: 'a'
+    // }
   },
   {
     path: 'selling-products',
-    component: SellingProductsComponent
+    component: SellingProductsComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"p"
+    // }
   },
   {
     path: 'order-products',
-    component: OrderProductsComponent
+    component: OrderProductsComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"p"
+    // }
   },
   {
     path: 'cart',
-    component: CartComponent
+    component: CartComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"u"
+    // }
   },
   {
     path: 'a-prodavnice',
-    component: AProdavniceComponent
+    component: AProdavniceComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"a"
+    // }
   },
   {
     path: 'a-radnici',
-    component: ARadniciComponent
+    component: ARadniciComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"a"
+    // }
   },
   {
     path: 'a-proizvodi',
-    component: AProizvodiComponent
+    component: AProizvodiComponent,
+    // canActivate: [AuthGuard],
+    // data: {
+    //   role:"a"
+    // }
   }
 ];
 

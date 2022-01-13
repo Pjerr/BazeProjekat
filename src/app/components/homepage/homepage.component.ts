@@ -10,6 +10,10 @@ export class HomepageComponent implements OnInit {
 
   constructor(private modalService: ModalService) { }
 
+  userLoggedIn: boolean = false;
+  //SAMO AKO je role u prikazujemo for you dugme
+  userRole: string = "u";
+
   ngOnInit(): void {
   }
 

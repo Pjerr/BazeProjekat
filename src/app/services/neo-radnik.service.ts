@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Prodavnica } from '../models/prodavnica';
 import { Radnik } from '../models/user/radnik';
+import { RadnikIRadnoMesto } from '../models/user/radnikIRadnoMesto';
 @Injectable({
   providedIn: 'root',
 })
@@ -52,11 +53,11 @@ export class NeoRadnikService {
     );
   }
 
-  fireRadnik(username: string, grad:string, adresa: string){
+  fireRadnik(radnik: RadnikIRadnoMesto) {
     let params = new HttpParams();
-    params = params.append("username", username);
-    params = params.append("grad", grad);
-    params = params.append("adresa", adresa);
+    params = params.append('username', radnik.username);
+    params = params.append('grad', radnik.grad);
+    params = params.append('adresa', radnik.adresa);
 
     return this.httpClient.delete(
       `${environment.apiURL}neo_radnik/otpustiRadnika`,
@@ -64,7 +65,6 @@ export class NeoRadnikService {
         params: params,
       }
     );
-
   }
 
   getZaposlenje(username: string, grad: string, adresa: string) {
@@ -109,26 +109,49 @@ export class NeoRadnikService {
 
     return this.httpClient.post(
       `${environment.apiURL}neo_radnik/zaposliRadnika`,
-      body
+      body, {responseType: 'text'}
     );
   }
 
   updatePozicijaRadnika(
-    username: string,
-    grad: string,
-    adresa: string,
-    pozicija: string,
+    radnikIRadnoMesto: RadnikIRadnoMesto,
+    novaPozicija: string
   ) {
     const body = {
-      username,
-      grad,
-      adresa,
-      pozicija,
+      username: radnikIRadnoMesto.username,
+      grad: radnikIRadnoMesto.grad,
+      adresa: radnikIRadnoMesto.adresa,
+      pozicija: novaPozicija,
     };
 
     return this.httpClient.put(
       `${environment.apiURL}neo_radnik/izmeniPoziciju`,
-      body
+      body,
+      { responseType: 'text' }
+    );
+  }
+
+  getSviPodaciORadnikuIProdavnici(
+    username: string
+  ): Observable<RadnikIRadnoMesto> {
+    let params = new HttpParams();
+    params = params.append('username', username);
+
+    return this.httpClient.get<RadnikIRadnoMesto>(
+      `${environment.apiURL}neo_radnik/vratiSvePodatkeORadniku`,
+      { params: params }
+    );
+  }
+
+  getSviRadniciSavInfoZaposljeni(): Observable<RadnikIRadnoMesto[]> {
+    return this.httpClient.get<RadnikIRadnoMesto[]>(
+      `${environment.apiURL}neo_radnik/getSviRadniciSavInfoZaposleni`
+    );
+  }
+
+  getSviRadniciSavInfoNezaposljeni(): Observable<RadnikIRadnoMesto[]> {
+    return this.httpClient.get<RadnikIRadnoMesto[]>(
+      `${environment.apiURL}neo_radnik/getSviRadniciSavInfoNezaposleni`
     );
   }
 }

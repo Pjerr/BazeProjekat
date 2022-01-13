@@ -1,7 +1,6 @@
 @import "../../../assets/colors.scss";
 
 .product-detail__wrapper{
-    margin: 40px 0px 20px 0px;
     display: flex;
 }
 .product_detail__product-card{
@@ -20,7 +19,7 @@
     color: blue;
 }
 .product-detail__image{
-    width: 500px;
+    width: 350px;
     height: 350px;
 }
 
@@ -68,4 +67,8 @@
     box-shadow: 5px 6px 6px 2px #e9ecef;
     border-radius: 4px;
     margin-bottom: 10px;
+}
+
+.btn{
+    width: 50px;
 }

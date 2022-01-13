@@ -11,6 +11,13 @@ export class CartService {
   cartProducts: ProductCartCass[] = [];
 
   getCartProducts(): ProductCartCass[] {
+    
+    if (this.cartProducts.length === 0) {
+      const fromLocalStorage = localStorage.getItem('products');
+      if (fromLocalStorage != null) {
+        this.cartProducts = JSON.parse(fromLocalStorage);
+      }
+    }
     return this.cartProducts;
   }
 

@@ -1,12 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { Observable, of, Subscription } from 'rxjs';
 import { ProductCass } from 'src/app/models/product/productCass';
 import { Proizvodjac } from 'src/app/models/product/proizvodjac';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { CasProizvodjacService } from 'src/app/services/cas-proizvodjac.service';
-import { AppState } from 'src/app/store/app.state';
 @Component({
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',

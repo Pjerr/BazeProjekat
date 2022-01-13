@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, of, Subscription, take } from 'rxjs';
+import { Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { ProductCass } from 'src/app/models/product/productCass';
 import { AppState } from 'src/app/store/app.state';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
@@ -34,10 +34,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
     private toastrService: ToastrService
   ) {}
 
-  //SUBS
-  productSub: Subscription | undefined = undefined;
-  ratingSub: Subscription | undefined = undefined;
-  commentSub: Subscription | undefined = undefined;
+  destroy$: Subject<boolean> = new Subject();
   //OBJECTS
   product: ProductCass | undefined = undefined;
   comments: Observable<UserKomentar[]> | undefined = undefined;
@@ -67,15 +64,14 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.productSub?.unsubscribe();
-    this.commentSub?.unsubscribe();
-    this.ratingSub?.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   loadProduct(kategorija: string, tip: string, naziv: string) {
-    this.productSub = this.casProizvodService
+    this.casProizvodService
       .getCassandraProizvodi(kategorija, tip, naziv, '', 'Naziv', 0)
-      .pipe(take(1))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((product) => {
         this.product = product[0];
         this.loadAllComments(this.product.naziv);
@@ -93,28 +89,40 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
     if (this.userComment.value != '') {
       if (this.product) {
         const forSend = {
-          username: 'marko.njusic',
+          username: 'sasa.novkovic',
           komentar: this.userComment.value,
           naziv: this.product.naziv,
         };
 
-        this.commentSub = this.neoKorisnikService
+        this.neoKorisnikService
           .ostaviKomentar(forSend.username, forSend.komentar, forSend.naziv)
-          .subscribe(() => {
-            setTimeout(() => {
-              if (this.product) {
-                console.log('loading new comments!');
-                this.loadAllComments(this.product.naziv);
-              }
-            });
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            complete: () => {
+              setTimeout(() => {
+                if (this.product) {
+                  this.loadAllComments(this.product.naziv);
+                }
+              });
+            },
+            error: () => {
+              this.toastrService.error(
+                'Doslo je do greske prilikom komentarisanja',
+                'Error'
+              );
+            },
           });
       }
     } else {
       //toster service
-      console.log('POPUNI POLJE!');
+      this.toastrService.error(
+        'Molimo vas popunite polje pre nego sto komentarisete',
+        'Error'
+      );
     }
   }
 
+  //imamo iz baze bese proveru da je nesto ocenjeno?
   openRating(): void {
     if (!this.rated) {
       this.clickedOnRate = true;
@@ -128,28 +136,42 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
       const kategorija = this.product.kategorija;
       const tip = this.product.tip;
 
-      //TODO UNSUBSCRIBE
-      this.casProizvodService.updateCassandraOcenaProizvoda(this.product, rating).subscribe(()=>{
-        setTimeout(()=>{
-          this.neoKorisnikService.oceniProizvod("marko.njusic", rating, naziv).subscribe(()=>{
-            this.loadProduct(kategorija, tip, naziv);
-            this.toastrService.success("Oba api dobra", "Success");
-          });
-        })
-      });
+      //da li treba setTimeout ako imamo ovo complete?
+      this.casProizvodService
+        .updateCassandraOcenaProizvoda(this.product, rating)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          complete: () => {
+            this.neoKorisnikService
+              .oceniProizvod('sasa.novkovic', rating, naziv)
+              .pipe(takeUntil(this.destroy$))
+              .subscribe({
+                complete: () => {
+                  this.loadProduct(kategorija, tip, naziv);
+                  this.toastrService.success(
+                    'Oba api dobra za rate',
+                    'Success'
+                  );
+                },
+                error: () => {
+                  this.toastrService.error(
+                    'Doslo je do greske prilikom ocenjivanja',
+                    'Error'
+                  );
+                },
+              });
+          },
+        });
 
       this.rated = true;
       this.clickedOnRate = false;
     } else {
-      this.toastrService.error("WHOPS", "Error");
+      this.toastrService.error('WHOPS', 'Error');
     }
   }
 
-  //TODO: implement cart, make an api call every time someone adds or removes something from cart?
-  //QUESTION: how to make cart not remove items once you step out of the page?
   addToCart(): void {
     if (this.product) {
-      // this.store.dispatch(CartActions.addToCart({ product: this.product }));
       this.cartSerivce.addToCart(this.product);
       this.toastrService.success('Dodat proizvod u korpu', 'Success');
     }

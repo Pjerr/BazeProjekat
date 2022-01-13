@@ -19,6 +19,7 @@ import { commonReducer } from './store/common/common.reducer';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductThumbComponent } from './components/product-thumb/product-thumb.component';
 
+import { MatRadioModule } from '@angular/material/radio';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -57,7 +58,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     CartComponent,
     AProizvodiComponent,
     ARadniciComponent,
-    AProdavniceComponent
+    AProdavniceComponent,
   ],
   imports: [
     BrowserModule,
@@ -75,9 +76,10 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     ReactiveFormsModule,
+    MatRadioModule,
     StoreModule.forRoot(
       {
-        common: commonReducer
+        common: commonReducer,
       },
       {
         metaReducers: !environment.production ? [] : [],
@@ -91,13 +93,13 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   providers: [
-    {provide:JWT_OPTIONS, useValue:JWT_OPTIONS},
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
     JwtHelperService,
     {
-      provide:HTTP_INTERCEPTORS,
-      useClass:TokenInterceptorService,
-      multi:true
-    }
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true,
+    },
   ],
   bootstrap: [AppComponent],
 })

@@ -72,24 +72,28 @@ export class CartComponent implements OnInit, OnDestroy {
           '',
           nizNazivaCass,
           this.ukupnaCena,
-          'bogdan.petrov'
+          'sasa.novkovic'
         )
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          setTimeout(() => {
+        .subscribe({
+          complete: ()=>{
             this.neoKorisnikService
-              .kupiProizvode('bogdan.petrov', nizNazivaNeo)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe(() => {
+            .kupiProizvode('sasa.novkovic', nizNazivaNeo)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              complete: () =>{
                 this.toastrService.success(
                   'Uspesno kupljeni proizvodi!',
                   'Success'
                 );
                 localStorage.removeItem('products');
                 this.cartService.clearCartProducts();
-              });
-          });
-        });
+                this.loadCartProducts();
+              }
+            });
+          }
+        }
+        );
     }
   }
 

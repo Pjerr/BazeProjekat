@@ -1,49 +1,53 @@
 <jw-modal id="login">
     <h3>Login</h3>
-    <form class="form">
-        <mat-form-field class="example-full-width" appearance="fill">
-            <mat-label>Email</mat-label>
-            <input matInput>
-          </mat-form-field>
-        <mat-form-field class="example-full-width" appearance="fill">
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form">
+            <mat-form-field class="example-full-width" appearance="fill">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="username">
+            </mat-form-field>
+            <mat-form-field class="example-full-width" appearance="fill">
 
-        <mat-label>Password</mat-label>
-        <input matInput type="password">
-        </mat-form-field>
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password">
+            </mat-form-field>
+        </div>
+        <button class="btn btn-success my-2" type="submit">Login</button>
     </form>
-    <button class="btn btn-success me-2" (click)="login()">Login</button>
     <button class="btn btn-danger" (click)="closeModalForLogin()">Close</button>
 </jw-modal>
 
 <jw-modal id="register">
     <h3>Register user</h3>
-    <form class="form">
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="form">
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Email</mat-label>
-            <input matInput>
+            <input matInput formControlName="email">
           </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Password</mat-label>
-            <input matInput type="password">
+            <input matInput type="password" formControlName="password" minlength="5">
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Telefon</mat-label>
-            <input matInput>
+            <input matInput formControlName="telefon">
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Ime</mat-label>
-            <input matInput>
+            <input matInput formControlName="ime">
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Prezime</mat-label>
-            <input matInput>
+            <input matInput formControlName="prezime">
         </mat-form-field>
+    </div>
+        <button class="btn btn-success my-2" type="submit">Register</button>
     </form>
-    <button class="btn btn-success me-2" (click)="register()">Register</button>
     <button class="btn btn-danger" (click)="closeModalForRegister()">Close</button>
 </jw-modal>
 

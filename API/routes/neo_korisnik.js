@@ -11,6 +11,62 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 
+router.post('/loginKorisnik', (req,res)=>{
+    var username = req.body.username;
+
+    var pass = req.body.pass
+
+    var prefix = username.split('.')[0];
+
+    var tip = '';
+
+    var queryString = '';
+
+    if(prefix === 'radnik')
+    {
+        tip = 'R';
+        queryString = 'MATCH (r:Radnik{username:$username}) RETURN r'
+    }
+    else
+    {
+        if(prefix === 'admin')
+            tip = 'A';
+        else
+        {
+            tip = 'K';
+            queryString = 'MATCH (k:Korisnik{username:$username}) RETURN k';
+        }
+    }
+
+
+    if(tip != 'A')
+    {
+    neo4jSession
+                .run(queryString, {username})
+                .then((result)=>{
+                    if(result.records._fields[0].properties.password === pass)
+                    {
+                        var token = generateJWTToken(username);
+                        res.status(200).send({token,tip});
+                    }
+                    else
+                    {
+                        res.status(400).send('Username ili password nisu dobri, probajte ponovo');
+                    }
+                })
+                .catch((err)=>{
+                    res.status(500).send('ERROR KOD LOGIN ' + err);
+                });
+
+    }
+    else
+    {
+        var token = generateJWTToken('admin');
+        res.status(200).send({token,tip})
+    }
+})
+
+
 router.get('/',(req,res)=>{
     
     

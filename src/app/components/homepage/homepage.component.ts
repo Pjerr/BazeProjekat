@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ModalService } from '../_modal';
 
 @Component({
@@ -13,6 +14,19 @@ export class HomepageComponent implements OnInit {
   userLoggedIn: boolean = false;
   //SAMO AKO je role u prikazujemo for you dugme
   userRole: string = "u";
+
+  loginForm = new FormGroup({
+    username: new FormControl(''),
+    password: new FormControl('')
+  })
+
+  registerForm = new FormGroup({
+    email: new FormControl(''),
+    ime: new FormControl(''),
+    prezime: new FormControl(''),
+    telefon: new FormControl(''),
+    password: new FormControl('')
+  })
 
   ngOnInit(): void {
   }
@@ -35,10 +49,12 @@ export class HomepageComponent implements OnInit {
 
   login(){
     console.log("should login!");
+    console.log(this.loginForm.value);
   }
 
   register(){
     console.log("should register!");
+    console.log(this.registerForm.value);
   }
 
 }

@@ -23,7 +23,7 @@ const routes: Routes = [
     component: ProductListComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"u"
+    //   role:"K"
     // }
   },
   {
@@ -31,7 +31,7 @@ const routes: Routes = [
     component: ProductDetailComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"u"
+    //   role:"K"
     // }
   },
   {
@@ -39,7 +39,7 @@ const routes: Routes = [
     component: AboutComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"u"
+    //   role:"K"
     // }
   },
   //TODO: fix this route guard, na kraju krajeva ne mora da postoji za ovo guard
@@ -48,7 +48,7 @@ const routes: Routes = [
     component: TransakcijeComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role: 'a'
+    //   role: 'A'
     // }
   },
   {
@@ -56,7 +56,7 @@ const routes: Routes = [
     component: SellingProductsComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"p"
+    //   role:"R"
     // }
   },
   {
@@ -64,7 +64,7 @@ const routes: Routes = [
     component: OrderProductsComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"p"
+    //   role:"R"
     // }
   },
   {
@@ -72,7 +72,7 @@ const routes: Routes = [
     component: CartComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"u"
+    //   role:"K"
     // }
   },
   {
@@ -80,7 +80,7 @@ const routes: Routes = [
     component: AProdavniceComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"a"
+    //   role:"A"
     // }
   },
   {
@@ -88,7 +88,7 @@ const routes: Routes = [
     component: ARadniciComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"a"
+    //   role:"A"
     // }
   },
   {
@@ -96,7 +96,7 @@ const routes: Routes = [
     component: AProizvodiComponent,
     // canActivate: [AuthGuard],
     // data: {
-    //   role:"a"
+    //   role:"A"
     // }
   }
 ];

@@ -155,7 +155,7 @@ function vratiKomentarisaoRelaciju(req, res, next)
                 RETURN EXISTS((:Proizvod{naziv : $naziv})<-[:KOMENTARISAO]-(:Korisnik{username : $username }))`, {naziv, username})
           .then((result) =>
           {
-              req.body.postoji = result;
+              req.body.postojiKomentar = result;
 
               next();
           })
@@ -166,13 +166,14 @@ function vratiKomentarisaoRelaciju(req, res, next)
 }
 
 //router.post('/komentarisiProizvod', authenticateJWTToken, (req,res)=>{
-router.post('/komentarisiProizvod', vratiKomentarisaoRelaciju, (req,res) =>
+router.post('/komentarisiProizvod', [vratiOcenioRelaciju, vratiKomentarisaoRelaciju], (req,res) =>
 {    
     var username = req.body.username;
     var komentar = req.body.komentar;
     var naziv = req.body.naziv;
 
-    if(req.body.postoji.records[0]._fields[0] == false)
+    //Ako postoji ocena, a ne postoji komentar, moze da se dozvoli komentarisanje
+    if(req.body.postoji.records[0]._fields[0] == true && req.body.postojiKomentar.records[0]._fields[0] == false)
     {
         neo4jSession.writeTransaction((tx) =>
         {
@@ -191,7 +192,10 @@ router.post('/komentarisiProizvod', vratiKomentarisaoRelaciju, (req,res) =>
     }
     else
     {
-        res.status(400).send('Vec ste komentarisali proizvod!')
+        if(req.body.postoji.records[0]._fields[0] == false)
+            res.status(400).send('Potrebno je oceniti proizvod pre komentarisanja!');
+
+        res.status(400).send('Vec ste komentarisali proizvod!');
     }
 })
 
@@ -237,7 +241,7 @@ function vratiOcenioRelaciju(req, res, next)
           });
 }
 
-//RELACIJA OCENI:
+//RELACIJA OCENI BEZ CONSTRAINTA DA JE POTREBNO DA JE KUPIO PROIZVOD PRE NEGO STO GA OCENJUJE:
 //router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
 router.post('/oceniProizvod', vratiOcenioRelaciju, (req, res) => 
 {    
@@ -267,6 +271,64 @@ router.post('/oceniProizvod', vratiOcenioRelaciju, (req, res) =>
         res.status(400).send('Vec ste ocenili proizvod!')
     }
 })
+
+//CONSTRAINT DA NE MOZE DA OCENI PROIZVOD AKO GA NEKAD NIJE KUPIO:
+/*
+//RELACIJA OCENI:
+//router.post('/oceniProizvod', authenticateJWTToken, (req, res) =>
+router.post('/oceniProizvod', [vratiKupioRelaciju, vratiOcenioRelaciju], (req, res) => 
+{    
+    var username = req.body.username;
+    var ocena = req.body.ocena;
+    var naziv = req.body.naziv;
+
+    //Ako je kupio a nije ocenio, onda treba da se dozvoli ocenjivanje
+    if(req.body.kupio.records[0]._fields[0] == true && req.body.postoji.records[0]._fields[0] == false)
+    {
+        neo4jSession.writeTransaction((tx) =>
+        {
+            tx
+            .run(`MATCH (p:Proizvod{naziv : $naziv}), (k:Korisnik{username : $username })
+                CREATE (p)<-[rel:OCENIO {ocena : ${ocena}}]-(k)`, {naziv,username})
+            .then((result) =>
+            {
+                res.status(200).send('Ocenjivanje uspesno')
+            })
+            .catch((err) =>
+            {
+                res.status(500).send('NEUSPENO' + err);
+            });
+        })
+    }
+    else
+    {
+        if(req.body.kupio.records[0]._fields[0] == false)
+            res.status(400).send('Proizvod mozete oceniti ako ste ga nekada kupili!')
+
+        res.status(400).send('Vec ste ocenili proizvod!')
+    }
+})
+
+function vratiKupioRelaciju(req, res, next) 
+{
+    var username = req.body.username;
+    var naziv = req.body.naziv;
+
+    neo4jSession
+          .run(`
+                RETURN EXISTS((:Proizvod{naziv : $naziv})<-[:KUPIO]-(:Korisnik{username : $username }))`, {naziv, username})
+          .then((result) =>
+          {
+              req.body.kupio = result;
+
+              next();
+          })
+          .catch((err) =>
+          {
+              res.status(500).send('NEUSPENO' + err);
+          });
+}
+*/
 
 //TODO PREPOURKA PROIZVODA
 

@@ -35,10 +35,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   queryParamMapSub: Subscription | undefined = undefined;
 
   //OBJECTS
-  products: ProductCass[] | undefined = undefined
+  products: ProductCass[] | undefined = undefined;
   sviProizvodjaci: Observable<Proizvodjac[]> = of([]);
-
-  testProducts: ProductCass[] = []
 
   //FILTERS
   searchValue: string  = "";
@@ -81,7 +79,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   loadProductsWithFilters(proizvodjaci: string[], filter: string) {
     const kategorija = this.route.snapshot.queryParamMap.get('kategorija');
     const tip = this.route.snapshot.queryParamMap.get('tip');
-    console.log(kategorija, tip, proizvodjaci, filter);
     //sortiranje po proizvodjacima
     if (kategorija != null && tip != null) {
       if (proizvodjaci[0] != null)
@@ -126,7 +123,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   filterByProizvodjaci(checked: boolean, manufacturer: string) {
     if (checked) {
       this.proizvodjaciToFilterBy.push(manufacturer);
-      console.log(this.proizvodjaciToFilterBy);
       this.loadProductsWithFilters(
         this.proizvodjaciToFilterBy,
         this.selectedFilterOption
@@ -136,7 +132,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
         this.proizvodjaciToFilterBy.indexOf(manufacturer),
         1
       );
-      console.log(this.proizvodjaciToFilterBy);
       this.loadProductsWithFilters(
         this.proizvodjaciToFilterBy,
         this.selectedFilterOption
@@ -145,8 +140,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   filterBySelectedOption() {
-    console.log('Should filter by this!');
-    console.log(this.selectedFilterOption);
     this.loadProductsWithFilters(
       this.proizvodjaciToFilterBy,
       this.selectedFilterOption

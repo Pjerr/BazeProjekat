@@ -39,14 +39,22 @@
   text-align: center;
 }
 
-.card {
+.card{
+  width: 250px;
+  height: 400px;
+}
+.card, .selling-card {
   border: none;
   box-shadow: 5px 6px 6px 2px #e9ecef;
   border-radius: 4px;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.selling-card{
   width: 250px;
-  height: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
 .product-price {
@@ -66,6 +74,7 @@
 .products-to-sell {
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
 }
 
 .input {

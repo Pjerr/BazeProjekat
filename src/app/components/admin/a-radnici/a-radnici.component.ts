@@ -2,8 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subject, take, takeUntil } from 'rxjs';
+import { Prodavnica } from 'src/app/models/prodavnica';
 import { Radnik } from 'src/app/models/user/radnik';
 import { RadnikIRadnoMesto } from 'src/app/models/user/radnikIRadnoMesto';
+import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
 import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
 import { ModalService } from '../../_modal';
 
@@ -16,6 +18,7 @@ export class ARadniciComponent implements OnInit, OnDestroy {
   constructor(
     private neoRadnikService: NeoRadnikService,
     private modalService: ModalService,
+    private neoProdavnicaService: NeoProdavnicaService,
     private toastrService: ToastrService
   ) {}
 
@@ -24,6 +27,10 @@ export class ARadniciComponent implements OnInit, OnDestroy {
   selectedRadnik: RadnikIRadnoMesto | undefined = undefined;
 
   novaPoz: FormControl = new FormControl('');
+
+  gradovi: string[] = [];
+  gradIzabran: boolean = false;
+  adrese: string[] = [];
 
   zaposliForm: FormGroup = new FormGroup({
     grad: new FormControl(''),
@@ -44,7 +51,9 @@ export class ARadniciComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initSviGradoviIAdrese();
+  }
 
   loadZaposljeniRadnici() {
     this.radnici = this.neoRadnikService.getSviRadniciSavInfoZaposljeni();
@@ -52,6 +61,22 @@ export class ARadniciComponent implements OnInit, OnDestroy {
 
   loadNezaposljeniRadnici() {
     this.radnici = this.neoRadnikService.getSviRadniciSavInfoNezaposljeni();
+  }
+
+  initSviGradoviIAdrese() {
+    this.neoProdavnicaService
+      .getAllProdavnice()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (prodavnice: Prodavnica[]) => {
+          prodavnice.forEach((prodavnica) => {
+            const nadjenGrad = this.gradovi.find(
+              (grad: string) => grad === prodavnica.grad
+            );
+            if (!nadjenGrad) this.gradovi.push(prodavnica.grad);
+          });
+        },
+      });
   }
 
   //OVO SE OKIDA SAMO AKO NEMA PRODAVNICU U KOJOJ RADI
@@ -161,5 +186,21 @@ export class ARadniciComponent implements OnInit, OnDestroy {
 
   closeModal(modalID: string) {
     this.modalService.close(modalID);
+  }
+
+  izaberiGrad(){
+    const grad = this.zaposliForm.value.grad;
+    this.adrese = [];
+    this.neoProdavnicaService
+      .getProdavniceUGradu(grad)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (info) => {
+          info.forEach((element) => {
+            this.adrese.push(element.adresa);
+          });
+        },
+      });
+    this.gradIzabran = true;
   }
 }

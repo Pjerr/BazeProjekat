@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, Subscription, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ProductCartNeo } from 'src/app/models/cart/productCartNeo';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
-import { ProductCass } from 'src/app/models/product/productCass';
 import { ProductNeo } from 'src/app/models/product/productNeo';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
 import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service';
@@ -49,6 +48,8 @@ export class SellingProductsComponent implements OnInit {
   numberToOrder = new FormControl(0);
   prodavnica: Prodavnica | undefined = undefined;
 
+  searchValue: string = "";
+
   initGradAndAdresaProdavnice() {
     const username = localStorage.getItem('username');
     this.productsForSelling = undefined;
@@ -58,7 +59,6 @@ export class SellingProductsComponent implements OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (prodavnica: Prodavnica) => {
-            console.log(prodavnica);
             this.prodavnica = prodavnica;
           },
           complete: () => {

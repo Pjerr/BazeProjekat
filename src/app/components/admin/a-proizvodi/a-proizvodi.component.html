@@ -53,9 +53,9 @@
 </jw-modal>
 
 
-<div class="container fluid">
+<div class="container-fluid">
     <div class="row">
-        <div [ngClass]="{'col' : !products, 'col-4': products}">
+        <div [ngClass]="{'col' : !products, 'col-2': products}">
             <div class="order-products__product-categories">
                 <ul class="order-products__product-categories">
                     <li class="order-products__category" *ngFor="let category of productCategories;  let i = index" (mouseenter)="toggleSubcategories(i)" (mouseleave)="hideSubcategories(i)">
@@ -78,6 +78,7 @@
                         <img [src]="'http://localhost:5000/' + product.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
                         <h5>{{product.naziv}}</h5>
                         <p class="product-price">{{product.cena}} rsd</p>
+                        <small><b>Popust: {{product.popust}}%</b></small>
                         <small>{{product.ocena.toFixed(2)}}<i class="fas fa-star product-thumb__fa-star"></i></small>
                         <div class="buttons">
                             <button class="btn btn-warning mx-2 my-2" (click)="openModal('izmeniProizvodModal', product)"><i class="fas fa-edit"></i></button>

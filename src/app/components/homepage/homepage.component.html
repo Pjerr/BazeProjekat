@@ -23,30 +23,30 @@
         <div class="form">
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Email</mat-label>
-            <input matInput formControlName="email">
+            <input matInput formControlName="email" required>
           </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" minlength="5">
+            <input matInput type="password" formControlName="password" minlength="5" required>
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Telefon</mat-label>
-            <input matInput formControlName="telefon">
+            <input matInput formControlName="telefon" required>
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Ime</mat-label>
-            <input matInput formControlName="ime">
+            <input matInput formControlName="ime" required>
         </mat-form-field>
 
         <mat-form-field class="example-full-width" appearance="fill">
             <mat-label>Prezime</mat-label>
-            <input matInput formControlName="prezime">
+            <input matInput formControlName="prezime" required>
         </mat-form-field>
     </div>
-        <button class="btn btn-success my-2" type="submit">Register</button>
+        <button class="btn btn-success my-2" type="submit" [disabled]="!registerForm.valid">Register</button>
     </form>
     <button class="btn btn-danger" (click)="closeModalForRegister()">Close</button>
 </jw-modal>

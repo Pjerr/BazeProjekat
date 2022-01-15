@@ -35,7 +35,7 @@ const routes: Routes = [
     component: TransakcijeComponent,
     canActivate: [AuthGuard],
     data: {
-      role: ['A', 'R']
+      role: ['A', 'R', 'K']
     }
   },
   {

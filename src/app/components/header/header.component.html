@@ -16,6 +16,9 @@
               <li class="nav-item">
                 <a class="nav-link" (click)="toggleCategories()" routerLinkActive="active">Proizvodi</a>
               </li>
+              <li class="nav-item" *ngIf="username !== ''">
+                <a class="nav-link" routerLink="/transakcije" routerLinkActive="active">Moje transakcije</a>
+              </li>
         </ul>
         <ul class="navbar-nav float-end mx-3">
           <li class="nav-item cart">

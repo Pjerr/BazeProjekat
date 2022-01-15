@@ -3,5 +3,6 @@ export interface UserRegisterDto{
     ime: string,
     prezime: string,
     telefon: string,
-    password: string
+    password: string,
+    username: string
 }

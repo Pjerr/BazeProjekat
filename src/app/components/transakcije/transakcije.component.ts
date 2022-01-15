@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { CasTransakcijaService } from 'src/app/services/cas-transakcija.service';
+import { NeoKorisnikService } from 'src/app/services/neo-korisnik.service';
 import { NeoProdavnicaService } from 'src/app/services/neo-prodavnica.service';
 import { NeoRadnikService } from 'src/app/services/neo-radnik.service';
 
@@ -17,7 +19,9 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     private toastrService: ToastrService,
     private neoProdavnicaService: NeoProdavnicaService,
     private casTransakcijaService: CasTransakcijaService,
-    private neoRadnikService: NeoRadnikService
+    private neoRadnikService: NeoRadnikService,
+    private neoKorisnikService: NeoKorisnikService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -27,6 +31,7 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     }
     if (this.userRole === 'R') this.initGradAndAdresaProdavniceRadnik();
     else if (this.userRole === 'A') this.initSviGradoviIAdrese();
+    else if (this.userRole === 'K') this.prikaziKorisnikTransakcije();
   }
 
   ngOnDestroy(): void {
@@ -38,8 +43,10 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject();
   //OBV
   prodavnice: Observable<Prodavnica[]> | undefined = undefined;
-  transakcije: any | undefined = undefined; //NE ZNAM STA DOBIJAM TACNO, mozda mogu da napravim model za to i cak bi i trebalo
+  transakcije: any | undefined = undefined; 
   prodavnica: Prodavnica | undefined = undefined;
+  onlineTransakcije: any | undefined = undefined;
+  
   //HELP VARS
   meseci = [
     'JAN',
@@ -69,6 +76,12 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     mesec: new FormControl(''),
     grad: new FormControl(''),
     adresa: new FormControl(''),
+  });
+  
+  onlineTransakcijeForm = new FormGroup({
+    godina: new FormControl(''),
+    kvartal: new FormControl(''),
+    mesec: new FormControl(''),
   });
 
   initGradAndAdresaProdavniceRadnik() {
@@ -104,7 +117,6 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
 
   pretraziTransakcije() {
     const paramsForSearch = this.transakcijeForm.value;
-    console.log(paramsForSearch);
     let godina = paramsForSearch.godina;
     let kvartal = paramsForSearch.kvartal;
     let mesec = paramsForSearch.mesec;
@@ -158,6 +170,25 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     }
   }
 
+  pretraziOnlineTransakcije(){
+    const paramsForSearch = this.onlineTransakcijeForm.value;
+    console.log(paramsForSearch);
+    let godina = paramsForSearch.godina;
+    let kvartal = paramsForSearch.kvartal;
+    let mesec = paramsForSearch.mesec;
+    if(this.userRole === 'A'){
+      this.casTransakcijaService.getOnlineTransakcije(parseInt(godina), parseInt(kvartal), mesec).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (info)=>{
+          this.onlineTransakcije = info;
+        },
+        error: (err)=>{
+          console.log(err);
+          this.toastrService.error("Greska prilikom ucitavanja online transakcija", "Error");
+        }
+      })
+    }
+  }
+
   izaberiGrad() {
     const grad = this.transakcijeForm.value.grad;
     this.adrese = [];
@@ -172,5 +203,31 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
         },
       });
     this.gradIzabran = true;
+  }
+
+  prikaziKorisnikTransakcije() {
+    const username = localStorage.getItem('username');
+    if (username) {
+      this.neoKorisnikService
+        .getSvojeTransakcije(username)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (info) => {
+            console.log(info);
+            this.transakcije = info;
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
+    }
+  }
+
+  odvediNaStranicuProizvoda(transakcija: any){
+    this.router.navigate(["product-detail"], {queryParams:{
+      naziv: transakcija.naziv,
+      kategorija: transakcija.kategorija,
+      tip: transakcija.tip
+    }});
   }
 }

@@ -41,6 +41,7 @@ import { JwtHelperService, JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { TokenInterceptorService } from './services/token-interceptor.service';
 import { ProductPopularnoComponent } from './components/product-popularno/product-popularno.component';
 import { ProductPreporukeComponent } from './components/product-preporuke/product-preporuke.component';
+import { SearchProizvodRadnikPipe } from './pipes/search-proizvod-radnik.pipe';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { ProductPreporukeComponent } from './components/product-preporuke/produc
     AProdavniceComponent,
     ProductPopularnoComponent,
     ProductPreporukeComponent,
+    SearchProizvodRadnikPipe,
   ],
   imports: [
     BrowserModule,

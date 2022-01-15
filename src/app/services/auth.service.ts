@@ -53,14 +53,14 @@ export class AuthService {
 
   register(user: UserRegisterDto) {
     return this.httpClient
-      .post(`${environment.apiURL}neo_korisnik/dodajKorisnika`, user)
+      .post(`${environment.apiURL}neo_korisnik/dodajKorisnika`, user , {responseType: 'text'})
       .pipe(
-        map((response: any) => {
-          if (response.token != '') {
-            localStorage.setItem('token', response.token);
+        map((token: any) => {
+          if (token != '') {
+            localStorage.setItem('token', token);
             localStorage.setItem('tip', 'K');
           }
-          return response;
+          return token;
         })
       );
   }

@@ -34,8 +34,7 @@ export class HeaderComponent implements OnInit {
     const username = localStorage.getItem('username');
     if (role) {
       this.role = role;
-    } else this.role = 'K';
-
+    } else this.role = 'K'
     if (username) {
       this.username = username;
     }

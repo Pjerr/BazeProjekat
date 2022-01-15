@@ -107,15 +107,18 @@ export class HomepageComponent implements OnInit, OnDestroy {
   }
 
   register() {
+    
+    const username = this.registerForm.value.email.split('@')[0];
+    
     const zaSlanje: UserRegisterDto = {
       email: this.registerForm.value.email,
       telefon: this.registerForm.value.telefon,
       ime: this.registerForm.value.ime,
       prezime: this.registerForm.value.prezime,
       password: this.registerForm.value.password,
+      username: username
     };
 
-    const username = this.registerForm.value.email.split('@')[0];
 
     this.authService
       .register(zaSlanje)

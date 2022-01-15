@@ -10,7 +10,6 @@ import { ProductCass } from '../models/product/productCass';
 export class CasTransakcijaService {
   constructor(private httpClient: HttpClient) {}
 
-  //QUESTION: da li je godina i kvartal number ili string?
   getOnlineTransakcije(godina: number, kvartal: number, mesec: string) {
     let params = new HttpParams();
     params = params.append('godina', godina);

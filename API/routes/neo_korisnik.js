@@ -73,9 +73,9 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/dodajKorisnika", authenticateJWTToken, async (req, res) => {
-  var { email, ime, pass, prezime, telefon, username } = req.body;
-  var hashPass = bcrypt.hashSync(pass, 10);
+router.post("/dodajKorisnika", async (req, res) => {
+  var { email, ime, password, prezime, telefon, username } = req.body;
+  var hashPass = bcrypt.hashSync(password, 10);
 
   neo4jSession
     .run(
@@ -243,13 +243,15 @@ router.get("/pogledajSvojeTransakcije", authenticateJWTToken, (req, res) => {
 
   neo4jSession.readTransaction((tx) => {
     tx.run(
-      "MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) RETURN p",
+      "MATCH (k:Korisnik{username:$username})-[r:KUPIO]->(p:Proizvod) RETURN p,r ORDER BY r.DatumKupovine DESC",
       { username }
     )
       .then((result) => {
         var output = [];
         result.records.forEach((element) => {
-          output.push(element._fields[0].properties);
+          const podatak1 = element._fields[0].properties;
+          const podatak2 = element._fields[1].properties;
+          output.push({...podatak1, ...podatak2});
         });
         res.status(200).send(output);
       })

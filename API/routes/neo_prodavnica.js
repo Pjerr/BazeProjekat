@@ -1,10 +1,11 @@
 const express = require('express');
 const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
+const authenticateJWTToken = require("../auth").authenticateJWTToken;
 
 //Ovo je npr korisno da se izlista adminu da bi zaposlio nekog radnika 
 //u konkretnu prodavnicu
-router.get('/preuzmiProdavnice', (req, res) =>
+router.get('/preuzmiProdavnice',(req, res) =>
     {
         neo4jSession
                 .run('MATCH (p:Prodavnica) RETURN p', { })
@@ -27,7 +28,7 @@ router.get('/preuzmiProdavnice', (req, res) =>
 )
 
 //Moze da se koristi takodje za admina kada hoce da zaposli radnika
-router.get('/preuzmiProdavniceUGradu', (req, res) =>
+router.get('/preuzmiProdavniceUGradu',(req, res) =>
     {
         var grad = req.query.grad;
 
@@ -51,7 +52,7 @@ router.get('/preuzmiProdavniceUGradu', (req, res) =>
     }
 )
 
-router.post('/dodajProdavnicu', (req, res) =>
+router.post('/dodajProdavnicu', authenticateJWTToken,(req, res) =>
     {
         var grad = req.body.grad;
         var adresa = req.body.adresa;
@@ -82,7 +83,7 @@ router.post('/dodajProdavnicu', (req, res) =>
 )
 
 //Moze sve da se menja osim grada i adrese. Nema poente da se grad/adresa menjaju
-router.put('/izmeniProdavnicu', (req, res) =>
+router.put('/izmeniProdavnicu', authenticateJWTToken,(req, res) =>
     {
         var grad = req.body.grad;
         var adresa = req.body.adresa;
@@ -105,7 +106,7 @@ router.put('/izmeniProdavnicu', (req, res) =>
     }
 ) 
 
-router.delete('/obrisiProdavnicu', (req, res) =>
+router.delete('/obrisiProdavnicu', authenticateJWTToken,(req, res) =>
     {
         var grad = req.query.grad;
         var adresa = req.query.adresa;
@@ -128,7 +129,7 @@ router.delete('/obrisiProdavnicu', (req, res) =>
 //Veza sa proizvodom - PRIVREMENO OVDE. TREBA DA BUDE KOD PROIZVODA:
 
 //Vraca trenutni broj proizvoda konkretnog naziva u magacinu
-router.get('/vratiStanjeMagacina', (req, res) => 
+router.get('/vratiStanjeMagacina', authenticateJWTToken,(req, res) => 
     {
         var naziv = req.query.naziv;
 
@@ -162,7 +163,7 @@ router.get('/vratiStanjeMagacina', (req, res) =>
 )
 
 //Vraca sve relacije - PROVERITI POSLE 
-router.get('/vratiSveProizvodeProdavnice', (req, res) => 
+router.get('/vratiSveProizvodeProdavnice', authenticateJWTToken,(req, res) => 
     {
         var grad = req.query.grad;
         var adresa = req.query.adresa;
@@ -203,7 +204,7 @@ router.get('/vratiSveProizvodeProdavnice', (req, res) =>
 
 
 //RASKIDANJE VEZE IZMEDJU PROIZVODA I PRODAVNICE
-router.delete('/obrisiMagacin', (req, res) => 
+router.delete('/obrisiMagacin', authenticateJWTToken,(req, res) => 
     {
         var kategorija = req.query.kategorija;
         var tip = req.query.tip;
@@ -233,7 +234,7 @@ router.delete('/obrisiMagacin', (req, res) =>
 )
 
 //PREDLOG-----------------------------------------------------------------------------------:
-router.put('/dekrementirajBrojProizvodaMagacina', (req, res) => 
+router.put('/dekrementirajBrojProizvodaMagacina', authenticateJWTToken,(req, res) => 
     {
         var nizNaziva = req.body.nizNaziva; 
 
@@ -292,7 +293,7 @@ function vratiUMagacinuRelaciju(req, res, next)
           });
 }
 
-router.post('/naruciProizvod', vratiUMagacinuRelaciju, (req,res) =>
+router.post('/naruciProizvod', [authenticateJWTToken,vratiUMagacinuRelaciju], (req,res) =>
 {    
     var naziv = req.body.naziv;
 

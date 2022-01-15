@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { UserLoginDto } from '../models/user/userLoginDto';
@@ -13,49 +15,53 @@ import { UserRegisterDto } from '../models/user/userRegisterDto';
 export class AuthService {
   constructor(
     public jwtHelper: JwtHelperService,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private router: Router
   ) {}
 
   decodedToken: any;
 
-  //TODO dodaj pravu rutu fix :any ako je moguce
+  user$: Observable<UserLoginDto> | undefined = undefined;
+
   login(user: UserLoginDto) {
-    return this.httpClient.post(`${environment.apiURL}`, user).pipe(
-      map((response: any) => {
-        if (response.email != '') {
-          localStorage.setItem('token', response.accessToken);
-          localStorage.setItem('tip', response.tipKorisnika);
-          localStorage.setItem('email', response.email);
-          this.decodedToken = this.jwtHelper.decodeToken(response.accessToken);
-        }
-        return response;
-      })
-    );
+    return this.httpClient
+      .post(`${environment.apiURL}neo_korisnik/loginKorisnik`, user)
+      .pipe(
+        map((response: any) => {
+          if (response.token != '') {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('tip', response.tip);
+          }
+          return response;
+        })
+      );
   }
 
   loggedIn(): boolean {
     const token = localStorage.getItem('token');
-    if (token) return !this.jwtHelper.isTokenExpired(token);
+    if (token) return true;
     else return false;
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('tip');
-    localStorage.removeItem('email');
+    localStorage.removeItem('username');
+    this.router.navigate(['/']);
+    location.reload();
   }
 
   register(user: UserRegisterDto) {
-    return this.httpClient.post(`${environment.apiURL}`, user).pipe(
-      map((response: any) => {
-        if (response.email != '') {
-          localStorage.setItem('token', response.accessToken);
-          localStorage.setItem('tip', 'u');
-          localStorage.setItem('email', response.email);
-          this.decodedToken = this.jwtHelper.decodeToken(response.accessToken);
-        }
-        return response;
-      })
-    );
+    return this.httpClient
+      .post(`${environment.apiURL}neo_korisnik/dodajKorisnika`, user)
+      .pipe(
+        map((response: any) => {
+          if (response.token != '') {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('tip', 'K');
+          }
+          return response;
+        })
+      );
   }
 }

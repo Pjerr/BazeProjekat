@@ -21,8 +21,12 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.userRole === 'p') this.initGradAndAdresaProdavniceRadnik();
-    else if (this.userRole === 'a') this.initSviGradoviIAdrese();
+    const role = localStorage.getItem('tip');
+    if (role) {
+      this.userRole = role;
+    }
+    if (this.userRole === 'R') this.initGradAndAdresaProdavniceRadnik();
+    else if (this.userRole === 'A') this.initSviGradoviIAdrese();
   }
 
   ngOnDestroy(): void {
@@ -51,7 +55,7 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     'NOV',
     'DEC',
   ];
-  userRole = 'a';
+  userRole = '';
   gradRadnika: string = '';
   adresaRadnika: string = '';
 
@@ -68,27 +72,33 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
   });
 
   initGradAndAdresaProdavniceRadnik() {
-    this.neoRadnikService
-      .getInfoOProdavniciUKojojRadiRadnik('todor.kalezic')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((prodavnica: Prodavnica) => {
-        this.prodavnica = prodavnica;
-        this.gradRadnika = this.prodavnica.grad;
-        this.adresaRadnika = this.prodavnica.adresa;
-      });
+    const username = localStorage.getItem('username');
+    if (username)
+      this.neoRadnikService
+        .getInfoOProdavniciUKojojRadiRadnik(username)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (prodavnica: Prodavnica) => {
+            this.prodavnica = prodavnica;
+            this.gradRadnika = this.prodavnica.grad;
+            this.adresaRadnika = this.prodavnica.adresa;
+          },
+        });
   }
 
   initSviGradoviIAdrese() {
     this.neoProdavnicaService
       .getAllProdavnice()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((prodavnice) => {
-        console.log(prodavnice);
-        prodavnice.forEach((prodavnica) => {
-          const nadjenGrad = this.gradovi.find((grad:string)=> grad === prodavnica.grad);
-          if(!nadjenGrad)
-            this.gradovi.push(prodavnica.grad);
-        });
+      .subscribe({
+        next: (prodavnice: Prodavnica[]) => {
+          prodavnice.forEach((prodavnica) => {
+            const nadjenGrad = this.gradovi.find(
+              (grad: string) => grad === prodavnica.grad
+            );
+            if (!nadjenGrad) this.gradovi.push(prodavnica.grad);
+          });
+        },
       });
   }
 
@@ -101,7 +111,7 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
     let grad = '';
     let adresa = '';
 
-    if (this.userRole === 'p') {
+    if (this.userRole === 'R') {
       this.casTransakcijaService
         .getTransakcijeProdavnice(
           parseInt(godina),
@@ -111,46 +121,56 @@ export class TransakcijeComponent implements OnInit, OnDestroy {
           this.adresaRadnika
         )
         .pipe(takeUntil(this.destroy$))
-        .subscribe((info) => {
-          if (info.length > 0) {
-            this.transakcije = info;
-          } else
-            this.toastrService.info(
-              'Ne postoje transakcije u ovom periodu',
-              'Info'
-            );
+        .subscribe({
+          next: (info) => {
+            if (info.length > 0) {
+              this.transakcije = info;
+            } else
+              this.toastrService.info(
+                'Ne postoje transakcije u ovom periodu',
+                'Info'
+              );
+          },
         });
     } else {
       grad = paramsForSearch.grad;
       adresa = paramsForSearch.adresa;
       this.casTransakcijaService
-      .getTransakcijeProdavnice(
-        parseInt(godina),
-        parseInt(kvartal),
-        mesec,
-        grad,
-        adresa
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((info) => {
-        if (info.length > 0) {
-          this.transakcije = info;
-        } else
-          this.toastrService.info(
-            'Ne postoje transakcije u ovom periodu',
-            'Info'
-          );
-      });
+        .getTransakcijeProdavnice(
+          parseInt(godina),
+          parseInt(kvartal),
+          mesec,
+          grad,
+          adresa
+        )
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (info) => {
+            if (info.length > 0) {
+              this.transakcije = info;
+            } else
+              this.toastrService.info(
+                'Ne postoje transakcije u ovom periodu',
+                'Info'
+              );
+          },
+        });
     }
   }
 
-  izaberiGrad(){
+  izaberiGrad() {
     const grad = this.transakcijeForm.value.grad;
-    this.neoProdavnicaService.getProdavniceUGradu(grad).pipe(takeUntil(this.destroy$)).subscribe((info)=>{
-      info.forEach(element => {
-        this.adrese.push(element.adresa);
+    this.adrese = [];
+    this.neoProdavnicaService
+      .getProdavniceUGradu(grad)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (info) => {
+          info.forEach((element) => {
+            this.adrese.push(element.adresa);
+          });
+        },
       });
-    })
     this.gradIzabran = true;
   }
 }

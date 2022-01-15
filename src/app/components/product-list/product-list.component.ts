@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription, takeUntil } from 'rxjs';
 import { ProductCass } from 'src/app/models/product/productCass';
 import { Proizvodjac } from 'src/app/models/product/proizvodjac';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
@@ -26,18 +26,22 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
   ngOnDestroy(): void {
-    if (this.queryParamMapSub) this.queryParamMapSub.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
-  //SUBS
+  //SUBS'
+  destroy$: Subject<boolean> = new Subject();
   queryParamMapSub: Subscription | undefined = undefined;
 
   //OBJECTS
-  products: Observable<ProductCass[]> = of([]);
+  products: ProductCass[] | undefined = undefined
   sviProizvodjaci: Observable<Proizvodjac[]> = of([]);
 
+  testProducts: ProductCass[] = []
+
   //FILTERS
-  searchValue: string | undefined;
+  searchValue: string  = "";
   proizvodjaciToFilterBy: string[] = [];
   selectedFilterOption: string = 'None';
   filters: string[] = ['None', 'Cena asc', 'Cena des', 'Ocena', 'Popust'];
@@ -52,14 +56,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
     pretraga: string,
     ascending: number
   ): void {
-    this.products = this.casProizvodService.getCassandraProizvodi(
+    this.casProizvodService.getCassandraProizvodi(
       kategorija,
       tip,
       naziv,
       proizvodjac,
       pretraga,
       ascending
-    );
+    ).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (products: ProductCass[])=>{
+        this.products = products;
+      },
+    });
   }
 
   loadProizvodjaci(kategorija: string, tip: string): void {
@@ -100,7 +108,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
             break;
           }
           case 'Ocena': {
-            this.loadProducts(kategorija, tip, '', '', 'Ocena', 1);
+            this.loadProducts(kategorija, tip, '', '', 'Ocena', 0);
             break;
           }
           case 'None': {

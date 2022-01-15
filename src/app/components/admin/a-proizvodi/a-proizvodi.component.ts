@@ -58,22 +58,27 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
     this.casProizvodService
       .getKategorijeITipove()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        const tempCategories = data;
-        tempCategories.forEach((element: any) => {
-          const foundElement = this.productCategories.find(
-            (category: ProductCatergory) =>
-              category.kategorija === element.kategorija
-          );
-          if (foundElement) foundElement.tipovi.push(element.tip);
-          else {
-            let noviElement: ProductCatergory = {
-              kategorija: element.kategorija,
-              tipovi: [element.tip],
-            };
-            this.productCategories.push(noviElement);
-          }
-        });
+      .subscribe({
+        next: (data) => {
+          const tempCategories = data;
+          tempCategories.forEach((element: any) => {
+            const foundElement = this.productCategories.find(
+              (category: ProductCatergory) =>
+                category.kategorija === element.kategorija
+            );
+            if (foundElement) foundElement.tipovi.push(element.tip);
+            else {
+              let noviElement: ProductCatergory = {
+                kategorija: element.kategorija,
+                tipovi: [element.tip],
+              };
+              this.productCategories.push(noviElement);
+            }
+          });
+        },
+        error: () => {
+          this.toastrService.error('Doslo je do greske', 'Error');
+        },
       });
   }
 
@@ -133,21 +138,27 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
     this.casProizvodService
       .addCassandraProizvod(cassProizvod)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.toastrService.success(
-          'Uspesno ste dodali proizvod CASS',
-          'Sucess'
-        );
-
-        setTimeout(() => {
+      .subscribe({
+        next: () => {
+          this.toastrService.success(
+            'Uspesno ste dodali proizvod CASS',
+            'Sucess'
+          );
+        },
+        complete: () => {
           this.neoProizvodService
             .addNeoProizvod(neoProizvod)
             .pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-              this.toastrService.success('Uspesno ste dodali proizvod NEO');
-              this.loadProducts(neoProizvod.kategorija, neoProizvod.tip);
+            .subscribe({
+              complete: () => {
+                this.toastrService.success('Uspesno ste dodali proizvod NEO');
+                this.loadProducts(neoProizvod.kategorija, neoProizvod.tip);
+              },
             });
-        });
+        },
+        error: () => {
+          this.toastrService.error('Doslo je do greske u cass', 'Error');
+        },
       });
   }
 
@@ -167,15 +178,15 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
       this.casProizvodService
         .updateCassandraPopustProizvoda(this.selectedProizvod, novPopust)
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.toastrService.success('Uspesno promenjena ocena', 'Success');
-          setTimeout(() => {
+        .subscribe({
+          complete: () => {
+            this.toastrService.success('Uspesno promenjena ocena', 'Success');
             if (this.selectedProizvod)
               this.loadProducts(
                 this.selectedProizvod.kategorija,
                 this.selectedProizvod.tip
               );
-          });
+          },
         });
   }
 
@@ -184,15 +195,15 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
       this.casProizvodService
         .updateCassandraOcenaProizvoda(this.selectedProizvod, novaOcena)
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.toastrService.success('Uspesno promenjena ocena', 'Success');
-          setTimeout(() => {
+        .subscribe({
+          complete: () => {
+            this.toastrService.success('Uspesno promenjena ocena', 'Success');
             if (this.selectedProizvod)
               this.loadProducts(
                 this.selectedProizvod.kategorija,
                 this.selectedProizvod.tip
               );
-          });
+          },
         });
   }
 
@@ -200,26 +211,37 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
     this.obrisiProizvodIzCassandre(product);
   }
 
-  obrisiProizvodIzCassandre(product: ProductCass){
+  obrisiProizvodIzCassandre(product: ProductCass) {
     this.casProizvodService
-    .deleteCassandraProizvod(product)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
-      this.toastrService.success('Uspesno izbrisan proizvod CASS', 'Success');
-      setTimeout(()=>{
-        this.obrisiProizvodIzNeo(product);
-      })
-    });
+      .deleteCassandraProizvod(product)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        complete: () => {
+          this.toastrService.success(
+            'Uspesno izbrisan proizvod CASS',
+            'Success'
+          );
+          this.obrisiProizvodIzNeo(product);
+        },
+        error:()=>{
+          this.toastrService.error("Doslo je do greske u cass", "Error");
+        }
+      });
   }
 
-  obrisiProizvodIzNeo(product: ProductCass){
+  obrisiProizvodIzNeo(product: ProductCass) {
     this.neoProizvodService
-    .deleteNeoProizvod(product.naziv)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(() => {
-      this.toastrService.success('Uspesno izbrisan proizvod NEO', 'Success');
-      this.loadProducts(product.kategorija, product.tip);
-    });
+      .deleteNeoProizvod(product.naziv)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        complete: ()=>{
+          this.toastrService.success('Uspesno izbrisan proizvod NEO', 'Success');
+          this.loadProducts(product.kategorija, product.tip);
+        },
+        error: ()=>{
+          this.toastrService.error("Doslo je do greske u NEO", "Error");
+        }
+      });
   }
 
   openModal(modalName: string, product?: ProductCass) {

@@ -1,0 +1,31 @@
+<div class="product-popularno__wrapper">
+    <button class="btn btn-info" (click)="loadPreporuke()">Klikni za personalizovane preporuke</button>
+    <h2 *ngIf="products1">Ovo su vasi preporuceni proizvodi</h2>
+    <small *ngIf="products1">Ruta 1</small>
+    <div class="product-popularno__product-wrapper">
+      <div *ngFor="let product of products1">
+        <app-product-thumb
+          [product]="product"
+          class="product-popularno__product"
+        ></app-product-thumb>
+      </div>
+    </div>
+    <small *ngIf="products2">Ruta 2</small>
+    <div class="product-popularno__product-wrapper">
+      <div *ngFor="let product of products2">
+        <app-product-thumb
+          [product]="product"
+          class="product-popularno__product"
+        ></app-product-thumb>
+      </div>
+    </div>
+    <small *ngIf="products3">Ruta 3</small>
+    <div class="product-popularno__product-wrapper">
+      <div *ngFor="let product of products3">
+        <app-product-thumb
+          [product]="product"
+          class="product-popularno__product"
+        ></app-product-thumb>
+      </div>
+    </div>
+</div>

@@ -18,9 +18,8 @@ function authenticateJWTToken(req,res,next)
     if(token == null) return res.status(401).send();
 
     jwt.verify(token, process.env.TOKEN_SECRET, (err,user)=>{
-        console.log('FORBIDDEN');
 
-        if(err) return res.status(403).send();
+        if(err) return res.status(403).send("FORBIDDEN");
 
         req.user = user;
         next();

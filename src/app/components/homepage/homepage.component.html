@@ -4,15 +4,15 @@
         <div class="form">
             <mat-form-field class="example-full-width" appearance="fill">
                 <mat-label>Username</mat-label>
-                <input matInput formControlName="username">
+                <input matInput formControlName="username" required>
             </mat-form-field>
             <mat-form-field class="example-full-width" appearance="fill">
 
             <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password">
+            <input matInput type="password" formControlName="password" required>
             </mat-form-field>
         </div>
-        <button class="btn btn-success my-2" type="submit">Login</button>
+        <button class="btn btn-success my-2" type="submit" [disabled]="!loginForm.valid">Login</button>
     </form>
     <button class="btn btn-danger" (click)="closeModalForLogin()">Close</button>
 </jw-modal>
@@ -60,12 +60,13 @@
     </div>
     <div class="row">
         <div class="homepage__popularno">
-            <h3>OVDE IDU POPULARNI PROIZVODI</h3>
+            <h3>Popularni proizvodi</h3>
+            <app-product-popularno></app-product-popularno>
         </div>
     </div>
-    <div class="row" *ngIf="userRole === 'u'">
+    <div class="row" *ngIf="userRole === 'K'">
         <div class="homepage__for-you">
-            <button class="btn btn-info">For you</button>
+            <app-product-preporuke></app-product-preporuke>
         </div>
     </div>
 </div>

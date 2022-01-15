@@ -1,15 +1,16 @@
 const express = require('express');
 const { copyFileSync } = require('fs');
+const { authenticateJWTToken } = require('../auth');
 const cassandraClient = require('../cassandraConnect');
 const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
 
 //Ovo je npr za admina da moze da povuce transakcije konkretne godine/kvartala/meseca
-router.get('/preuzmiTransakcije', (req, res) =>
+router.get('/preuzmiOnlineTransakcije', authenticateJWTToken,(req, res) =>
     {
-        var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ?';
+        var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = true';
         
-        cassandraClient.execute(query, [req.query.godina, req.query.kvartal, req.query.mesec], (err,result) =>
+        cassandraClient.execute(query, [req.query.godina, req.query.kvartal, req.query.mesec], {prepare: true}, (err,result) =>
         {
             if(err)
             {
@@ -25,7 +26,7 @@ router.get('/preuzmiTransakcije', (req, res) =>
 )
 
 //Transakcije za konkretnu prodavnicu. Ovo sluzi za admina/radnika (da bi pogledao sve transakcije iz svoje prodavnice)
-router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
+router.get('/preuzmiTransakcijeIzProdavnice', authenticateJWTToken,(req, res) =>
     {
         var query = 'SELECT * FROM buyhub.transakcija WHERE godina = ? and kvartal = ? and mesec = ? and online = false and grad = ? and adresa = ?';
 
@@ -48,7 +49,7 @@ router.get('/preuzmiTransakcijeIzProdavnice', (req, res) =>
 //2. Takodje, okida se ako radnik (za OFFLINE kupovinu) hoce da rucno unese neku kupovinu
 //      Note: ne mora da unese username korisnika, zato sto je username korisnika poslednji
 //      deo clustering key-a (ovo kazem zato sto je moguce da neko irl kupi nesto a da nema profil)
-router.post('/dodajTransakciju', (req,res) => 
+router.post('/dodajTransakciju', authenticateJWTToken,(req,res) => 
     {
         var options = {year: "numeric", month: "short", day: "numeric", 
                         hour: "2-digit", minute: "2-digit", hour12: false,
@@ -109,7 +110,7 @@ router.post('/dodajTransakciju', (req,res) =>
 //Neka postoji i neka se okine npr ako se brise prodavnica 
 //=>hardkodirala sam online = false u upitu 
 //=>Ovo se okida kada se obrise konkretna prodavnica, tj zapamti se njen grad i adresa i onda se ovo okida
-router.delete('/obrisiTransakcijeProdavnice', (req,res) =>
+router.delete('/obrisiTransakcijeProdavnice', authenticateJWTToken,(req,res) =>
     {
         //var online = req.body.online;
         //var grad = req.body.grad;

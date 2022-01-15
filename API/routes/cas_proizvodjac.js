@@ -1,5 +1,6 @@
 const express = require('express');
 const { copyFileSync } = require('fs');
+const { authenticateJWTToken } = require('../auth');
 const cassandraClient = require('../cassandraConnect');
 const router = express.Router();
 
@@ -47,7 +48,7 @@ router.get('/preuzmiProizvodjaca', (req, res) =>
 
 //OVO BI TREBALO DA SE IZVRSI AKO /preuzmiProizvodjaca vrati prazan niz, tj ako NE POSTOJI VEC taj proizvodjac
 //za konkretnu kategoriju i tip
-router.post('/dodajProizvodjaca', (req, res) =>
+router.post('/dodajProizvodjaca', authenticateJWTToken,(req, res) =>
     {
         var allArgs = [req.body.kategorija, req.body.tip, req.body.naziv];
         var query = 'INSERT INTO buyhub.proizvodjac (kategorija, tip, naziv) VALUES (?, ?, ?);';
@@ -70,7 +71,7 @@ router.post('/dodajProizvodjaca', (req, res) =>
 
 //Mozda nece biti potrebno, ali moze npr da se pozove ako se svi proizvodi
 //konkretne kategorije, tipa i konkretnog proizvodjaca obrisu. Ali ne mora. Samo kazem.
-router.delete('/obrisiProizvodjaca', (req, res) =>
+router.delete('/obrisiProizvodjaca', authenticateJWTToken,(req, res) =>
     {
         var allArgs =  [req.query.kategorija, req.query.tip, req.query.naziv];
 

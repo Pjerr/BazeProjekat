@@ -7,7 +7,7 @@
                         <img [src]="'http://localhost:5000/' + element.proizvod.slika" class="img-thumbnail rounded mx-auto d-block img img-fluid product-thumb__img_img-thumbnail">
                         <h5>{{element.proizvod.naziv}}</h5>
                         <p class="product-price">{{element.proizvod.cena}} rsd</p>
-                        <small *ngIf="element.proizvod.brojOcena > 0">{{element.proizvod.zbirOcena / element.proizvod.brojOcena}}<i class="fas fa-star product-thumb__fa-star"></i></small>
+                        <small *ngIf="element.proizvod.brojOcena > 0">{{(element.proizvod.zbirOcena / element.proizvod.brojOcena).toFixed(2)}}<i class="fas fa-star product-thumb__fa-star"></i></small>
                         <small *ngIf="element.proizvod.brojOcena == 0">Nema ocenu <i class="fas fa-star product-thumb__fa-star"></i></small>
                         <small>Trenutno na stanju: {{element.brojProizvoda}}</small>
                     </div>
@@ -24,6 +24,12 @@
                     <button class="btn btn-danger" (click)="reduceNumberFromSellList(element.product)"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
+            <form class="example-form">
+                <mat-form-field class="input" appearance="fill">
+                  <mat-label>Username korisnika (opciono)</mat-label>
+                  <input matInput [formControl]="usernameKorisnika" class="input">
+                </mat-form-field>
+            </form>
             <button class="btn btn-primary" (click)="kupiProizvode()">Kupi</button>
         </div>
     </div>

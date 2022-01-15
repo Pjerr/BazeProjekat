@@ -39,6 +39,8 @@ import { ARadniciComponent } from './components/admin/a-radnici/a-radnici.compon
 import { AProdavniceComponent } from './components/admin/a-prodavnice/a-prodavnice.component';
 import { JwtHelperService, JwtModule, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { ProductPopularnoComponent } from './components/product-popularno/product-popularno.component';
+import { ProductPreporukeComponent } from './components/product-preporuke/product-preporuke.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +61,8 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     AProizvodiComponent,
     ARadniciComponent,
     AProdavniceComponent,
+    ProductPopularnoComponent,
+    ProductPreporukeComponent,
   ],
   imports: [
     BrowserModule,

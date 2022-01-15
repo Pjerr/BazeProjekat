@@ -3,7 +3,7 @@
 .product-thumb__wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   margin: 5px 25px;
   cursor: pointer;
@@ -27,4 +27,9 @@
 
 .product-thumb__product-price{
   color: blue;
+}
+
+.card{
+  width: 250px;
+  height: 400px;
 }

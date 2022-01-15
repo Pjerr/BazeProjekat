@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user/userDto';
+import { UserLoginDto } from '../models/user/userLoginDto';
 
 @Injectable({
   providedIn: 'root',
@@ -112,5 +113,43 @@ export class NeoKorisnikService {
     );
   }
   //TODO: pitaj koja ruta od tri u neo_korisnik da se iskoristi
-  getPreporukeProizvoda() {}
+  getPreporukeProizvodaMetodaPrva(username: string) {
+    let params = new HttpParams();
+    params = params.append("username", username);
+
+    return this.httpClient.get(
+      `${environment.apiURL}neo_korisnik/preporuceniProizvodiMetodaPrva`,
+      {
+        params: params,
+      }
+    );
+  }
+
+  getPreporukeProizvodaMetodaDruga(username: string) {
+    let params = new HttpParams();
+    params = params.append("username", username);
+
+    return this.httpClient.get(
+      `${environment.apiURL}neo_korisnik/preporuceniProizvodiMetodaDruga`,
+      {
+        params: params,
+      }
+    );
+  }
+
+  getPreporukeProizvodaMetodaTreca(username: string) {
+    let params = new HttpParams();
+    params = params.append("username", username);
+
+    return this.httpClient.get(
+      `${environment.apiURL}neo_korisnik/preporuceniProizvodiMetodaTreca`,
+      {
+        params: params,
+      }
+    );
+  }
+
+  loginKorisnik(userLoginDto: UserLoginDto){
+    return this.httpClient.post(`${environment.apiURL}neo_korisnik/loginKorisnik`, userLoginDto)
+  }
 }

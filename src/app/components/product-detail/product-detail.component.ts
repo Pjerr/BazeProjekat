@@ -1,13 +1,7 @@
-import {
-  Component,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { ProductCass } from 'src/app/models/product/productCass';
 import { AppState } from 'src/app/store/app.state';
 import { CasProizvodService } from 'src/app/services/cas-proizvod.service';
@@ -23,9 +17,8 @@ import { CartService } from 'src/app/services/cart.service';
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
 })
-export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
+export class ProductDetailComponent implements OnInit, OnDestroy {
   constructor(
-    private store: Store<AppState>,
     private route: ActivatedRoute,
     private casProizvodService: CasProizvodService,
     private neoProizvodService: NeoProizvodService,
@@ -35,11 +28,8 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   destroy$: Subject<boolean> = new Subject();
-  //OBJECTS
   product: ProductCass | undefined = undefined;
   comments: Observable<UserKomentar[]> | undefined = undefined;
-  //HELP VARS
-  rated: boolean = false; //moramo da preuzmemo nekako od korisnika + da ogranicimo da mogu da ratuju samo oni koji su logovani
   clickedOnRate: boolean = false;
   userComment = new FormControl('');
 
@@ -49,17 +39,6 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
     const naziv = this.route.snapshot.queryParamMap.get('naziv');
     if (kategorija != null && tip != null && naziv != null) {
       this.loadProduct(kategorija, tip, naziv);
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.product) {
-      const kategorija = this.route.snapshot.queryParamMap.get('kategorija');
-      const tip = this.route.snapshot.queryParamMap.get('tip');
-      const naziv = this.route.snapshot.queryParamMap.get('naziv');
-      if (kategorija != null && tip != null && naziv != null) {
-        this.loadProduct(kategorija, tip, naziv);
-      }
     }
   }
 
@@ -78,102 +57,117 @@ export class ProductDetailComponent implements OnInit, OnDestroy, OnChanges {
       });
   }
 
-  //Would get more than a string, probably something like an object holding a comment and some user info
   loadAllComments(nazivProizvoda: string): void {
     this.comments =
       this.neoProizvodService.getKomentariIOceneZaProizvod(nazivProizvoda);
   }
 
-  //TODO: popravi ovu fju, testiraj comment i rating!
   leaveComment(): void {
-    if (this.userComment.value != '') {
-      if (this.product) {
-        const forSend = {
-          username: 'sasa.novkovic',
-          komentar: this.userComment.value,
-          naziv: this.product.naziv,
-        };
+    if (this.product) {
+      const username = localStorage.getItem('username');
 
+      const forSend = {
+        username: username,
+        komentar: this.userComment.value,
+        naziv: this.product.naziv,
+      };
+
+      this.userComment.setValue('');
+
+      if (forSend.username)
         this.neoKorisnikService
           .ostaviKomentar(forSend.username, forSend.komentar, forSend.naziv)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             complete: () => {
-              setTimeout(() => {
-                if (this.product) {
-                  this.loadAllComments(this.product.naziv);
-                }
-              });
+              if (this.product) {
+                this.toastrService.success(
+                  'Uspesno ste komentarisali!',
+                  'Success'
+                );
+                this.loadAllComments(this.product.naziv);
+              }
             },
             error: () => {
-              this.toastrService.error(
-                'Doslo je do greske prilikom komentarisanja',
-                'Error'
+              this.toastrService.info(
+                'Prvo ocenite proizvod da bi komentarisali',
+                'Info'
               );
             },
           });
+      else {
+        this.toastrService.info(
+          'Morate biti ulogovani da biste komentarisali',
+          'Info'
+        );
       }
-    } else {
-      //toster service
-      this.toastrService.error(
-        'Molimo vas popunite polje pre nego sto komentarisete',
-        'Error'
-      );
     }
   }
 
-  //imamo iz baze bese proveru da je nesto ocenjeno?
   openRating(): void {
-    if (!this.rated) {
-      this.clickedOnRate = true;
-    }
+    this.clickedOnRate = true;
   }
 
-  //TODO: kada se obezbedi log in, ide username korisnika! fix
   rateProduct(rating: number): void {
     if (this.product) {
       const naziv = this.product.naziv;
       const kategorija = this.product.kategorija;
       const tip = this.product.tip;
+      const username = this.getUsername();
 
-      //da li treba setTimeout ako imamo ovo complete?
-      this.casProizvodService
-        .updateCassandraOcenaProizvoda(this.product, rating)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          complete: () => {
-            this.neoKorisnikService
-              .oceniProizvod('sasa.novkovic', rating, naziv)
-              .pipe(takeUntil(this.destroy$))
-              .subscribe({
-                complete: () => {
-                  this.loadProduct(kategorija, tip, naziv);
-                  this.toastrService.success(
-                    'Oba api dobra za rate',
-                    'Success'
-                  );
-                },
-                error: () => {
-                  this.toastrService.error(
-                    'Doslo je do greske prilikom ocenjivanja',
-                    'Error'
-                  );
-                },
-              });
-          },
-        });
-
-      this.rated = true;
-      this.clickedOnRate = false;
+      if (username) {
+        this.casProizvodService
+          .updateCassandraOcenaProizvoda(this.product, rating)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            complete: () => {
+              this.neoKorisnikService
+                .oceniProizvod(username, rating, naziv)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  complete: () => {
+                    this.loadProduct(kategorija, tip, naziv);
+                    this.toastrService.success(
+                      'Oba api dobra za rate',
+                      'Success'
+                    );
+                  },
+                  error: () => {
+                    this.toastrService.info(
+                      'Ne mozete da ocenite isti proizvod dvaput',
+                      'Info'
+                    );
+                  },
+                });
+            },
+            error: ()=>{
+              this.toastrService.info(
+                'Ne mozete da ocenite isti proizvod dvaput',
+                'Info'
+              );
+            }
+          });
+        this.clickedOnRate = false;
+      } else {
+        this.toastrService.info(
+          'Morate biti ulogovani da biste ocenili proizvod',
+          'Info'
+        );
+      }
     } else {
       this.toastrService.error('WHOPS', 'Error');
     }
   }
 
   addToCart(): void {
-    if (this.product) {
+    const username = this.getUsername();
+    if (username && this.product) {
       this.cartSerivce.addToCart(this.product);
       this.toastrService.success('Dodat proizvod u korpu', 'Success');
-    }
+    }else this.toastrService.info("Morate biti ulogovani da biste dodali proizvod u korpu!", "Info");
+  }
+
+  getUsername() {
+    return localStorage.getItem('username');
   }
 }

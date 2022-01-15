@@ -6,11 +6,6 @@
   margin-bottom: 20px;
 }
 
-.selling-products__product{
-  max-width: 200px;
-  height: 350px;
-}
-
 .selling-products__info {
   text-align: center;
 }
@@ -50,24 +45,29 @@
   border-radius: 4px;
   margin-bottom: 10px;
   text-align: center;
+  width: 250px;
+  height: 400px;
 }
 
-.product-price{
+.product-price {
   color: blue;
 }
 
-.btn{
+.btn {
   margin: 10px 0px;
 }
 
-.product-details{
+.product-details {
   display: flex;
   flex-wrap: nowrap;
-  align-items: center; 
+  align-items: center;
 }
 
-.products-to-sell{
-  width: 500px;
+.products-to-sell {
   display: flex;
   flex-direction: column;
+}
+
+.input {
+  width: 300px;
 }

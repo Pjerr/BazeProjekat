@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription, take, takeUntil } from 'rxjs';
 import { Prodavnica } from 'src/app/models/prodavnica';
 import { ProductCatergory } from 'src/app/models/product/productCatergoryDto';
 import { ProductCass } from 'src/app/models/product/productCass';
@@ -25,7 +25,8 @@ export class OrderProductsComponent implements OnInit {
   ) {}
 
   ngOnDestroy(): void {
-    if (this.productCategoriesSub) this.productCategoriesSub.unsubscribe();
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -34,37 +35,40 @@ export class OrderProductsComponent implements OnInit {
   }
 
   //SUBS
-  productCategoriesSub: Subscription | undefined = undefined;
+  destroy$: Subject<boolean> = new Subject();
   productCategories: ProductCatergory[] = [];
 
   //OBSV
   products: Observable<ProductCass[]> | undefined = undefined;
 
   //HELP VARS
-  productForOrdering : ProductCass | undefined = undefined;
+  productForOrdering: ProductCass | undefined = undefined;
   tempCategories: any;
   isSubcategoryShown: boolean[] = [];
   numberToOrder = new FormControl(0);
 
   getAllCategories(): void {
-    this.productCategoriesSub = this.casProizvodService
+    this.casProizvodService
       .getKategorijeITipove()
-      .subscribe((data) => {
-        this.tempCategories = data;
-        this.tempCategories.forEach((element: any) => {
-          const foundElement = this.productCategories.find(
-            (category: ProductCatergory) =>
-              category.kategorija === element.kategorija
-          );
-          if (foundElement) foundElement.tipovi.push(element.tip);
-          else {
-            let noviElement: ProductCatergory = {
-              kategorija: element.kategorija,
-              tipovi: [element.tip],
-            };
-            this.productCategories.push(noviElement);
-          }
-        });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.tempCategories = data;
+          this.tempCategories.forEach((element: any) => {
+            const foundElement = this.productCategories.find(
+              (category: ProductCatergory) =>
+                category.kategorija === element.kategorija
+            );
+            if (foundElement) foundElement.tipovi.push(element.tip);
+            else {
+              let noviElement: ProductCatergory = {
+                kategorija: element.kategorija,
+                tipovi: [element.tip],
+              };
+              this.productCategories.push(noviElement);
+            }
+          });
+        },
       });
   }
 
@@ -98,26 +102,45 @@ export class OrderProductsComponent implements OnInit {
     this.modalService.open(modalName);
   }
 
-  orderThisProduct(numberOfProductsToOrder: number){
-    console.log(this.productForOrdering);
-    console.log(numberOfProductsToOrder);
-    if(numberOfProductsToOrder > 0){
-      this.neoRadnikService.getInfoOProdavniciUKojojRadiRadnik("todor.kalezic").subscribe((prodavnica)=>{
-        console.log(prodavnica);
-        setTimeout(()=>{
-          if(this.productForOrdering)
-            this.neoProdavnicaService.naruciProizvod(this.productForOrdering, prodavnica, numberOfProductsToOrder).subscribe(()=>{
-              this.toastrService.success("Uspesno naruceni proizvodi!", "Success");
-            });
-        })
-      })
-    }
-    else{
-      this.toastrService.error("Unesite validan broj", "Error");
+  orderThisProduct(numberOfProductsToOrder: number) {
+    const username = localStorage.getItem("username");
+    if (username && numberOfProductsToOrder > 0) {
+      this.neoRadnikService
+        .getInfoOProdavniciUKojojRadiRadnik(username)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (prodavnica) => {
+            if (this.productForOrdering)
+              this.neoProdavnicaService
+                .naruciProizvod(
+                  this.productForOrdering,
+                  prodavnica,
+                  numberOfProductsToOrder
+                )
+                .pipe(takeUntil(this.destroy$))
+                .subscribe({
+                  complete: () => {
+                    this.toastrService.success(
+                      'Uspesno naruceni proizvodi',
+                      'Success'
+                    );
+                    this.modalService.close('modal');
+                  },
+                });
+          },
+          error: () => {
+            this.toastrService.error(
+              'Doslo je do greske kod order u cass',
+              'Error'
+            );
+          },
+        });
+    } else {
+      this.toastrService.error('Unesite validan broj', 'Error');
     }
   }
 
-  closeOrderModal(modalName: string){
+  closeOrderModal(modalName: string) {
     this.modalService.close(modalName);
   }
 }

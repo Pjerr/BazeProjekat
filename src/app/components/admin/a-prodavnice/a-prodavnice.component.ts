@@ -64,14 +64,14 @@ export class AProdavniceComponent implements OnInit {
     this.neoProdavnicaService
       .deleteProdavnica(prodavnica)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.toastrService.success(
-          'Uspesno ste obrisali prodavnicu',
-          'Success'
-        );
-        setTimeout(()=>{
+      .subscribe({
+        complete: () => {
+          this.toastrService.success(
+            'Uspesno ste obrisali prodavnicu',
+            'Success'
+          );
           this.loadProdavnice();
-        })
+        },
       });
   }
 
@@ -87,12 +87,12 @@ export class AProdavniceComponent implements OnInit {
     this.neoProdavnicaService
       .addProdavnica(prodavnicaZaSlanje)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.toastrService.success('Uspesno dodata prodavnica', 'Success');
-        this.modalService.close('dodajProdavnicuModal');
-        setTimeout(() => {
+      .subscribe({
+        complete: () => {
+          this.toastrService.success('Uspesno dodata prodavnica', 'Success');
+          this.modalService.close('dodajProdavnicuModal');
           this.loadProdavnice();
-        });
+        },
       });
   }
 
@@ -113,12 +113,12 @@ export class AProdavniceComponent implements OnInit {
       this.neoProdavnicaService
         .updateProdavnica(prodavnicaZaSlanje)
         .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.toastrService.success('Uspena izmena', 'Success');
-          this.modalService.close('updateProdavnicaModal');
-          setTimeout(() => {
+        .subscribe({
+          complete: () => {
+            this.toastrService.success('Uspena izmena', 'Success');
+            this.modalService.close('updateProdavnicaModal');
             this.loadProdavnice();
-          });
+          },
         });
   }
 }

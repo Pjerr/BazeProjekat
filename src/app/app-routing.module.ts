@@ -21,83 +21,70 @@ const routes: Routes = [
   {
     path: 'products',
     component: ProductListComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"K"
-    // }
   },
   {
     path: 'product-detail',
     component: ProductDetailComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"K"
-    // }
   },
   {
     path: 'about',
     component: AboutComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"K"
-    // }
   },
-  //TODO: fix this route guard, na kraju krajeva ne mora da postoji za ovo guard
   {
     path: 'transakcije',
     component: TransakcijeComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role: 'A'
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role: ['A', 'R']
+    }
   },
   {
     path: 'selling-products',
     component: SellingProductsComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"R"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["R"]
+    }
   },
   {
     path: 'order-products',
     component: OrderProductsComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"R"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["R"]
+    }
   },
   {
     path: 'cart',
     component: CartComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"K"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["K"],
+    }
   },
   {
     path: 'a-prodavnice',
     component: AProdavniceComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"A"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["A"]
+    }
   },
   {
     path: 'a-radnici',
     component: ARadniciComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"A"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["A"]
+    }
   },
   {
     path: 'a-proizvodi',
     component: AProizvodiComponent,
-    // canActivate: [AuthGuard],
-    // data: {
-    //   role:"A"
-    // }
+    canActivate: [AuthGuard],
+    data: {
+      role:["A"]
+    }
   }
 ];
 

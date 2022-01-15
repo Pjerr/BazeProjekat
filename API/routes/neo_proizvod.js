@@ -1,6 +1,7 @@
 const express = require('express');
 const neo4jSession = require('../neo4jConnection');
 const router = express.Router();
+const authenticateJWTToken = require("../auth").authenticateJWTToken;
 
 router.get('/', (req,res)=>{
     var nazivProizvoda = req.query.naziv;
@@ -38,7 +39,7 @@ router.get('/startsWithPretraga',(req,res)=>{
 })
 
 
-router.post('/dodajProizvod', (req,res)=>{
+router.post('/dodajProizvod', authenticateJWTToken,(req,res)=>{
     
     var {brojKupovina,brojOcena,cena,kategorija,naziv,opis,popust,proizvodjac, slika, tip,zbirOcena} = req.body;
 
@@ -58,7 +59,7 @@ router.post('/dodajProizvod', (req,res)=>{
 })
 
 
-router.delete('/obrisiProizvod', (req,res)=>{
+router.delete('/obrisiProizvod', authenticateJWTToken,(req,res)=>{
     var naziv = req.query.naziv;
     var deleteQuery = 'MATCH (p:Proizvod{naziv:$naziv}) DELETE p';
     neo4jSession
@@ -71,7 +72,7 @@ router.delete('/obrisiProizvod', (req,res)=>{
                 });
 })
 
-//IZLISTANE PRODAVNICE U KOJIMA SE NALAZI:
+//IZLISTANE PRODAVNICE U KOJIMA SE NALAZI PROIZVOD:
 router.get('/vratiProdavnice', (req, res) => 
     {
         var kategorija = req.query.kategorija;

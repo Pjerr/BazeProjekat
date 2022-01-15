@@ -24,8 +24,8 @@
         </div>
       </div>
     </div>
-    <div class="product-list__product-wrapper">
-      <div *ngFor="let product of products | async">
+    <div class="product-list__product-wrapper" *ngIf="products">
+      <div *ngFor="let product of products | search:searchValue">
         <app-product-thumb
           [product]="product"
           class="product-list__product"

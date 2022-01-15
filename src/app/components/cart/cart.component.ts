@@ -65,35 +65,38 @@ export class CartComponent implements OnInit, OnDestroy {
         (element: ProductCartCass) => element.product.naziv
       );
       let nizNazivaCass = nizNazivaNeo.join('\r\n');
-      this.casTransakcijaService
-        .addTransakcija(
-          true,
-          '',
-          '',
-          nizNazivaCass,
-          this.ukupnaCena,
-          'sasa.novkovic'
-        )
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          complete: ()=>{
-            this.neoKorisnikService
-            .kupiProizvode('sasa.novkovic', nizNazivaNeo)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              complete: () =>{
-                this.toastrService.success(
-                  'Uspesno kupljeni proizvodi!',
-                  'Success'
-                );
-                localStorage.removeItem('products');
-                this.cartService.clearCartProducts();
-                this.loadCartProducts();
-              }
-            });
-          }
-        }
-        );
+      let username = localStorage.getItem('username');
+      if (username) {
+        this.casTransakcijaService
+          .addTransakcija(
+            true,
+            '',
+            '',
+            nizNazivaCass,
+            this.ukupnaCena,
+            username
+          )
+          .pipe(takeUntil(this.destroy$))
+          .subscribe({
+            complete: () => {
+              if (username)
+                this.neoKorisnikService
+                  .kupiProizvode(username, nizNazivaNeo)
+                  .pipe(takeUntil(this.destroy$))
+                  .subscribe({
+                    complete: () => {
+                      this.toastrService.success(
+                        'Uspesno kupljeni proizvodi!',
+                        'Success'
+                      );
+                      localStorage.removeItem('products');
+                      this.cartService.clearCartProducts();
+                      this.loadCartProducts();
+                    },
+                  });
+            },
+          });
+      }
     }
   }
 

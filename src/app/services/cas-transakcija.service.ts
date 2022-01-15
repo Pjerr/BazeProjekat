@@ -11,14 +11,14 @@ export class CasTransakcijaService {
   constructor(private httpClient: HttpClient) {}
 
   //QUESTION: da li je godina i kvartal number ili string?
-  getAllTransakcije(godina: number, kvartal: number, mesec: string) {
+  getOnlineTransakcije(godina: number, kvartal: number, mesec: string) {
     let params = new HttpParams();
     params = params.append('godina', godina);
     params = params.append('kvartal', kvartal);
     params = params.append('mesec', mesec);
 
     return this.httpClient.get(
-      `${environment.apiURL}cas_transakcija/preuzmiTransakcije`,
+      `${environment.apiURL}cas_transakcija/preuzmiOnlineTransakcije`,
       {
         params: params,
       }

@@ -36,7 +36,6 @@ rootRouter.use('/neo_prodavnica', neo_prodavnica_Router);
 rootRouter.use('/neo_korisnik', neo_korisnik_Router);
 rootRouter.use('/neo_radnik', neo_radnik_Router);
 
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 

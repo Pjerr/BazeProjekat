@@ -445,7 +445,8 @@ router.get(
                 MATCH (p2:Proizvod) WHERE p.naziv <> p2.naziv AND \
                 p2.kategorija = p.kategorija \
                 or p2.tip = p.tip or p2.proizvodjac = p.proizvodjac \
-                MATCH (k:Korisnik)-[rel:KUPIO]->(p2) \
+                MATCH (k2:Korisnik)-[rel:KUPIO]->(p2) \
+                WHERE k2.username <> k.username \
                 WITH avg(rel.ocena) as mean, p2 as proizvod2 \
                 RETURN proizvod2, mean \
                 ORDER BY mean DESC LIMIT 10",

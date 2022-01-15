@@ -369,9 +369,7 @@ function vratiOcenioRelaciju(req, res, next) {
       { naziv, username }
     )
     .then((result) => {
-      //res.status(200).send('Ocenjivanje uspesno')
       req.body.postoji = result;
-
       next();
     })
     .catch((err) => {

@@ -190,23 +190,6 @@ export class AProizvodiComponent implements OnInit, OnDestroy {
         });
   }
 
-  updateOcenaProizvoda(novaOcena: number) {
-    if (this.selectedProizvod)
-      this.casProizvodService
-        .updateCassandraOcenaProizvoda(this.selectedProizvod, novaOcena)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          complete: () => {
-            this.toastrService.success('Uspesno promenjena ocena', 'Success');
-            if (this.selectedProizvod)
-              this.loadProducts(
-                this.selectedProizvod.kategorija,
-                this.selectedProizvod.tip
-              );
-          },
-        });
-  }
-
   obrisiProizvodeIzObeBaze(product: ProductCass) {
     this.obrisiProizvodIzCassandre(product);
   }

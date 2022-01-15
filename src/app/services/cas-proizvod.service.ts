@@ -73,11 +73,12 @@ export class CasProizvodService {
     );
   }
 
-  updateCassandraOcenaProizvoda(product: ProductCass, novaOcena: number) {
+  updateCassandraOcenaProizvoda(product: ProductCass, novaOcena: number, username: string) {
     const body = {
       naziv: product.naziv,
       novaOcena,
       proizvodjac: product.proizvodjac,
+      username
     };
     console.log(body);
     return this.httpClient.put(

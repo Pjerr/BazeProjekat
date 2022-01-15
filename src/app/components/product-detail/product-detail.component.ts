@@ -88,9 +88,9 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
                 this.loadAllComments(this.product.naziv);
               }
             },
-            error: () => {
+            error: (err) => {
               this.toastrService.info(
-                'Prvo ocenite proizvod da bi komentarisali',
+                'Ocenite proizvod / ne mozete dva put da komentarisete!',
                 'Info'
               );
             },
@@ -117,7 +117,7 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
 
       if (username) {
         this.casProizvodService
-          .updateCassandraOcenaProizvoda(this.product, rating)
+          .updateCassandraOcenaProizvoda(this.product, rating, username)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             complete: () => {
@@ -132,19 +132,21 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
                       'Success'
                     );
                   },
-                  error: () => {
+                  error: (err) => {
                     this.toastrService.info(
-                      'Ne mozete da ocenite isti proizvod dvaput',
+                      'Ne mozete da ocenite isti proizvod dvaput NEO',
                       'Info'
                     );
+                    console.log(err);
                   },
                 });
             },
-            error: ()=>{
+            error: (err)=>{
               this.toastrService.info(
-                'Ne mozete da ocenite isti proizvod dvaput',
+                'Ne mozete da ocenite isti proizvod dvaput CASS',
                 'Info'
               );
+              console.log(err);
             }
           });
         this.clickedOnRate = false;

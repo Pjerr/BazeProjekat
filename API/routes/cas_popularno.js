@@ -5,7 +5,7 @@ const neo4jSession = require("../neo4jConnection");
 const router = express.Router();
 const authenticateJWTToken = require("../auth").authenticateJWTToken;
 
-router.get("/", (req, res) => {
+router.get("/", napraviPopularneProizvode, (req, res) => {
   var getQuery = "SELECT * FROM buyhub.popularno WHERE popularno = ?";
   cassandraClient.execute(getQuery, ["POPULARNO"], (err, result) => {
     if (err) {
@@ -15,6 +15,66 @@ router.get("/", (req, res) => {
     }
   });
 });
+
+function napraviPopularneProizvode(req, res, next) 
+{
+  neo4jSession.readTransaction((tx) => 
+  {
+    tx.run(
+      "MATCH (p:Proizvod) \
+        WHERE p.brojKupovina >= 2 \
+        and p.brojOcena > 1 \
+        and p.zbirOcena / (p.brojOcena) > 3\
+        RETURN p LIMIT 5"
+    )
+      .then((result) => {
+        var argsArray = [];
+        var i = 0;
+        result.records.forEach((element) => {
+          var elemUnpacked = element._fields[0].properties;
+          argsArray.push({
+            popularno: "POPULARNO",
+            ocena: elemUnpacked.zbirOcena / elemUnpacked.brojOcena,
+            cena: elemUnpacked.cena,
+            kategorija: elemUnpacked.kategorija,
+            naziv: elemUnpacked.naziv,
+            tip: elemUnpacked.tip,
+            slika: elemUnpacked.slika,
+          });
+        });
+        var batchQueriesArray = [];
+        argsArray.forEach((element) => {
+          batchQueriesArray.push({
+            query:
+              "INSERT INTO buyhub.popularno (popularno, ocena, cena, kategorija,naziv,tip,slika) VALUES (?,?,?,?,?,?,?);",
+            params: [
+              element.popularno,
+              element.ocena,
+              element.cena,
+              element.kategorija,
+              element.naziv,
+              element.tip,
+              element.slika,
+            ],
+          });
+        });
+    
+        cassandraClient.batch(
+          batchQueriesArray,
+          { prepare: true },
+          (err, result) => {
+            if (err) {
+              console.log("Unable to put data" + err);
+            }
+            else
+            {
+              next();
+            }
+          }
+        );
+      })
+  });
+}
 
 //Treba slika da se doda
 router.post(
@@ -73,7 +133,7 @@ async function getPopularneProizvodeNeo(req, res, next) {
   neo4jSession.readTransaction((tx) => {
     tx.run(
       "MATCH (p:Proizvod) \
-        WHERE p.brojKupovina >= 3 \
+        WHERE p.brojKupovina >= 2 \
         and p.brojOcena > 1 \
         and p.zbirOcena / (p.brojOcena) > 3\
         RETURN p LIMIT 5"

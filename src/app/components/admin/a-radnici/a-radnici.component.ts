@@ -52,7 +52,7 @@ export class ARadniciComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initSviGradoviIAdrese();
+    
   }
 
   loadZaposljeniRadnici() {
@@ -181,6 +181,8 @@ export class ARadniciComponent implements OnInit, OnDestroy {
     if (radnik) {
       this.selectedRadnik = radnik;
       this.modalService.open(modalID);
+      if(modalID === "zaposliRadnikModal")
+        this.initSviGradoviIAdrese();
     } else this.modalService.open(modalID);
   }
 

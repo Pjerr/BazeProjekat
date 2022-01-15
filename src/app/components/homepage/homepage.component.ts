@@ -100,7 +100,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.modalService.close('login');
-          this.toastrService.success('Uspesno ulogovan', 'Success');
           location.reload();
         },
       });
@@ -133,7 +132,6 @@ export class HomepageComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.modalService.close('register');
-          this.toastrService.success('Uspesno registrovan', 'Success');
           location.reload();
         },
       });

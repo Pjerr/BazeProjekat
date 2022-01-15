@@ -1,0 +1,107 @@
+*DDL naredbe su u folderu:
+	/Upiti
+	1. /Cassandra: 
+		Izvrsiti u redosledu:
+			1 - CreateTables.txt
+			2 - INSERT - proizvod_cenanaziv.txt
+			2 - INSERT - proizvod_naziv.txt
+			2 - INSERT - proizvod_ocenanaziv.txt
+			2 - INSERT - proizvod_popust.txt
+			2 - INSERT - proizvod_proizvodjac.txt
+			3 - INSERT - proizvodjac.txt
+			4 - CREATE SASI INDEX.txt	- kreirali smo ga, ali ga ne koristimo jer ne radi dovoljno lepo. U ovom .txt fajlu je naveden primer problema
+		NOTE: IGNORISATI:
+			CreateKeyspace.txt		- korisceno preko cqlsh jer nismo videli gde se kreira preko onog NoSQLViewer-a
+			New Text Document.txt		
+	2. /Neo4J:
+		CREDENTIALS ZA BAZU:
+			username: neo4j
+			password: pas123
+			NOTE: Radili smo u default database
+		Nebitan redosled - navedene su samo DML naredbe za osnovne cvorove, ne za relacije izmedju njih
+
+*CREDENTIALS:
+	1. ADMIN
+		username: admin
+		password: admin
+	2. RADNICI
+		usernames mogu da se nadju u /Neo4J DML naredbama za radnike
+		password: pass123
+	3. KORISNICI
+		usernames mogu da se nadju u /Neo4J DML naredbama za korisnike
+		password: pass123
+		
+*Naredbe za kreiranje nekih relacija + Notes:
+
+		a) ZAPOSLENJE RADNIKA-----------------------------------------------------------------------------------------------------
+		(moguce i preko UI preko admin panela)
+
+		CREATE (r:Radnik{username:"todor.kalezic"})-[rel:RADI_U{ pozicija: 'menadzer', datumZaposlenja: '2020/02/19'}]->(p:Prodavnica{grad:"Nis", adresa:"Aleksandra Medvedeva 100"})	
+
+		CREATE (r:Radnik{username:"petra.milisavljevic"})-[rel:RADI_U{ pozicija: 'menadzer', datumZaposlenja: '2020/02/19'}]->(p:Prodavnica{grad:"Beograd", adresa:"Andre Nikolica 100"})	
+
+		CREATE (r:Radnik{username:"luna.mladenovic"})-[rel:RADI_U{ pozicija: 'menadzer', datumZaposlenja: '2020/02/19'}]->(p:Prodavnica{grad:"Novi Sad", adresa:"Milovana Vidakovica 100"})
+	
+		b) DODAVANJE PROIZVODA U PRODAVNICU-----------------------------------------------------------------------------------------------------
+		NOTE: Napisali smo upite za dodavanje u jednu istu prodavnicu. Svakako postoji opcija preko UI-a da se narucuju proizvodi
+		Ovo sluzi za "offline" kupovinu. Simulirali smo kupovinu iz prodavnice tako sto smo zamislili sledeci scenario:
+			1) Osoba (koja moze biti ili ne mora biti registrovani korisnik) moze da kupi neke proizvode uzivo. Tada radnik treba da unese izvrsene transakcije u bazu podataka. Opciono, osoba moze dati svoj username kako bi se transakcija povezala sa njegovim profilom (da bi kasnije mogao da pregleda svoje transakcije i dobije bolje preporuke za naredne kupovine)
+
+		MATCH (p:Proizvod{naziv : "Intel Core i7 11700K"}), (prod:Prodavnica {grad: "Nis", adresa: "Aleksandra Medvedeva 100"})
+                		CREATE (prod)<-[rel:U_MAGACINU {brojProizvoda : 10}]-(p)
+                		RETURN rel
+
+		MATCH (p:Proizvod{naziv : "XIAOMI MI 8"}), (prod:Prodavnica {grad: "Nis", adresa: "Aleksandra Medvedeva 100"})
+                		CREATE (prod)<-[rel:U_MAGACINU {brojProizvoda : 20}]-(p)
+                		RETURN rel
+
+		MATCH (p:Proizvod{naziv : "NOKIA 3310"}), (prod:Prodavnica {grad: "Nis", adresa: "Aleksandra Medvedeva 100"})
+                		CREATE (prod)<-[rel:U_MAGACINU {brojProizvoda : 30}]-(p)
+                		RETURN rel
+
+		MATCH (p:Proizvod{naziv : "MSI B450 TOMAHAWK MAX II"}), (prod:Prodavnica {grad: "Nis", adresa: "Aleksandra Medvedeva 100"})
+                		CREATE (prod)<-[rel:U_MAGACINU {brojProizvoda : 40}]-(p)
+                		RETURN rel
+		
+		Note: za offline kupovinu je potrebno da postoje proizvodi na stanju => treba ih prvo naruciti iz UI-a
+
+		c) KUPOVINA PROIZVODA----------------------------------------------------------------------------------------------------- 
+		S obzirom da se radi o updateovanju obe baze, najlakse je uraditi to iz UI-a kao registrovani korisnik.
+			Prijaviti se kao bogdan.petrov
+			Password: pass123
+			
+			Navigirati se ka zeljenim proizvodima i kupiti ih. Primetiti da se kao rezultat kreiraju potezi izmedju korisnika i proizvoda u Neu, a dodaje transakcija u Cassandri.
+
+		d) OCENJIVANJE I KOMENTARISANJE PROIZVODA-----------------------------------------------------------------------------------------------------
+		Najlakse uraditi preko UI-a. Potrebno je prvo oceniti proizvod, a zatim komentarisati.
+			U pozadini se u Neu kreiraju potezi OCENIO i KOMENTARISAO ka datom proizvodu. U Cassandri se u realtime updatuju 5 tabela:
+				proizvod_naziv
+				proizvod_cenanaziv
+				proizvod_ocenanaziv
+				proizvod_proizvodjac
+				proizvod_popust
+			Razlog postojanja 5 tabela je koriscenje svojstava razlicitih clustering key-eva za razlicite potrebe prikaza i sortiranja. Shodno tome, bilo je potrebno azurirati sve tabele radi sto konzistentnijeg prikaza. S obzirom da akcija ocenjivanja nije toliko cesta, smatrali smo da je ovo najbolji nacin odrzavanja konzistentnosti podataka.
+		
+		e) POPULARNI PROIZVODI----------------------------------------------------------------------------------------------------- 
+			Postoji ruta koja, za dati kriterijum popularnosti (brOcena, prosecna ocena, broj kupovina i sl) radi pretragu u Neu i date popularne proizvode upisuje u Cassandru. Ovo bi trebalo da se desava na nedeljnom nivou. Razlog upisa u Cassandru je brzina citanja informacija, dok bi se kreiranje radilo u downtime (nedelja uvece npr). 
+			U samom projektu su popularni proizvodi preko rute kreirani jednom, a citaju se radi prikaza na glavnoj stranici. Smatrali smo da je ovo lakse nego da simuliramo povecavanjem ucestanosti azuriranja tabele u Cassandri (npr na 10 min).
+			
+		f) RECOMMENDATION SYSTEM-----------------------------------------------------------------------------------------------------
+			Koriscenjem kreiranih potega u neu (KUPIO, OCENIO itd) i mogucnosti grafovskih baza, iskoriscene su tri rute za tri razlicita vida preporuka:
+				-Prva nalazi 5 korisnika koji su najslicniji po ukusu kao dati korisnik i nalazi proizvode koje su oni najbolje ocenili a da ih dati korisnik nije kupio 
+				-Druga radi po principu "Korisnici koji su kupili ovo sto si ti, kupili su jos i..."
+				-Treca gleda koje kategorije i tip proizvoda korisnik kupuje i predlaze mu iz tih kategorija/tipova proizvode koje nije jos uvek kupio
+
+		g) PREGLED TRANSAKCIJA-----------------------------------------------------------------------------------------------------
+			-Admin moze da vidi sve online transakcije. Takodje, moze da vidi offline transakcije konkretne prodavnice. (via Cassandra)
+			-Radnik moze samo da vidi offline transakcije svoje prodavnice. (via Cassandra)
+			-Korisnik moze da vidi sve svoje online transakcije i sve svoje offline transakcije koje je dozvolio da budu povezane s njegovim profilom. (via Neo4J)
+
+		
+
+
+
+
+
+
+
